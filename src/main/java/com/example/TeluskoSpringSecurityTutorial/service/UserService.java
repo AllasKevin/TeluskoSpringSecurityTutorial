@@ -24,6 +24,11 @@ public class UserService {
         return repo.save(user);
     }
 
+    /**
+     * This method is used to verify the user
+     * @param user
+     * @return a JWT token if the user is authenticated
+     */
     public String verify(Users user) {
         // The parameter is unauthenticated and return value is authenticated
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));

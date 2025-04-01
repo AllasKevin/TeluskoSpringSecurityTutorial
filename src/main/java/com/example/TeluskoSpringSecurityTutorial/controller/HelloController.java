@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloController {
 
-    @GetMapping("")
+    @GetMapping("/")
     public String greet(HttpServletRequest request){
         return "Welcome to Telusko Tutorial " + request.getSession().getId();
     }
