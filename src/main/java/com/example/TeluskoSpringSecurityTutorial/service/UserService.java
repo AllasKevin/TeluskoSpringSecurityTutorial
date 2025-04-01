@@ -29,7 +29,7 @@ public class UserService {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
         if (authentication.isAuthenticated()) {
-            return jwtService.genereateToken();
+            return jwtService.genereateToken(user.getUsername());
         } else {
             return "User is not authenticated";
         }
