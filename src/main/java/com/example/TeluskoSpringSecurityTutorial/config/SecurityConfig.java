@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // eftersom jag har implementerat UserDetailsService i MyUserDetailsService och lagt till en service annotation är det MyUserDetailsService som kommer att användas
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -38,11 +40,13 @@ public class SecurityConfig {
         //httpSecurity.formLogin(Customizer.withDefaults());
     }
 
+    // AuthenticationProvider kommer att ta ett icke-autentiserat 'Authentication Object' och autentisera det.
+    // Det görs alltid men genom att implementera vår egen som en Bean så är det inte default som används.
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
-        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+        provider.setUserDetailsService(userDetailsService); // eftersom jag har implementerat UserDetailsService i MyUserDetailsService och lagt till en service annotation är det MyUserDetailsService som kommer att användas
         return provider;
     }
 
