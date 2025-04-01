@@ -22,4 +22,10 @@ public class UserController {
         userService.register(user);
         return user;
     }
+
+    @PostMapping("/login")
+    public String login(@RequestBody Users user) {
+        System.out.println("Trying to Log in User: " + user);
+        return userService.verify(user);
+    }
 }
