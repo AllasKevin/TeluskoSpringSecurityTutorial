@@ -1,5 +1,6 @@
-package com.example.TeluskoSpringSecurityTutorial;
+package com.example.TeluskoSpringSecurityTutorial.controller;
 
+import com.example.TeluskoSpringSecurityTutorial.model.Student;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.example.TeluskoSpringSecurityTutorial;
+package com.example.TeluskoSpringSecurityTutorial.model;
 
 public class Student {
     private int id;
