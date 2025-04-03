@@ -4,6 +4,7 @@ import com.example.TeluskoSpringSecurityTutorial.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -40,7 +41,8 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/", "/register", "/login").permitAll()
+                        .requestMatchers("/", "/index.html", "/static/**").permitAll()
+                        .requestMatchers("/register", "/login").permitAll()
                         .anyRequest().authenticated())
                 //.httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
