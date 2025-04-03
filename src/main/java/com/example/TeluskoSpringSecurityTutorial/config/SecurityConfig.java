@@ -35,8 +35,11 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
+        //httpSecurity.formLogin(Customizer.withDefaults());
 
         return httpSecurity
                 .csrf(customizer -> customizer.disable())
@@ -49,9 +52,6 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
-
-        //httpSecurity.formLogin(Customizer.withDefaults());
     }
 
     // AuthenticationProvider kommer att ta ett icke-autentiserat 'Authentication Object' och autentisera det.

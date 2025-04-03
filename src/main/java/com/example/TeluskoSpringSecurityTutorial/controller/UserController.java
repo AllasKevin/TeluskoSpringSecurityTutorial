@@ -2,11 +2,17 @@ package com.example.TeluskoSpringSecurityTutorial.controller;
 
 import com.example.TeluskoSpringSecurityTutorial.model.Users;
 import com.example.TeluskoSpringSecurityTutorial.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Duration;
 
 @RestController
 public class UserController {
@@ -24,8 +30,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Users user) {
+    public ResponseEntity<?> login(@RequestBody Users user, HttpServletResponse response) {
         System.out.println("Trying to Log in User: " + user);
-        return userService.verify(user);
+        String jwt = userService.verify(user);
+
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
+                .httpOnly(true)
+                .secure(false) // TODO: Set to true in production
+                .path("/")
+                .maxAge(Duration.ofHours(1))
+                .sameSite("Strict")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+
+        return ResponseEntity.ok("Login successful");
     }
 }
