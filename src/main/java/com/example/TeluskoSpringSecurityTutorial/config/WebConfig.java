@@ -11,7 +11,7 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Arrays;
-
+/*
 @Configuration
 @EnableWebMvc
 public class WebConfig {
@@ -44,4 +44,4 @@ public class WebConfig {
         bean.setOrder(CORS_FILTER_ORDER);
         return bean;
     }
-}
+}*/
