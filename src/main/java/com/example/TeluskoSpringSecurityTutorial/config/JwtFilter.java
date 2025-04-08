@@ -69,8 +69,11 @@ public class JwtFilter extends OncePerRequestFilter {
         // Skip filtering for login, register, index, and static resources
         return path.equals("/login") || path.equals("/register") ||
                 path.equals("/") || path.equals("/index.html") ||
-                path.startsWith("/static/");
+                path.startsWith("/static/") || path.startsWith("/assets/");
     }
+
+
+
 
     /*
     @Override
