@@ -24,6 +24,7 @@ public class JWTService {
     private String secretKey;    // TODO: An option is to create a key everytime this service is used and not just when it is created like below. Right now, the key is hardcoded in the application.properties file. This is not a good practice for production code. But the commented out way of dynamically generating a key is also not good because it will generate a new key every time the application is started. This means that the tokens generated before the application was restarted will not be valid anymore. So, we need to find a way to generate a key that is not hardcoded but also not generated every time the service is created. One option is to use a key management service like AWS KMS or Azure Key Vault. Another option is to use a library like Jasypt or Spring Cloud Config to encrypt the key and store it in a secure location.
 
     public JWTService(@Value("${jwt.secret}") String secretKey) {
+        this.secretKey = secretKey;
         /*
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
@@ -33,7 +34,6 @@ public class JWTService {
             throw new RuntimeException(e);
         }
          */
-        //System.out.println("Secret key: " + secretKey);
     }
 
     public String genereateToken(String username) {
