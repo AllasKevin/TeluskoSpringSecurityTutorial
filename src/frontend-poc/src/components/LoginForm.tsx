@@ -2,7 +2,8 @@ import { FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoginService, { LoginCredentials } from "../services/LoginService";
-
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./auth/AuthContext";
 const schema = z.object({
   username: z
     .string()
@@ -21,10 +22,15 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const loginUser = (loginCredentials: LoginCredentials) => {
     LoginService.post(loginCredentials)
       .then(() => {
         console.log("Login successful");
+        login();
+        navigate("/app");
       })
       .catch((err) => {
         console.log("Login failed");

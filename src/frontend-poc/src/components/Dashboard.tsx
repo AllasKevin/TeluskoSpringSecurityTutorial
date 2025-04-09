@@ -1,6 +1,6 @@
 import apiClient from "../services/api-client";
 
-const LoggedIn = () => {
+const Dashboard = () => {
   const getStudents = () => {
     apiClient
       .get("/students", {
@@ -16,7 +16,7 @@ const LoggedIn = () => {
 
   return (
     <div>
-      LoggedIn
+      Dashboard
       <button className="btn btn-secondary" onClick={getStudents}>
         GetStudents
       </button>
@@ -24,4 +24,4 @@ const LoggedIn = () => {
   );
 };
 
-export default LoggedIn;
+export default Dashboard;

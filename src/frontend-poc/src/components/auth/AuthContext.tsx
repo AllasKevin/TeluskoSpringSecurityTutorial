@@ -12,10 +12,20 @@ const AuthContext = createContext<{
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setAuth] = useState(false);
+  const [isAuthenticated, setAuthenticated] = useState<boolean>(() => {
+    // Initialize from localStorage
+    return localStorage.getItem("authenticated") === "true";
+  });
 
-  const login = () => setAuth(true);
-  const logout = () => setAuth(false);
+  const login = () => {
+    localStorage.setItem("authenticated", "true");
+    setAuthenticated(true);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("authenticated");
+    setAuthenticated(false);
+  };
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>

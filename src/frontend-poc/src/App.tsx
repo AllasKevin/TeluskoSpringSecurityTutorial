@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import LoginForm from "./components/LoginForm";
-import LoggedIn from "./components/LoggedIn";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -11,10 +11,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/loginpage" element={<LoginForm />} />
         <Route
-          path="/loggedin"
+          path="/app"
           element={
-            <ProtectedRoute>
-              <LoggedIn />
+            <ProtectedRoute protectedPath="/app">
+              <Dashboard />
             </ProtectedRoute>
           }
         />
