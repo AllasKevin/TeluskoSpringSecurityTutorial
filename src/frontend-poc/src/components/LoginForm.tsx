@@ -2,7 +2,6 @@ import { FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoginService, { LoginCredentials } from "../services/LoginService";
-import apiClient from "../services/api-client";
 
 const schema = z.object({
   username: z
@@ -30,19 +29,6 @@ const LoginForm = () => {
       .catch((err) => {
         console.log("Login failed");
         console.log(err.response.data);
-      });
-  };
-
-  const getStudents = () => {
-    apiClient
-      .get("/students", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        console.log("Students: ", response.data);
-      })
-      .catch((err) => {
-        console.error("Error fetching students:", err);
       });
   };
 
@@ -88,9 +74,6 @@ const LoginForm = () => {
           Submit
         </button>
       </form>
-      <button className="btn btn-secondary" onClick={getStudents}>
-        GetStudents
-      </button>
     </div>
   );
 };
