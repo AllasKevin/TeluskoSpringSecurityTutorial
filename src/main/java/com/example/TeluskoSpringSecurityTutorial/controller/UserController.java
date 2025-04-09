@@ -2,6 +2,7 @@ package com.example.TeluskoSpringSecurityTutorial.controller;
 
 import com.example.TeluskoSpringSecurityTutorial.model.Users;
 import com.example.TeluskoSpringSecurityTutorial.service.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +56,17 @@ public class UserController {
         }
 
         return ResponseEntity.ok("Login successful");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        System.out.println("Logging out user");
+        Cookie cookie = new Cookie("jwt", "");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // only if you're using HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // deletes the cookie
+        response.addCookie(cookie);
+        return ResponseEntity.ok().build();
     }
 }
