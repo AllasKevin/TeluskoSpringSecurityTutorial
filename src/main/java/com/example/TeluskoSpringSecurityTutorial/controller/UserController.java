@@ -87,7 +87,7 @@ public class UserController {
     @PostMapping("/changecolor")
     @ResponseBody
     public ResponseEntity<Map<String, String>> changeColor(@RequestBody Map<String, String> body) {
-        this.color.put("color", body.get("color"));
+        this.color.put("color", body.get("color")); // TODO: validate color. This could be a problem if the user sends a malicious request.
         return ResponseEntity.ok(this.color);
     }
 }
