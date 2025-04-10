@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -69,23 +70,24 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    private String color = "blue";
+    private Map<String, String> color;
+
+    public UserController(){
+        System.out.println("UserController constructor called");
+        color = new HashMap<>();
+        color.put("color", "blue");
+    }
 
     @GetMapping("/color")
     @ResponseBody
-    public String greet(){
-        System.out.println("Fetching color: " + color);
-        return color;
+    public Map<String, String> greet(){
+        return this.color;
     }
 
     @PostMapping("/changecolor")
     @ResponseBody
-    public ResponseEntity<String> changeColor(@RequestBody Map<String, String> body) {
-        System.out.println("Color received: " + body);
-
-        String color = body.get("color");
-        System.out.println("Changing color to: " + color);
-        this.color = color;
-        return ResponseEntity.ok(color);
+    public ResponseEntity<Map<String, String>> changeColor(@RequestBody Map<String, String> body) {
+        this.color.put("color", body.get("color"));
+        return ResponseEntity.ok(this.color);
     }
 }
