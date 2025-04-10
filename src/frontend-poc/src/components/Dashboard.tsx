@@ -47,7 +47,7 @@ const Dashboard = () => {
   return (
     <div
       style={{
-        backgroundColor: colorState?.color,
+        backgroundColor: colorState?.color || "blue",
         height: "100vh",
         color: "white",
       }}
