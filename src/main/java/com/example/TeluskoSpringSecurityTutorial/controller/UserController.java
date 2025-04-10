@@ -10,12 +10,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -68,5 +67,25 @@ public class UserController {
         cookie.setMaxAge(0); // deletes the cookie
         response.addCookie(cookie);
         return ResponseEntity.ok().build();
+    }
+
+    private String color = "blue";
+
+    @GetMapping("/color")
+    @ResponseBody
+    public String greet(){
+        System.out.println("Fetching color: " + color);
+        return color;
+    }
+
+    @PostMapping("/changecolor")
+    @ResponseBody
+    public ResponseEntity<String> changeColor(@RequestBody Map<String, String> body) {
+        System.out.println("Color received: " + body);
+
+        String color = body.get("color");
+        System.out.println("Changing color to: " + color);
+        this.color = color;
+        return ResponseEntity.ok(color);
     }
 }
