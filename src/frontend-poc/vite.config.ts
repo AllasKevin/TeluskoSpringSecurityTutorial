@@ -8,4 +8,12 @@ export default defineConfig({
     outDir: '../main/resources/static',
     emptyOutDir: true,
   },
+  server: {
+    https: {
+      key: '../main/resources/ssl/192.168.0.110-key.pem',
+      cert: '../main/resources/ssl/192.168.0.110.pem',
+    },
+    host: '192.168.0.110',
+    port: 5173,
+  },
 })
