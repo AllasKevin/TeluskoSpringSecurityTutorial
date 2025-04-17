@@ -42,6 +42,14 @@ const createPeerConnection = (userName: string,typeOfCall: string)=>{
             })
         })
 
+        peerConnection.oniceconnectionstatechange = () => {
+            console.log("peerConnection.iceConnectionState: ", peerConnection.iceConnectionState);
+        };
+
+        peerConnection.onconnectionstatechange = () => {
+        console.log("peerConnection.connectionState: ", peerConnection.connectionState);
+        };
+        
         return({
             peerConnection,
             remoteStream,

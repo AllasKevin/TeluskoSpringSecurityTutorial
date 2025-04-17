@@ -8,7 +8,7 @@ const VideoButton = ({localFeedEl,callStatus,localStream,updateCallStatus,peerCo
         console.log(callStatus.videoEnabled)
         const copyCallStatus = {...callStatus}
         // useCases:
-        if(copyCallStatus.callInitiated && copyCallStatus.videoEnabled){
+        if(copyCallStatus?.callInitiated && copyCallStatus?.videoEnabled){
             // 1. Video is enabled, so we need to disable
             //disable
             console.log("Disable video!")
@@ -16,14 +16,14 @@ const VideoButton = ({localFeedEl,callStatus,localStream,updateCallStatus,peerCo
             updateCallStatus(copyCallStatus)
             const tracks = localStream.getVideoTracks()
             tracks.forEach(track=>track.enabled = false)
-        }else if(copyCallStatus.callInitiated && copyCallStatus.videoEnabled === false){
+        }else if(copyCallStatus?.callInitiated && copyCallStatus?.videoEnabled === false){
             // 2. Video is disabled, so we need to enable
             console.log("Enable video!")
             copyCallStatus.videoEnabled = true
             updateCallStatus(copyCallStatus)
             const tracks = localStream.getVideoTracks()
             tracks.forEach(track=>track.enabled = true)
-        }else if(copyCallStatus.callInitiated === false && copyCallStatus.videoEnabled === false){
+        }else if(copyCallStatus?.callInitiated === false && copyCallStatus?.videoEnabled === false){
             // 3. Video is null, so we need to init
             console.log("Init video!")
             copyCallStatus.videoEnabled = true
@@ -43,7 +43,7 @@ const VideoButton = ({localFeedEl,callStatus,localStream,updateCallStatus,peerCo
             <i className="fa fa-caret-up choose-video"></i>
             <div className="button camera" onClick={startStopVideo}>
                 <i className="fa fa-video"></i>
-                <div className="btn-text">{callStatus.video === "enabled" ? "Stop" : "Start"} Video</div>
+                <div className="btn-text">{callStatus?.video === "enabled" ? "Stop" : "Start"} Video</div>
             </div>
         </div>
     )

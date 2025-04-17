@@ -29,12 +29,13 @@ const LoginForm = () => {
     LoginService.post(loginCredentials)
       .then(() => {
         console.log("Login successful");
+        sessionStorage.setItem("username", loginCredentials.username);
         login();
         navigate("/app");
       })
       .catch((err) => {
         console.log("Login failed");
-        console.log(err.response.data);
+        console.log(err);
       });
   };
 
