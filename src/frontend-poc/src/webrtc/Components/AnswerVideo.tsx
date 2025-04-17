@@ -1,0 +1,154 @@
+import { RefObject, useEffect, useState } from "react";
+import "./VideoPage.css";
+import { useNavigate } from "react-router-dom";
+import socketConnection from "../webrtcUtilities/socketConnection";
+import ActionButtons from "./ActionButtons/ActionButtons";
+import VideoMessageBox from "./VideoMessageBox";
+import { CallStatus } from "../../App";
+import { CallData } from "../../components/Dashboard";
+
+interface AnswerVideoProps {
+  callStatus: CallStatus | undefined;
+  updateCallStatus: React.Dispatch<
+    React.SetStateAction<CallStatus | undefined>
+  >;
+  localStream: MediaStream | undefined;
+  remoteStream: MediaStream | undefined;
+  peerConnection: RTCPeerConnection | undefined;
+  userName: string | null;
+  localFeedEl: RefObject<HTMLVideoElement | null>;
+  remoteFeedEl: RefObject<HTMLVideoElement | null>;
+  offerData: CallData | undefined;
+}
+const AnswerVideo = ({
+  remoteStream,
+  localStream,
+  peerConnection,
+  callStatus,
+  updateCallStatus,
+  offerData,
+  userName,
+  remoteFeedEl,
+  localFeedEl,
+}: AnswerVideoProps) => {
+  const navigate = useNavigate();
+  const [videoMessage, setVideoMessage] = useState(
+    "Please enable video to start!"
+  );
+  const [answerCreated] = useState(false); // This is never changed and therefore it should be possible to remove it
+
+  // end the call
+  useEffect(() => {
+    if (callStatus?.current === "complete") {
+      console.log("notify hangUp to: " + offerData?.offererUserName);
+      socketConnection(userName).emit("notify", {
+        receiver: offerData?.offererUserName,
+        message: "hangUp",
+      });
+      //navigate(`/`)
+    }
+  }, [callStatus]);
+
+  //send back to home if no localStream
+  useEffect(() => {
+    if (!localStream) {
+      navigate(`/`);
+    } else {
+      //set video tags
+      if (remoteFeedEl.current && remoteStream) {
+        remoteFeedEl.current.srcObject = remoteStream;
+      }
+
+      if (localFeedEl.current && localStream) {
+        localFeedEl.current.srcObject = localStream;
+      }
+    }
+  }, []);
+
+  //set video tags
+  // useEffect(()=>{
+  //     remoteFeedEl.current.srcObject = remoteStream
+  //     localFeedEl.current.srcObject = localStream
+  // },[])
+
+  //if we have tracks, disable the video message
+  useEffect(() => {
+    if (peerConnection) {
+      peerConnection.ontrack = (e) => {
+        if (e?.streams?.length) {
+          setVideoMessage("");
+        } else {
+          setVideoMessage("Disconnected...");
+        }
+      };
+    }
+  }, [peerConnection]);
+
+  //User has enabled video, but not made answer
+  useEffect(() => {
+    const addOfferAndCreateAnswerAsync = async () => {
+      if (!peerConnection) {
+        console.log("No peerConnection, returning...");
+        return;
+      } else if (!offerData) {
+        console.log("No offerData, returning...");
+        return;
+      }
+      //add the offer
+      await peerConnection.setRemoteDescription(offerData.offer);
+      console.log(peerConnection.signalingState); //have remote-offer
+      //now that we have the offer set, make our answer
+      console.log("Creating answer...");
+      const answer = await peerConnection.createAnswer();
+      peerConnection.setLocalDescription(answer);
+      const copyOfferData = { ...offerData };
+      copyOfferData.answer = answer;
+      copyOfferData.answererUserName = userName;
+      const socket = socketConnection(userName);
+      const offerIceCandidates = await socket.emitWithAck(
+        "newAnswer",
+        copyOfferData
+      );
+      offerIceCandidates.forEach((c: RTCIceCandidateInit) => {
+        peerConnection.addIceCandidate(c);
+        console.log("==Added ice candidate from offerer==");
+      });
+    };
+
+    if (!answerCreated && callStatus?.videoEnabled) {
+      addOfferAndCreateAnswerAsync();
+    }
+  }, [callStatus?.videoEnabled, answerCreated]);
+
+  return (
+    <div>
+      <div className="videos">
+        <VideoMessageBox message={videoMessage} />
+        <video
+          id="local-feed"
+          ref={localFeedEl}
+          autoPlay
+          controls
+          playsInline
+        ></video>
+        <video
+          id="remote-feed"
+          ref={remoteFeedEl}
+          autoPlay
+          controls
+          playsInline
+        ></video>
+      </div>
+      <ActionButtons
+        localFeedEl={localFeedEl}
+        remoteFeedEl={remoteFeedEl}
+        callStatus={callStatus}
+        localStream={localStream}
+        updateCallStatus={updateCallStatus}
+        peerConnection={peerConnection}
+      />
+    </div>
+  );
+};
+
+export default AnswerVideo;
