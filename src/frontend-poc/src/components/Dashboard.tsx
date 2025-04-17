@@ -33,12 +33,13 @@ interface DashboardProps {
   setPeerConnection: React.Dispatch<
     React.SetStateAction<RTCPeerConnection | undefined>
   >;
-  userName: string | null;
-  setUserName: React.Dispatch<React.SetStateAction<string | null>>;
   //  offerData: any;
   setOfferData: React.Dispatch<React.SetStateAction<any>>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   localFeedEl: RefObject<HTMLVideoElement | null>;
+  gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
+  setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
+  remoteDescAddedForOfferer: boolean;
 }
 
 const Dashboard = ({
@@ -50,12 +51,13 @@ const Dashboard = ({
   setRemoteStream,
   peerConnection,
   setPeerConnection,
-  userName,
-  setUserName,
   //  offerData,
   setOfferData,
   remoteFeedEl,
   localFeedEl,
+  gatheredAnswerIceCandidatesRef,
+  setIceCandidatesReadyTrigger,
+  remoteDescAddedForOfferer,
 }: DashboardProps) => {
   const getStudents = () => {
     apiClient
@@ -99,9 +101,9 @@ const Dashboard = ({
   console.log("Dashboard component rendered");
 
   const [typeOfCall, setTypeOfCall] = useState("");
-  const [joined, setJoined] = useState(false);
   const [availableCalls, setAvailableCalls] = useState([]);
   const navigate = useNavigate();
+  const username = sessionStorage.getItem("username");
 
   //called on "Call" or "Answer"
   const initCall = async (typeOfCall: string) => {
@@ -121,29 +123,25 @@ const Dashboard = ({
   //     test()
   // },[])
 
-  //Nothing happens until the user clicks join
-  //(Helps with React double render)
   useEffect(() => {
-    console.log("joined changed: " + joined);
-    if (joined) {
-      const userName = prompt("Enter username");
-      setUserName(userName);
-      const setCalls = (data: []) => {
-        setAvailableCalls(data);
-        console.log("Available calls: " + data);
-      };
-      const socket = socketConnection(userName);
-      socket.on("availableOffers", setCalls);
-      socket.on("newOfferAwaiting", setCalls);
-    }
-  }, [joined]);
+    console.log("listening for available calls...");
+    const setCalls = (data: []) => {
+      setAvailableCalls(data);
+      console.log("Available calls: " + data);
+    };
+    const socket = socketConnection(username);
+    socket.on("availableOffers", setCalls);
+    socket.on("newOfferAwaiting", setCalls);
+  }, []);
 
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
-    if (callStatus && userName && callStatus.haveMedia && !peerConnection) {
+    if (callStatus && username && callStatus.haveMedia && !peerConnection) {
       // prepForCall has finished running and updated callStatus
-      const result = createPeerConnection(userName, typeOfCall);
+      const result = createPeerConnection(username, typeOfCall);
       if (result) {
+        console.log("createPeerConnection created! ");
+        console.log(result.peerConnection);
         setPeerConnection(result.peerConnection);
         setRemoteStream(result.remoteStream);
       }
@@ -154,7 +152,7 @@ const Dashboard = ({
   //Add socketlisteners
   useEffect(() => {
     if (typeOfCall && peerConnection) {
-      const socket = socketConnection(userName);
+      const socket = socketConnection(username);
       clientSocketListeners(
         socket,
         typeOfCall,
@@ -162,7 +160,10 @@ const Dashboard = ({
         updateCallStatus,
         peerConnection,
         remoteFeedEl,
-        localFeedEl
+        localFeedEl,
+        gatheredAnswerIceCandidatesRef,
+        setIceCandidatesReadyTrigger,
+        remoteDescAddedForOfferer
       );
     }
   }, [typeOfCall, peerConnection]);
@@ -170,7 +171,11 @@ const Dashboard = ({
   //once remoteStream AND pc are ready, navigate
   useEffect(() => {
     if (remoteStream && peerConnection) {
-      navigate(`/${typeOfCall}?token=${Math.random()}`);
+      if (typeOfCall === "offer") {
+        navigate("/offer", { replace: false });
+      } else if (typeOfCall === "answer") {
+        navigate("/answer", { replace: false });
+      }
     }
   }, [remoteStream, peerConnection]);
 
@@ -185,26 +190,19 @@ const Dashboard = ({
     setOfferData(callData);
   };
 
-  if (!joined) {
-    return (
-      <div className="container d-flex align-items-center justify-content-center min-vh-100">
-        <button
-          onClick={() => setJoined(true)}
-          className="btn btn-primary btn-lg"
-        >
-          Join
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div className="container">
       <div className="row">
-        <h1>{userName}</h1>
+        <h1>{username}</h1>
         <div className="col-6">
           <h2>Make a call</h2>
-          <button onClick={call} className="btn btn-success btn-lg hang-up">
+          <button
+            onClick={() => {
+              console.log(peerConnection);
+              call();
+            }}
+            className="btn btn-success btn-lg hang-up"
+          >
             Start Call
           </button>
         </div>
@@ -214,6 +212,7 @@ const Dashboard = ({
             <div className="col mb-2" key={i}>
               <button
                 onClick={() => {
+                  console.log(peerConnection);
                   answer(callData);
                 }}
                 className="btn btn-lg btn-warning hang-up"

@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useState } from "react";
 import "./VideoPage.css";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
@@ -15,7 +15,6 @@ interface AnswerVideoProps {
   localStream: MediaStream | undefined;
   remoteStream: MediaStream | undefined;
   peerConnection: RTCPeerConnection | undefined;
-  userName: string | null;
   localFeedEl: RefObject<HTMLVideoElement | null>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   offerData: CallData | undefined;
@@ -27,21 +26,22 @@ const AnswerVideo = ({
   callStatus,
   updateCallStatus,
   offerData,
-  userName,
   remoteFeedEl,
   localFeedEl,
 }: AnswerVideoProps) => {
-  const navigate = useNavigate();
+  console.log("AnswerVideoComponent rendered");
+  console.log(peerConnection);
+  //const navigate = useNavigate();
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
   );
-  const [answerCreated] = useState(false); // This is never changed and therefore it should be possible to remove it
-
+  const [answerCreated] = useState(false); // TODO: This is never changed and therefore it should be possible to remove it
+  const username = sessionStorage.getItem("username");
   // end the call
   useEffect(() => {
     if (callStatus?.current === "complete") {
       console.log("notify hangUp to: " + offerData?.offererUserName);
-      socketConnection(userName).emit("notify", {
+      socketConnection(username).emit("notify", {
         receiver: offerData?.offererUserName,
         message: "hangUp",
       });
@@ -52,7 +52,7 @@ const AnswerVideo = ({
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {
-      navigate(`/`);
+      //navigate(`/`);
     } else {
       //set video tags
       if (remoteFeedEl.current && remoteStream) {
@@ -99,12 +99,17 @@ const AnswerVideo = ({
       console.log(peerConnection.signalingState); //have remote-offer
       //now that we have the offer set, make our answer
       console.log("Creating answer...");
+      console.log(peerConnection);
       const answer = await peerConnection.createAnswer();
       peerConnection.setLocalDescription(answer);
+      console.log("Answer created!");
+      console.log(peerConnection.signalingState); //have local-answer
+      console.log(answer);
+      console.log(peerConnection);
       const copyOfferData = { ...offerData };
       copyOfferData.answer = answer;
-      copyOfferData.answererUserName = userName;
-      const socket = socketConnection(userName);
+      copyOfferData.answererUserName = username;
+      const socket = socketConnection(username);
       const offerIceCandidates = await socket.emitWithAck(
         "newAnswer",
         copyOfferData
