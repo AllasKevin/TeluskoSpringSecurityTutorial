@@ -7,6 +7,7 @@ import Dashboard, { CallData } from "./components/Dashboard";
 import Header from "./components/Header";
 import CallerVideo from "./webrtc/Components/CallerVideo";
 import AnswerVideo from "./webrtc/Components/AnswerVideo";
+import LoginForm from "./components/LoginForm";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -23,36 +24,21 @@ function App() {
   const [localStream, setLocalStream] = useState<MediaStream>();
   const [remoteStream, setRemoteStream] = useState<MediaStream>();
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection>();
-  const [userName, setUserName] = useState<string | null>(null);
   const [offerData, setOfferData] = useState<CallData>();
   const remoteFeedEl = useRef<HTMLVideoElement>(null); //this is a React ref to a dom element, so we can interact with it the React way
   const localFeedEl = useRef<HTMLVideoElement>(null); //this is a React ref to a dom element, so we can interact with it the React way
+  //const [gatheredAnswerIceCandidates, setGatheredAnswerIceCandidates] = useState<RTCIceCandidateInit[]>([]);
+  const gatheredAnswerIceCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
+  const [iceCandidatesReadyTrigger, setIceCandidatesReadyTrigger] = useState(0);
+  const [remoteDescAddedForOfferer, setRemoteDescAddedForOfferer] =
+    useState(false);
+
   return (
     <div>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/loginpage"
-          element={
-            <Dashboard
-              callStatus={callStatus}
-              updateCallStatus={updateCallStatus}
-              //                localStream={localStream}
-              setLocalStream={setLocalStream}
-              remoteStream={remoteStream}
-              setRemoteStream={setRemoteStream}
-              peerConnection={peerConnection}
-              setPeerConnection={setPeerConnection}
-              userName={userName}
-              setUserName={setUserName}
-              //                offerData={offerData}
-              setOfferData={setOfferData}
-              remoteFeedEl={remoteFeedEl}
-              localFeedEl={localFeedEl}
-            />
-          }
-        />
+        <Route path="/loginpage" element={<LoginForm />} />
         <Route
           path="/app"
           element={
@@ -66,12 +52,13 @@ function App() {
                 setRemoteStream={setRemoteStream}
                 peerConnection={peerConnection}
                 setPeerConnection={setPeerConnection}
-                userName={userName}
-                setUserName={setUserName}
                 //                offerData={offerData}
                 setOfferData={setOfferData}
                 remoteFeedEl={remoteFeedEl}
                 localFeedEl={localFeedEl}
+                gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+                setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+                remoteDescAddedForOfferer={remoteDescAddedForOfferer}
               />
             </ProtectedRoute>
           }
@@ -79,32 +66,38 @@ function App() {
         <Route
           path="/offer"
           element={
-            <CallerVideo
-              callStatus={callStatus}
-              updateCallStatus={updateCallStatus}
-              localStream={localStream}
-              remoteStream={remoteStream}
-              peerConnection={peerConnection}
-              userName={userName}
-              remoteFeedEl={remoteFeedEl}
-              localFeedEl={localFeedEl}
-            />
+            <ProtectedRoute>
+              <CallerVideo
+                callStatus={callStatus}
+                updateCallStatus={updateCallStatus}
+                localStream={localStream}
+                remoteStream={remoteStream}
+                peerConnection={peerConnection}
+                remoteFeedEl={remoteFeedEl}
+                localFeedEl={localFeedEl}
+                gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+                iceCandidatesReadyTrigger={iceCandidatesReadyTrigger}
+                remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+                setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+              />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/answer"
           element={
-            <AnswerVideo
-              callStatus={callStatus}
-              updateCallStatus={updateCallStatus}
-              localStream={localStream}
-              remoteStream={remoteStream}
-              peerConnection={peerConnection}
-              userName={userName}
-              offerData={offerData}
-              remoteFeedEl={remoteFeedEl}
-              localFeedEl={localFeedEl}
-            />
+            <ProtectedRoute>
+              <AnswerVideo
+                callStatus={callStatus}
+                updateCallStatus={updateCallStatus}
+                localStream={localStream}
+                remoteStream={remoteStream}
+                peerConnection={peerConnection}
+                offerData={offerData}
+                remoteFeedEl={remoteFeedEl}
+                localFeedEl={localFeedEl}
+              />
+            </ProtectedRoute>
           }
         />
       </Routes>
