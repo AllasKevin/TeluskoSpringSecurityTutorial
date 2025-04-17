@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 const AudioButton = ({callStatus, setCallStatus,localStream,peerConnection})=>{
 
     let micText;
-    if(callStatus.audio === "off"){
+    if(callStatus?.audio === "off"){
         micText = "Join Audio"
-    }else if(callStatus.audio === "enabled"){
+    }else if(callStatus?.audio === "enabled"){
         micText = "Mute"
     }else{
         micText = "Unmute"

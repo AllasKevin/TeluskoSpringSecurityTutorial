@@ -1,6 +1,6 @@
-import { RefObject, useEffect, useState } from "react";
+import React, { RefObject, useEffect, useState } from "react";
 import "./VideoPage.css";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
@@ -14,9 +14,12 @@ interface CallerVideoProps {
   localStream: MediaStream | undefined;
   remoteStream: MediaStream | undefined;
   peerConnection: RTCPeerConnection | undefined;
-  userName: string | null;
   localFeedEl: RefObject<HTMLVideoElement | null>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
+  gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
+  iceCandidatesReadyTrigger: number;
+  remoteDescAddedForOfferer: boolean;
+  setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const CallerVideo = ({
@@ -25,22 +28,27 @@ const CallerVideo = ({
   peerConnection,
   callStatus,
   updateCallStatus,
-  userName,
   remoteFeedEl,
   localFeedEl,
+  gatheredAnswerIceCandidatesRef,
+  iceCandidatesReadyTrigger,
+  remoteDescAddedForOfferer,
+  setRemoteDescAddedForOfferer,
 }: CallerVideoProps) => {
-  const navigate = useNavigate();
+  console.log("CallerVideoComponent rendered");
+  console.log(peerConnection);
+  //const navigate = useNavigate();
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
   );
   const [offerCreated, setOfferCreated] = useState(false);
-
+  const username = sessionStorage.getItem("username");
   //send back to home if no localStream
   useEffect(() => {
     console.log("CallerVideo useEffect: localStream: " + localStream);
     console.log("CallerVideo useEffect: remoteStream: " + remoteStream);
     if (!localStream) {
-      navigate(`/`);
+      //navigate(`/`);
     } else {
       //set video tags
       if (remoteFeedEl.current && remoteStream) {
@@ -80,11 +88,23 @@ const CallerVideo = ({
         console.error("Peer connection is undefined!");
         return;
       }*/
+      console.log("CREATE OFFER!");
+      console.log(peerConnection);
       const offer = await peerConnection?.createOffer();
+      console.log("CREATED OFFER!");
+      console.log(peerConnection);
+
+      console.log("OFFER!");
+
+      console.log(offer);
       peerConnection?.setLocalDescription(offer);
+      console.log("SET LOCAL DESCRIPTION!");
+      console.log(peerConnection);
+      console.log("username: " + username);
       //we can now start collecing ice candidates!
       // we need to emit the offer to the server
-      const socket = socketConnection(userName);
+      const socket = socketConnection(username);
+      console.log(socket);
       socket.emit("newOffer", offer);
       setOfferCreated(true); //so that our useEffect doesn't make an offer again
       setVideoMessage("Awaiting answer..."); //update our videoMessage box
@@ -108,11 +128,33 @@ const CallerVideo = ({
       }
       await peerConnection?.setRemoteDescription(callStatus.answer);
       console.log("Answer added!!");
+      console.log(callStatus);
+      console.log(peerConnection);
+      console.log(peerConnection?.signalingState); //have remote-offer
+      setRemoteDescAddedForOfferer(true);
     };
     if (callStatus?.answer) {
       addAnswerAsync();
     }
   }, [callStatus]);
+
+  useEffect(() => {
+    if (remoteDescAddedForOfferer) {
+      console.log("ice Candidate ready");
+
+      gatheredAnswerIceCandidatesRef.current.forEach((iceCandidate) => {
+        console.log(
+          "Adding ice candidate from answerer in separate useEffect..."
+        );
+        peerConnection?.addIceCandidate(iceCandidate).catch((err) => {
+          console.log("Chrome thinks there is an error. There isn't...");
+          console.log(err);
+        });
+      });
+
+      gatheredAnswerIceCandidatesRef.current = []; //clear the array
+    }
+  }, [iceCandidatesReadyTrigger, remoteDescAddedForOfferer]);
 
   return (
     <div>

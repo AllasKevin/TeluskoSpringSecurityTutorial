@@ -21,7 +21,7 @@ const HangupButton = ({remoteFeedEl, localFeedEl,peerConnection, callStatus, upd
         }
     }
 
-    if(callStatus.current === "complete"){
+    if(callStatus?.current === "complete"){
         return <></>
     }
 
