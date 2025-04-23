@@ -1,8 +1,12 @@
+import { set } from "react-hook-form";
 
-const clientSocketListeners = (socket,typeOfCall,callStatus,
-    updateCallStatus,peerConnection,remoteFeedEl,localFeedEl,gatheredAnswerIceCandidatesRef,setIceCandidatesReadyTrigger,remoteDescAddedForOfferer)=>{
+const clientSocketListeners = (socket,typeOfCall,callStatus,updateCallStatus,peerConnection,
+    remoteFeedEl,localFeedEl,gatheredAnswerIceCandidatesRef,setIceCandidatesReadyTrigger,
+    remoteDescAddedForOfferer,setOfferData)=>{
+
     socket.on('answerResponse',entireOfferObj=>{
-        console.log(entireOfferObj);
+        console.log("Received answer from server. ")
+        setOfferData(entireOfferObj);
         const copyCallStatus = {...callStatus}
         copyCallStatus.answer = entireOfferObj.answer
         copyCallStatus.myRole = typeOfCall

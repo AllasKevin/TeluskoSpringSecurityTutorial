@@ -1,25 +1,18 @@
-const HangupButton = ({remoteFeedEl, localFeedEl,peerConnection, callStatus, updateCallStatus})=>{
+import { useCallManager }  from "../../hooks/useCallManager";
 
-    const hangupCall = ()=>{
-        if(peerConnection){
-            console.log("Hanging up...")
-            const copyCallStatus = {...callStatus}
-            copyCallStatus.current = 'complete'
-            updateCallStatus(copyCallStatus)
-            //user has clicked hang up. pc:
-                //close it
-                //remove listeners
-                //set it to null
-                peerConnection.close();
-                peerConnection.onicecandidate = null
-                peerConnection.onaddstream = null
-                peerConnection = null;
+const HangupButton = ({remoteFeedEl, localFeedEl,peerConnection,setPeerConnection, callStatus, updateCallStatus,localStream,setLocalStream,remoteStream,setRemoteStream})=>{
 
-            //set both video tags to empty
-            localFeedEl.current.srcObject = null;
-            remoteFeedEl.current.srcObject = null;
-        }
-    }
+    const { hangupCall } = useCallManager({
+        peerConnection,
+        setPeerConnection,
+        updateCallStatus,
+        localFeedEl,
+        remoteFeedEl,
+        localStream,
+        setLocalStream,
+        remoteStream,
+        setRemoteStream,
+      });
 
     if(callStatus?.current === "complete"){
         return <></>

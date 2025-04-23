@@ -33,6 +33,7 @@ const VideoButton = ({localFeedEl,callStatus,localStream,updateCallStatus,peerCo
             // in the video tag. We are addign them
             // to the PC, so they can be sent
             localStream.getTracks().forEach(track=>{
+                console.log("Adding tracks that will be used in remote stream to peer connection")
                 peerConnection.addTrack(track,localStream)
             })
         }

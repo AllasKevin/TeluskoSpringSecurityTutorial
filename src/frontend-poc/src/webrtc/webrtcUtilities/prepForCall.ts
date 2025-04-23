@@ -21,7 +21,13 @@ const prepForCall = ({callStatus,updateCallStatus,setLocalStream}: PrepForCallPr
         //can bring constraints in as a param
         const constraints = {
             video: true, //must have one constraint, dont have to show it yet
-            audio: false, 
+            audio: {
+                sampleRate: 48000,         // match WebRTC's preferred rate
+                channelCount: 2,           // stereo
+                echoCancellation: true,    // good for calls
+                noiseSuppression: true,    // good for calls
+                autoGainControl: true,     // helps normalize volume
+              },
         }
         try{
             console.log("Requesting media access...")
@@ -39,10 +45,13 @@ const prepForCall = ({callStatus,updateCallStatus,setLocalStream}: PrepForCallPr
             copyCallStatus.haveMedia = true //signals to the app that we have media
             copyCallStatus.videoEnabled = false //init both to false, you can init to true
             copyCallStatus.audioEnabled = false
+            copyCallStatus.current = "initialized"
             updateCallStatus(copyCallStatus)
             setLocalStream(stream)
             resolve()
+            console.log("The Call is being accepted")
         }catch(err){
+            console.log("The Call is being rejected because of the following error:")
             console.log(err);
             reject(err)
         }
