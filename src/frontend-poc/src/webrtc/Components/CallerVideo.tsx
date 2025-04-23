@@ -5,6 +5,7 @@ import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
 import { CallStatus } from "../../App";
+import { CallData } from "../../components/Dashboard";
 
 interface CallerVideoProps {
   callStatus: CallStatus | undefined;
@@ -12,20 +13,32 @@ interface CallerVideoProps {
     React.SetStateAction<CallStatus | undefined>
   >;
   localStream: MediaStream | undefined;
+  setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
+  setRemoteStream: React.Dispatch<
+    React.SetStateAction<MediaStream | undefined>
+  >;
   remoteStream: MediaStream | undefined;
   peerConnection: RTCPeerConnection | undefined;
+  setPeerConnection: React.Dispatch<
+    React.SetStateAction<RTCPeerConnection | undefined>
+  >;
   localFeedEl: RefObject<HTMLVideoElement | null>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
+  offerData: CallData | undefined;
   gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
   iceCandidatesReadyTrigger: number;
   remoteDescAddedForOfferer: boolean;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
+  hangupCall: () => void;
 }
 
 const CallerVideo = ({
   remoteStream,
+  setRemoteStream,
   localStream,
+  setLocalStream,
   peerConnection,
+  setPeerConnection,
   callStatus,
   updateCallStatus,
   remoteFeedEl,
@@ -34,6 +47,7 @@ const CallerVideo = ({
   iceCandidatesReadyTrigger,
   remoteDescAddedForOfferer,
   setRemoteDescAddedForOfferer,
+  hangupCall,
 }: CallerVideoProps) => {
   console.log("CallerVideoComponent rendered");
   console.log(peerConnection);
@@ -43,6 +57,32 @@ const CallerVideo = ({
   );
   const [offerCreated, setOfferCreated] = useState(false);
   const username = sessionStorage.getItem("username");
+
+  // Clean on route/component change
+  useEffect(() => {
+    return () => hangupCall();
+  }, []);
+
+  // Clean on browser unload
+  useEffect(() => {
+    const handleUnload = () => hangupCall();
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
+  }, []);
+
+  /*
+  // end the call
+  useEffect(() => {
+    if (callStatus?.current === "complete") {
+      console.log("notify hangUp to: " + offerData?.answererUserName);
+      socketConnection(username).emit("notify", {
+        receiver: offerData?.answererUserName,
+        message: "hangUp",
+      });
+      //navigate(`/`)
+    }
+  }, [callStatus]);
+*/
   //send back to home if no localStream
   useEffect(() => {
     console.log("CallerVideo useEffect: localStream: " + localStream);
@@ -56,7 +96,9 @@ const CallerVideo = ({
       }
 
       if (localFeedEl.current && localStream) {
-        localFeedEl.current.srcObject = localStream;
+        console.log("Setting local stream to only have video tracks...");
+        const localStreamCopy = new MediaStream(localStream.getVideoTracks());
+        localFeedEl.current.srcObject = localStreamCopy;
       }
     }
   }, []);
@@ -128,7 +170,6 @@ const CallerVideo = ({
       }
       await peerConnection?.setRemoteDescription(callStatus.answer);
       console.log("Answer added!!");
-      console.log(callStatus);
       console.log(peerConnection);
       console.log(peerConnection?.signalingState); //have remote-offer
       setRemoteDescAddedForOfferer(true);
@@ -180,8 +221,12 @@ const CallerVideo = ({
         remoteFeedEl={remoteFeedEl}
         callStatus={callStatus}
         localStream={localStream}
+        setLocalStream={setLocalStream}
+        remoteStream={remoteStream}
+        setRemoteStream={setRemoteStream}
         updateCallStatus={updateCallStatus}
         peerConnection={peerConnection}
+        setPeerConnection={setPeerConnection}
       />
     </div>
   );

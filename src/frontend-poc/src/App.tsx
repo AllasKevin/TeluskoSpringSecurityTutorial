@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import CallerVideo from "./webrtc/Components/CallerVideo";
 import AnswerVideo from "./webrtc/Components/AnswerVideo";
 import LoginForm from "./components/LoginForm";
+import { useCallManager } from "./webrtc/hooks/useCallManager";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -32,6 +33,19 @@ function App() {
   const [iceCandidatesReadyTrigger, setIceCandidatesReadyTrigger] = useState(0);
   const [remoteDescAddedForOfferer, setRemoteDescAddedForOfferer] =
     useState(false);
+
+  const { hangupCall } = useCallManager({
+    peerConnection,
+    setPeerConnection,
+    updateCallStatus,
+    localFeedEl,
+    remoteFeedEl,
+    localStream,
+    setLocalStream,
+    remoteStream,
+    setRemoteStream,
+    offerData,
+  });
 
   return (
     <div>
@@ -71,14 +85,19 @@ function App() {
                 callStatus={callStatus}
                 updateCallStatus={updateCallStatus}
                 localStream={localStream}
+                setLocalStream={setLocalStream}
                 remoteStream={remoteStream}
+                setRemoteStream={setRemoteStream}
                 peerConnection={peerConnection}
+                setPeerConnection={setPeerConnection}
                 remoteFeedEl={remoteFeedEl}
                 localFeedEl={localFeedEl}
+                offerData={offerData}
                 gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
                 iceCandidatesReadyTrigger={iceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+                hangupCall={hangupCall}
               />
             </ProtectedRoute>
           }
@@ -91,11 +110,15 @@ function App() {
                 callStatus={callStatus}
                 updateCallStatus={updateCallStatus}
                 localStream={localStream}
+                setLocalStream={setLocalStream}
                 remoteStream={remoteStream}
+                setRemoteStream={setRemoteStream}
                 peerConnection={peerConnection}
+                setPeerConnection={setPeerConnection}
                 offerData={offerData}
                 remoteFeedEl={remoteFeedEl}
                 localFeedEl={localFeedEl}
+                hangupCall={hangupCall}
               />
             </ProtectedRoute>
           }

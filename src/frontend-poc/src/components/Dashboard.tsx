@@ -99,6 +99,9 @@ const Dashboard = ({
   };
 
   console.log("Dashboard component rendered");
+  console.log(peerConnection);
+  console.log(remoteStream);
+  console.log("finsihed logging peerConnection and remoteStream");
 
   const [typeOfCall, setTypeOfCall] = useState("");
   const [availableCalls, setAvailableCalls] = useState([]);
@@ -136,6 +139,14 @@ const Dashboard = ({
 
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
+    console.log("useEffect responsible for setting PC and remotestream called");
+    console.log(callStatus);
+    console.log(username);
+
+    console.log(callStatus?.haveMedia);
+    console.log(peerConnection);
+    console.log("finsihed logging 4 values");
+
     if (callStatus && username && callStatus.haveMedia && !peerConnection) {
       // prepForCall has finished running and updated callStatus
       const result = createPeerConnection(username, typeOfCall);
@@ -163,13 +174,15 @@ const Dashboard = ({
         localFeedEl,
         gatheredAnswerIceCandidatesRef,
         setIceCandidatesReadyTrigger,
-        remoteDescAddedForOfferer
+        remoteDescAddedForOfferer,
+        setOfferData
       );
     }
   }, [typeOfCall, peerConnection]);
 
   //once remoteStream AND pc are ready, navigate
   useEffect(() => {
+    console.log("navigate useEffect called");
     if (remoteStream && peerConnection) {
       if (typeOfCall === "offer") {
         navigate("/offer", { replace: false });
