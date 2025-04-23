@@ -4,7 +4,7 @@ import socket from '../../webrtcUtilities/socketConnection'
 import VideoButton from './VideoButton';
 import AudioButton from './AudioButton';
 
-const ActionButtons = ({callStatus,localFeedEl, remoteFeedEl,updateCallStatus,localStream,peerConnection})=>{
+const ActionButtons = ({callStatus,localFeedEl, remoteFeedEl,updateCallStatus,localStream,setLocalStream,remoteStream,setRemoteStream,peerConnection,setPeerConnection})=>{
     // const callStatus = useSelector(state=>state.callStatus);
     const menuButtons = useRef(null)
 
@@ -31,8 +31,13 @@ const ActionButtons = ({callStatus,localFeedEl, remoteFeedEl,updateCallStatus,lo
                     localFeedEl={localFeedEl}
                     remoteFeedEl={remoteFeedEl}
                     peerConnection={peerConnection}
+                    setPeerConnection={setPeerConnection}
                     callStatus={callStatus}
                     updateCallStatus={updateCallStatus}
+                    localStream={localStream}
+                    setLocalStream={setLocalStream}
+                    remoteStream={remoteStream}
+                    setRemoteStream={setRemoteStream}
                 />
             </div>        
         </div>

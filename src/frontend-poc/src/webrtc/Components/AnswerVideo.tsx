@@ -13,21 +13,33 @@ interface AnswerVideoProps {
     React.SetStateAction<CallStatus | undefined>
   >;
   localStream: MediaStream | undefined;
+  setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
   remoteStream: MediaStream | undefined;
+  setRemoteStream: React.Dispatch<
+    React.SetStateAction<MediaStream | undefined>
+  >;
   peerConnection: RTCPeerConnection | undefined;
+  setPeerConnection: React.Dispatch<
+    React.SetStateAction<RTCPeerConnection | undefined>
+  >;
   localFeedEl: RefObject<HTMLVideoElement | null>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   offerData: CallData | undefined;
+  hangupCall: () => void;
 }
 const AnswerVideo = ({
   remoteStream,
+  setRemoteStream,
   localStream,
+  setLocalStream,
   peerConnection,
+  setPeerConnection,
   callStatus,
   updateCallStatus,
   offerData,
   remoteFeedEl,
   localFeedEl,
+  hangupCall,
 }: AnswerVideoProps) => {
   console.log("AnswerVideoComponent rendered");
   console.log(peerConnection);
@@ -37,6 +49,20 @@ const AnswerVideo = ({
   );
   const [answerCreated] = useState(false); // TODO: This is never changed and therefore it should be possible to remove it
   const username = sessionStorage.getItem("username");
+
+  // Clean on route/component change
+  useEffect(() => {
+    return () => hangupCall();
+  }, []);
+
+  // Clean on browser unload
+  useEffect(() => {
+    const handleUnload = () => hangupCall();
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
+  }, []);
+
+  /*
   // end the call
   useEffect(() => {
     if (callStatus?.current === "complete") {
@@ -48,6 +74,7 @@ const AnswerVideo = ({
       //navigate(`/`)
     }
   }, [callStatus]);
+*/
 
   //send back to home if no localStream
   useEffect(() => {
@@ -60,7 +87,9 @@ const AnswerVideo = ({
       }
 
       if (localFeedEl.current && localStream) {
-        localFeedEl.current.srcObject = localStream;
+        console.log("Setting local stream to only have video tracks...");
+        const localStreamCopy = new MediaStream(localStream.getVideoTracks());
+        localFeedEl.current.srcObject = localStreamCopy;
       }
     }
   }, []);
@@ -149,8 +178,12 @@ const AnswerVideo = ({
         remoteFeedEl={remoteFeedEl}
         callStatus={callStatus}
         localStream={localStream}
+        setLocalStream={setLocalStream}
+        remoteStream={remoteStream}
+        setRemoteStream={setRemoteStream}
         updateCallStatus={updateCallStatus}
         peerConnection={peerConnection}
+        setPeerConnection={setPeerConnection}
       />
     </div>
   );
