@@ -1,12 +1,16 @@
 package com.example.TeluskoSpringSecurityTutorial.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "users")
 public class Users {
+
     @Id
-    private int id;
+    private ObjectId id;
+    @Indexed(unique = true)
     private String username;
     private String password;
 
@@ -19,12 +23,8 @@ public class Users {
                 '}';
     }
 
-    public int getId() {
+    public ObjectId getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUsername() {
