@@ -2,6 +2,7 @@ package com.example.TeluskoSpringSecurityTutorial.controller;
 
 import com.example.TeluskoSpringSecurityTutorial.model.Users;
 import com.example.TeluskoSpringSecurityTutorial.service.UserService;
+import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,10 +27,22 @@ public class UserController {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @PostMapping("/register")
-    public Users registerUser(@RequestBody Users user) {
-        user.setPassword(encoder.encode(user.getPassword()));
-        userService.register(user);
-        return user;
+    public String registerUser(@RequestBody Users user) {
+        try {
+            user.setPassword(encoder.encode(user.getPassword()));
+            userService.register(user);
+
+            return user.getUsername() + " registered successfully!";
+        }
+        catch (Exception e){
+            System.out.println("Error: " + e.getMessage());
+
+            if (e.getMessage().contains("duplicate key error")) {
+                return "User already exists";
+            }
+
+            return "Error registering user";
+        }
     }
 
     @PostMapping("/login")
