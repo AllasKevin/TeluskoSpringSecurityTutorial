@@ -1,9 +1,10 @@
 package com.example.TeluskoSpringSecurityTutorial.repo;
 
 import com.example.TeluskoSpringSecurityTutorial.model.Users;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface UserRepo extends JpaRepository<Users, Integer> {
+public interface UserRepo extends MongoRepository<Users, ObjectId> {
     Users findByUsername(String username);
 }
 
