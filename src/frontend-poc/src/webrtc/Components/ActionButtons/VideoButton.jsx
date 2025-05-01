@@ -3,9 +3,6 @@ const VideoButton = ({localFeedEl,callStatus,localStream,updateCallStatus,peerCo
 
     //handle user clicking on video button
     const startStopVideo = ()=>{
-        console.log("videoButton clicked")
-        console.log(callStatus.callInitiated)
-        console.log(callStatus.videoEnabled)
         const copyCallStatus = {...callStatus}
         // useCases:
         if(copyCallStatus?.callInitiated && copyCallStatus?.videoEnabled){
@@ -33,7 +30,6 @@ const VideoButton = ({localFeedEl,callStatus,localStream,updateCallStatus,peerCo
             // in the video tag. We are addign them
             // to the PC, so they can be sent
             localStream.getTracks().forEach(track=>{
-                console.log("Adding tracks that will be used in remote stream to peer connection")
                 peerConnection.addTrack(track,localStream)
             })
         }

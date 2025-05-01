@@ -14,16 +14,14 @@ const createPeerConnection = (userName: string,typeOfCall: string)=>{
         const remoteStream = new MediaStream();
 
         //peerConnection listeners
-        peerConnection.addEventListener('signalingstatechange',(e)=>{
+        /*peerConnection.addEventListener('signalingstatechange',(e)=>{
             console.log("Signaling Event Change!")
             console.log(e)
             console.log(peerConnection.signalingState)
-        })
+        })*/
 
         peerConnection.addEventListener('icecandidate',e=>{
-            console.log("Found and ice candidate!")
             if(e.candidate){
-                console.log("Emmitting sendIceCandidateToSignalingServer!! apparently")
                 // emit the new ice cand. to the signaling server
                 socket.emit('sendIceCandidateToSignalingServer',{
                     iceCandidate: e.candidate,
@@ -38,10 +36,9 @@ const createPeerConnection = (userName: string,typeOfCall: string)=>{
             // let's add it to our remoteStream
             e.streams[0].getTracks().forEach(track=>{
                 remoteStream.addTrack(track)
-                console.log("This should add some video/audio to the remote feed...")
             })
         })
-
+/*
         peerConnection.oniceconnectionstatechange = () => {
             console.log("peerConnection.iceConnectionState: ", peerConnection.iceConnectionState);
         };
@@ -49,7 +46,7 @@ const createPeerConnection = (userName: string,typeOfCall: string)=>{
         peerConnection.onconnectionstatechange = () => {
         console.log("peerConnection.connectionState: ", peerConnection.connectionState);
         };
-        
+*/
         return({
             peerConnection,
             remoteStream,
