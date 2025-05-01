@@ -30,15 +30,7 @@ const prepForCall = ({callStatus,updateCallStatus,setLocalStream}: PrepForCallPr
               },
         }
         try{
-            console.log("Requesting media access...")
-            
-            //console.log("constraints: " + constraints)
-            //console.log("navigator: " + navigator)
-            //console.log("navigator.mediaDevices: " + navigator.mediaDevices)
-
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            console.log("Got media access!")
-            console.log(callStatus);
 
             //update bools
             const copyCallStatus = callStatus === undefined ? defaultCallStatus : {...callStatus};
@@ -49,9 +41,7 @@ const prepForCall = ({callStatus,updateCallStatus,setLocalStream}: PrepForCallPr
             updateCallStatus(copyCallStatus)
             setLocalStream(stream)
             resolve()
-            console.log("The Call is being accepted")
         }catch(err){
-            console.log("The Call is being rejected because of the following error:")
             console.log(err);
             reject(err)
         }

@@ -41,8 +41,6 @@ const AnswerVideo = ({
   localFeedEl,
   hangupCall,
 }: AnswerVideoProps) => {
-  console.log("AnswerVideoComponent rendered");
-  console.log(peerConnection);
   //const navigate = useNavigate();
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
@@ -76,6 +74,7 @@ const AnswerVideo = ({
   }, [callStatus]);
 */
 
+  // Step 3: Set the local stream to the local video element
   //send back to home if no localStream
   useEffect(() => {
     if (!localStream) {
@@ -87,7 +86,7 @@ const AnswerVideo = ({
       }
 
       if (localFeedEl.current && localStream) {
-        console.log("Setting local stream to only have video tracks...");
+        console.log("Step 3: Set the local stream to the local video element");
         const localStreamCopy = new MediaStream(localStream.getVideoTracks());
         localFeedEl.current.srcObject = localStreamCopy;
       }
@@ -113,6 +112,7 @@ const AnswerVideo = ({
     }
   }, [peerConnection]);
 
+  // Step 4 and 5: Recieved and adding offer from caller and handling it and sending back answer and ICE candidates
   //User has enabled video, but not made answer
   useEffect(() => {
     const addOfferAndCreateAnswerAsync = async () => {
@@ -123,18 +123,18 @@ const AnswerVideo = ({
         console.log("No offerData, returning...");
         return;
       }
-      //add the offer
+
+      // Step4: adding the offer from caller
       await peerConnection.setRemoteDescription(offerData.offer);
-      console.log(peerConnection.signalingState); //have remote-offer
+      console.log("Step 4: Recieved and adding offer from caller");
+
+      // Step 5: creating answer and sending it back to caller
       //now that we have the offer set, make our answer
-      console.log("Creating answer...");
-      console.log(peerConnection);
+      // when calling createAnswer, 'icecandidate' event in createPeerConnection is triggered
       const answer = await peerConnection.createAnswer();
       peerConnection.setLocalDescription(answer);
-      console.log("Answer created!");
-      console.log(peerConnection.signalingState); //have local-answer
-      console.log(answer);
-      console.log(peerConnection);
+      console.log("Step 5: creating answer and sending it back to caller");
+
       const copyOfferData = { ...offerData };
       copyOfferData.answer = answer;
       copyOfferData.answererUserName = username;
@@ -143,9 +143,9 @@ const AnswerVideo = ({
         "newAnswer",
         copyOfferData
       );
+      // use the ICE candidates from the offerer
       offerIceCandidates.forEach((c: RTCIceCandidateInit) => {
         peerConnection.addIceCandidate(c);
-        console.log("==Added ice candidate from offerer==");
       });
     };
 

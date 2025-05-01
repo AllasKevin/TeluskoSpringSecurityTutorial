@@ -98,21 +98,16 @@ const Dashboard = ({
       });
   };
 
-  console.log("Dashboard component rendered");
-  console.log(peerConnection);
-  console.log(remoteStream);
-  console.log("finsihed logging peerConnection and remoteStream");
-
   const [typeOfCall, setTypeOfCall] = useState("");
   const [availableCalls, setAvailableCalls] = useState([]);
   const navigate = useNavigate();
   const username = sessionStorage.getItem("username");
 
+  // Step 1: Initialize call and get GUM access
   //called on "Call" or "Answer"
   const initCall = async (typeOfCall: string) => {
     // set localStream and GUM
-    console.log("initCall called");
-    console.log(callStatus);
+    console.log("Step 1: Initialize call and get GUM access");
     await prepForCall({ callStatus, updateCallStatus, setLocalStream });
     // console.log("gum access granted!")
     setTypeOfCall(typeOfCall); //offer or answer
@@ -130,29 +125,22 @@ const Dashboard = ({
     console.log("listening for available calls...");
     const setCalls = (data: []) => {
       setAvailableCalls(data);
-      console.log("Available calls: " + data);
     };
     const socket = socketConnection(username);
     socket.on("availableOffers", setCalls);
     socket.on("newOfferAwaiting", setCalls);
   }, []);
 
+  // Step 2: GUM access granted, now we can set up the peer connection
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
-    console.log("useEffect responsible for setting PC and remotestream called");
-    console.log(callStatus);
-    console.log(username);
-
-    console.log(callStatus?.haveMedia);
-    console.log(peerConnection);
-    console.log("finsihed logging 4 values");
-
     if (callStatus && username && callStatus.haveMedia && !peerConnection) {
+      console.log(
+        "Step 2: GUM access granted, now we can set up the peer connection"
+      );
       // prepForCall has finished running and updated callStatus
       const result = createPeerConnection(username, typeOfCall);
       if (result) {
-        console.log("createPeerConnection created! ");
-        console.log(result.peerConnection);
         setPeerConnection(result.peerConnection);
         setRemoteStream(result.remoteStream);
       }
@@ -182,8 +170,8 @@ const Dashboard = ({
 
   //once remoteStream AND pc are ready, navigate
   useEffect(() => {
-    console.log("navigate useEffect called");
     if (remoteStream && peerConnection) {
+      console.log("navigating to videocall page...");
       if (typeOfCall === "offer") {
         navigate("/offer", { replace: false });
       } else if (typeOfCall === "answer") {
@@ -211,7 +199,6 @@ const Dashboard = ({
           <h2>Make a call</h2>
           <button
             onClick={() => {
-              console.log(peerConnection);
               call();
             }}
             className="btn btn-success btn-lg hang-up"
@@ -225,7 +212,6 @@ const Dashboard = ({
             <div className="col mb-2" key={i}>
               <button
                 onClick={() => {
-                  console.log(peerConnection);
                   answer(callData);
                 }}
                 className="btn btn-lg btn-warning hang-up"
