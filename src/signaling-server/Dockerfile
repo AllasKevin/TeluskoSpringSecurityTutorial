@@ -14,7 +14,10 @@ RUN npm install
 COPY . .
 
 # 6. Expose the port your app uses
-EXPOSE 3000
+EXPOSE 8181
 
 # 7. Start the app
 CMD ["node", "server.js"]
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl --insecure --fail https://localhost:8181/ || exit 1
