@@ -45,21 +45,15 @@ export function useCallManager({
         };
       });
 
-      console.log("Updating call status to complete...");
       peerConnection.close();
-      console.log("Closing peer connection...");
       peerConnection.onicecandidate = null;
       peerConnection.ontrack = null;
       peerConnection = undefined;
-      console.log("Setting peer connection to null...");
       setPeerConnection(peerConnection);
 
-      console.log("Peer connection closed.");
       if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
-        console.log("Stopping local stream tracks...");
         setLocalStream(undefined);
-        console.log("Local stream stopped.");
       }
       if (remoteStream) {
         remoteStream.getTracks().forEach(track => track.stop());

@@ -49,8 +49,6 @@ const CallerVideo = ({
   setRemoteDescAddedForOfferer,
   hangupCall,
 }: CallerVideoProps) => {
-  console.log("CallerVideoComponent rendered");
-  console.log(peerConnection);
   //const navigate = useNavigate();
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
@@ -83,10 +81,10 @@ const CallerVideo = ({
     }
   }, [callStatus]);
 */
+
+  // Step 3: Set the local stream to the local video element
   //send back to home if no localStream
   useEffect(() => {
-    console.log("CallerVideo useEffect: localStream: " + localStream);
-    console.log("CallerVideo useEffect: remoteStream: " + remoteStream);
     if (!localStream) {
       //navigate(`/`);
     } else {
@@ -94,9 +92,9 @@ const CallerVideo = ({
       if (remoteFeedEl.current && remoteStream) {
         remoteFeedEl.current.srcObject = remoteStream;
       }
-
       if (localFeedEl.current && localStream) {
-        console.log("Setting local stream to only have video tracks...");
+        console.log("Step 3: Set the local stream to the local video element");
+        // Setting local stream to only have video tracks
         const localStreamCopy = new MediaStream(localStream.getVideoTracks());
         localFeedEl.current.srcObject = localStreamCopy;
       }
@@ -111,7 +109,6 @@ const CallerVideo = ({
 
   //if we have tracks, disable the video message
   useEffect(() => {
-    console.log("CallerVideo useEffect: peerConnection: " + peerConnection);
     if (peerConnection) {
       peerConnection.ontrack = (e) => {
         if (e?.streams?.length) {
@@ -123,55 +120,37 @@ const CallerVideo = ({
     }
   }, [peerConnection]);
 
+  // Step 4: Create an offer
   //once the user has shared video, start WebRTC'ing :)
   useEffect(() => {
     const shareVideoAsync = async () => {
-      /* if (!peerConnection) {
-        console.error("Peer connection is undefined!");
-        return;
-      }*/
-      console.log("CREATE OFFER!");
-      console.log(peerConnection);
+      console.log("Step 4: Making offer");
       const offer = await peerConnection?.createOffer();
-      console.log("CREATED OFFER!");
-      console.log(peerConnection);
-
-      console.log("OFFER!");
-
-      console.log(offer);
       peerConnection?.setLocalDescription(offer);
-      console.log("SET LOCAL DESCRIPTION!");
-      console.log(peerConnection);
-      console.log("username: " + username);
+
       //we can now start collecing ice candidates!
       // we need to emit the offer to the server
       const socket = socketConnection(username);
-      console.log(socket);
       socket.emit("newOffer", offer);
       setOfferCreated(true); //so that our useEffect doesn't make an offer again
       setVideoMessage("Awaiting answer..."); //update our videoMessage box
-      console.log(
-        "created offer, setLocalDesc, emitted offer, updated videoMessage"
-      );
     };
     if (!offerCreated && callStatus?.videoEnabled) {
-      //CREATE AN OFFER!!
-      console.log("We have video and no offer... making offer");
       shareVideoAsync();
     }
   }, [callStatus?.videoEnabled, offerCreated]);
 
+  // Step 5: Set the remote description (answer)
   useEffect(() => {
-    console.log("CallerVideo useEffect: callStatus: " + callStatus);
     const addAnswerAsync = async () => {
+      console.log("Step 5: Recieved and setting answer.");
+
       if (callStatus?.answer === undefined) {
         console.error("Answer is undefined!");
         return;
       }
+
       await peerConnection?.setRemoteDescription(callStatus.answer);
-      console.log("Answer added!!");
-      console.log(peerConnection);
-      console.log(peerConnection?.signalingState); //have remote-offer
       setRemoteDescAddedForOfferer(true);
     };
     if (callStatus?.answer) {
@@ -179,14 +158,14 @@ const CallerVideo = ({
     }
   }, [callStatus]);
 
+  // Step 6: Add ICE candidates That are received after the answer is set
   useEffect(() => {
     if (remoteDescAddedForOfferer) {
-      console.log("ice Candidate ready");
+      console.log(
+        "Step 6: Adding more Ice.C's. from answerer after the call is connected."
+      );
 
       gatheredAnswerIceCandidatesRef.current.forEach((iceCandidate) => {
-        console.log(
-          "Adding ice candidate from answerer in separate useEffect..."
-        );
         peerConnection?.addIceCandidate(iceCandidate).catch((err) => {
           console.log("Chrome thinks there is an error. There isn't...");
           console.log(err);
