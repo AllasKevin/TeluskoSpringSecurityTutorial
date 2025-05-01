@@ -1,3 +1,4 @@
+console.log("Server is starting...");
 
 const fs = require('fs');
 const https = require('https')
@@ -33,6 +34,7 @@ const io = socketio(expressServer,{
             "http://localhost:3000",
             "http://localhost:3001",
             "http://192.168.0.110:3000",
+            //"https://4.177.9.28", this is the old public IP of the server unning on AKS
             // 'https://LOCAL-DEV-IP-HERE' //if using a phone or another computer
         ],
         methods: ["GET", "POST"]
