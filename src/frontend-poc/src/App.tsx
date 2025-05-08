@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
 //import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Dashboard, { CallData } from "./components/Dashboard";
@@ -9,6 +8,7 @@ import CallerVideo from "./webrtc/Components/CallerVideo";
 import AnswerVideo from "./webrtc/Components/AnswerVideo";
 import LoginForm from "./components/LoginForm";
 import { useCallManager } from "./webrtc/hooks/useCallManager";
+import { LoginTest } from "./scenes/LoginTest";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -51,7 +51,7 @@ function App() {
     <div>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<LoginTest />} />
         <Route path="/loginpage" element={<LoginForm />} />
         <Route
           path="/app"
