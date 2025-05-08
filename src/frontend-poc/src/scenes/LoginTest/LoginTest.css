@@ -8,6 +8,17 @@
   margin: 0;
 }
 
+.login-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #6515c6;
+  position: relative;
+  overflow: hidden;
+  
+padding: 0;
+margin: 0;
+}
+
 .login-background {
   position: absolute;
   width: 100%;
@@ -102,13 +113,15 @@
 }
 
 .login-form-container {
+  flex: 1;
+
   position: relative;
   width: 100%;
-  margin-top: 116px;
   border-radius: 24px 24px 0 0;
   box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.21);
   padding: 18px 16px;
   background-color: #fff;
+  
 }
 
 .login-form-content {
@@ -210,6 +223,11 @@
   text-align: right;
   white-space: nowrap;
 }
+
+.login-signup-link:hover {
+  text-decoration: underline;
+}
+
 
 /* Mobile Optimizations */
 @media (max-width: 640px) {

@@ -9,6 +9,7 @@ import AnswerVideo from "./webrtc/Components/AnswerVideo";
 import LoginForm from "./components/LoginForm";
 import { useCallManager } from "./webrtc/hooks/useCallManager";
 import { LoginTest } from "./scenes/LoginTest";
+import LandingPage from "./components/LandingPage";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -49,10 +50,9 @@ function App() {
 
   return (
     <div>
-      <Header />
       <Routes>
-        <Route path="/" element={<LoginTest />} />
-        <Route path="/loginpage" element={<LoginForm />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/loginpage" element={<LoginTest />} />
         <Route
           path="/app"
           element={
