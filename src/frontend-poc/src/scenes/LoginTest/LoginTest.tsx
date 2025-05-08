@@ -14,7 +14,7 @@ import mandala from "../../assets/mandala.png";
 const loginSchema = z.object({
   username: z
     .string()
-    .min(1, "Email is required")
+    .min(1, "Username is required")
     .refine(() => {
       // Basic username validation
       //const usernameRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -74,6 +74,10 @@ const LoginTest: React.FC<LoginTestProps> = ({
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  onSignupClick = () => {
+    navigate("/registerpage");
+  };
+
   /**
    * Handles form submission
    * @param data - The form data
@@ -104,11 +108,11 @@ const LoginTest: React.FC<LoginTestProps> = ({
       />
 
       <div className="login-container">
-        <div className="login-shape-1" />
-        <div className="login-shape-2" />
-        <div className="login-shape-3" />
-        <div className="login-shape-4" />
-        <div className="login-shape-5" />
+        <div className="shape-1" />
+        <div className="shape-2" />
+        <div className="shape-3" />
+        <div className="shape-4" />
+        <div className="shape-5" />
 
         <div className="content-wrapper">
           <div className="logo-container">
@@ -116,7 +120,7 @@ const LoginTest: React.FC<LoginTestProps> = ({
             <div className="logo-text">GrowHub</div>
           </div>
 
-          <div className="login-form-container">
+          <div className="form-container">
             <div className="login-form-content">
               <h1 className="login-title">Sign in to your account</h1>
               <p className="login-subtitle">
@@ -126,7 +130,7 @@ const LoginTest: React.FC<LoginTestProps> = ({
               <form onSubmit={handleSubmit(onSubmit)} noValidate>
                 <div className="login-input-group">
                   <label htmlFor="username" className="login-input-label">
-                    Email
+                    Username
                   </label>
                   <div>
                     <input
@@ -172,7 +176,7 @@ const LoginTest: React.FC<LoginTestProps> = ({
 
                 <button
                   type="submit"
-                  className="login-button"
+                  className="purple-button"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Signing in..." : "Sign in"}
