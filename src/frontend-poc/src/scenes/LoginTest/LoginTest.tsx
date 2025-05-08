@@ -6,6 +6,7 @@ import "./LoginTest.css";
 import LoginService, { LoginCredentials } from "../../services/LoginService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/auth/AuthContext";
+import mandala from "../../assets/mandala.png";
 
 /**
  * Login form validation schema using Zod
@@ -101,108 +102,93 @@ const LoginTest: React.FC<LoginTestProps> = ({
         href="https://fonts.googleapis.com/css2?family=SF+Pro+Text:wght@400;500;600;700&display=swap"
         rel="stylesheet"
       />
-      <div className="login-test-container">
-        <div className="login-background">
-          <div className="login-background-rect" />
-          <div className="login-background-rect" />
-          <div className="login-shape-1" />
-          <div className="login-shape-2" />
-          <div className="login-shape-3" />
-          <div className="login-shape-4" />
-          <div className="login-shape-5" />
-        </div>
 
-        <div className="login-logo-container">
-          <div className="login-logo-icon">
-            <div>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html:
-                    '<svg id="I0:98;0:222;0:218" class="logo-icon" style="width: 100%; height: 100%; fill: #FFF"></svg>',
-                }}
-              />
-            </div>
+      <div className="login-container">
+        <div className="login-shape-1" />
+        <div className="login-shape-2" />
+        <div className="login-shape-3" />
+        <div className="login-shape-4" />
+        <div className="login-shape-5" />
+
+        <div className="content-wrapper">
+          <div className="logo-container">
+            <img src={mandala} alt="Company Logo" className="logo-icon" />
+            <div className="logo-text">GrowHub</div>
           </div>
-          <div className="login-logo-type">
-            <div>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html:
-                    '<svg id="I0:98;0:223;0:227" class="logo-type" style="width: 100%; height: 100%; fill: #FFF"></svg>',
-                }}
-              />
-            </div>
-          </div>
-        </div>
 
-        <div className="login-form-container">
-          <div className="login-form-content">
-            <h1 className="login-title">Sign in to your account</h1>
-            <p className="login-subtitle">
-              Hello there, please sign in to continue.
-            </p>
+          <div className="login-form-container">
+            <div className="login-form-content">
+              <h1 className="login-title">Sign in to your account</h1>
+              <p className="login-subtitle">
+                Hello there, please sign in to continue.
+              </p>
 
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-              <div className="login-input-group">
-                <label htmlFor="username" className="login-input-label">
-                  Email
-                </label>
-                <div>
-                  <input
-                    id="username"
-                    type="text"
-                    className={`login-input ${errors.username ? "error" : ""}`}
-                    placeholder="Enter your username"
-                    {...register("username")}
-                    aria-invalid={errors.username ? "true" : "false"}
-                  />
-                  {errors.username && (
-                    <p className="login-error-message" role="alert">
-                      {errors.username.message}
-                    </p>
-                  )}
+              <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                <div className="login-input-group">
+                  <label htmlFor="username" className="login-input-label">
+                    Email
+                  </label>
+                  <div>
+                    <input
+                      id="username"
+                      type="text"
+                      className={`login-input ${
+                        errors.username ? "error" : ""
+                      }`}
+                      placeholder="Enter your username"
+                      {...register("username")}
+                      aria-invalid={errors.username ? "true" : "false"}
+                    />
+                    {errors.username && (
+                      <p className="login-error-message" role="alert">
+                        {errors.username.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <div className="login-input-group">
-                <label htmlFor="password" className="login-input-label">
-                  Password
-                </label>
-                <div>
-                  <input
-                    id="password"
-                    type="password"
-                    className={`login-input ${errors.password ? "error" : ""}`}
-                    placeholder="Enter your password"
-                    {...register("password")}
-                    aria-invalid={errors.password ? "true" : "false"}
-                  />
-                  {errors.password && (
-                    <p className="login-error-message" role="alert">
-                      {errors.password.message}
-                    </p>
-                  )}
+                <div className="login-input-group">
+                  <label htmlFor="password" className="login-input-label">
+                    Password
+                  </label>
+                  <div>
+                    <input
+                      id="password"
+                      type="password"
+                      className={`login-input ${
+                        errors.password ? "error" : ""
+                      }`}
+                      placeholder="Enter your password"
+                      {...register("password")}
+                      aria-invalid={errors.password ? "true" : "false"}
+                    />
+                    {errors.password && (
+                      <p className="login-error-message" role="alert">
+                        {errors.password.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
+
+                <button
+                  type="submit"
+                  className="login-button"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Signing in..." : "Sign in"}
+                </button>
+              </form>
+
+              <div className="login-signup-text">
+                <span>Don't you have an account? </span>
+                <button
+                  className="login-signup-link"
+                  onClick={onSignupClick}
+                  type="submit"
+                >
+                  Sign up
+                </button>
               </div>
-
-              <button
-                type="submit"
-                className="login-button"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Signing in..." : "Sign in"}
-              </button>
-            </form>
-
-            <div className="login-signup-text">
-              <span>Don't you have an account? </span>
-              <button
-                className="login-signup-link"
-                onClick={onSignupClick}
-                type="submit"
-              >
-                Sign up
-              </button>
             </div>
           </div>
         </div>
