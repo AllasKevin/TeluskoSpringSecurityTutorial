@@ -3,13 +3,12 @@ import { Route, Routes } from "react-router-dom";
 //import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Dashboard, { CallData } from "./components/Dashboard";
-import Header from "./components/Header";
 import CallerVideo from "./webrtc/Components/CallerVideo";
 import AnswerVideo from "./webrtc/Components/AnswerVideo";
-import LoginForm from "./components/LoginForm";
 import { useCallManager } from "./webrtc/hooks/useCallManager";
 import { LoginTest } from "./scenes/LoginTest";
 import LandingPage from "./components/LandingPage";
+import { Register } from "./scenes/Register";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -53,6 +52,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/loginpage" element={<LoginTest />} />
+        <Route path="/registerpage" element={<Register />} />
         <Route
           path="/app"
           element={

@@ -50,7 +50,7 @@ const LandingPage = () => {
   };
 
   const handleCreateAccount = () => {
-    navigate("/signup");
+    navigate("/registerpage");
   };
 
   const handleSignIn = () => {
