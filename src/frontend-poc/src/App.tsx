@@ -6,9 +6,9 @@ import Dashboard, { CallData } from "./components/Dashboard";
 import CallerVideo from "./webrtc/Components/CallerVideo";
 import AnswerVideo from "./webrtc/Components/AnswerVideo";
 import { useCallManager } from "./webrtc/hooks/useCallManager";
-import { LoginTest } from "./scenes/LoginTest";
-import LandingPage from "./components/LandingPage";
-import { Register } from "./scenes/Register";
+import { LoginPage } from "./components/LoginPage";
+import LandingPage from "./components/LandingPage/LandingPage";
+import { RegisterPage } from "./components/RegisterPage";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -51,8 +51,8 @@ function App() {
     <div>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/loginpage" element={<LoginTest />} />
-        <Route path="/registerpage" element={<Register />} />
+        <Route path="/loginpage" element={<LoginPage />} />
+        <Route path="/registerpage" element={<RegisterPage />} />
         <Route
           path="/app"
           element={

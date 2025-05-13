@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import "../styles/LandingPage.css";
+import "./LandingPage.css";
 import { useState } from "react";
-import mandala from "../assets/mandala.png";
+import mandala from "../../assets/mandala.png";
 
 const GoogleIcon = () => (
   <svg
