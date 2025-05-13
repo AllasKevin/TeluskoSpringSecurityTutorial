@@ -1,0 +1,205 @@
+.login-test-container {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  font-family: "SF Pro Text", sans-serif;
+  background-color: #6515c6;
+  padding: 0;
+  margin: 0;
+}
+
+.login-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #6515c6;
+  position: relative;
+  overflow: hidden;
+  
+padding: 0;
+margin: 0;
+}
+
+.login-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.login-background-rect {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #6515c6;
+}
+
+.login-logo-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 171px;
+  z-index: 1;
+}
+
+.login-logo-icon {
+  width: 77px;
+  height: 85px;
+  margin-bottom: 19px;
+}
+
+.login-logo-type {
+  width: 112px;
+  height: 21px;
+}
+
+.login-form-container {
+  flex: 1; /* Makes this take up all remaining vertical space*/
+  position: relative;
+  width: 100%;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.21);
+  padding: 18px 16px;
+  background-color: #fff;
+  
+}
+
+.login-form-content {
+  max-width: 343px;
+  margin: 0 auto;
+}
+
+.login-title {
+  color: #191919;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  color: #777e8e;
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: 18px;
+}
+
+.login-input-group {
+  margin-bottom: 16px;
+}
+
+.login-input-label {
+  color: #154dc6;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 21px;
+  margin-bottom: 3px;
+}
+
+.login-input {
+  width: 100%;
+  height: 48px;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 0 16px;
+  font-size: 16px;
+  color: #000;
+  transition: border-color 0.2s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #154dc6;
+}
+
+.login-input.error {
+  border-color: #dc3545;
+}
+
+.login-error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+
+
+.login-signup-text {
+  text-align: center;
+  color: #154dc6;
+  font-size: 15px;
+  line-height: 21px;
+  margin-top: 16px;
+}
+
+.login-signup-link {
+  all: unset; /* resets default button styles */
+  color: #154dc6;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 21px;
+  cursor: pointer;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.login-signup-link:hover {
+  text-decoration: underline;
+}
+
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+  .login-form-container {
+    margin-top: 80px;
+    padding: 16px;
+  }
+
+  .login-logo-container {
+    padding-top: 80px;
+  }
+
+  .login-title {
+    font-size: 18px;
+  }
+
+  .login-subtitle {
+    font-size: 15px;
+  }
+
+  .login-input {
+    height: 52px; /* Larger touch target */
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .login-button {
+    height: 52px; /* Larger touch target */
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .login-form-container {
+    margin-top: 60px;
+    padding: 12px;
+  }
+
+  .login-logo-container {
+    padding-top: 60px;
+  }
+
+  .login-form-content {
+    padding: 0 8px;
+  }
+}
+
+/* Landscape mode */
+@media (max-height: 480px) and (orientation: landscape) {
+  .login-logo-container {
+    padding-top: 40px;
+  }
+
+  .login-form-container {
+    margin-top: 40px;
+  }
+}

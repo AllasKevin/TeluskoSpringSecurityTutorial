@@ -1,14 +1,14 @@
 import { useState, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
 //import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Dashboard, { CallData } from "./components/Dashboard";
-import Header from "./components/Header";
 import CallerVideo from "./webrtc/Components/CallerVideo";
 import AnswerVideo from "./webrtc/Components/AnswerVideo";
-import LoginForm from "./components/LoginForm";
 import { useCallManager } from "./webrtc/hooks/useCallManager";
+import { LoginPage } from "./components/LoginPage";
+import LandingPage from "./components/LandingPage/LandingPage";
+import { RegisterPage } from "./components/RegisterPage";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -49,10 +49,10 @@ function App() {
 
   return (
     <div>
-      <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/loginpage" element={<LoginForm />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/loginpage" element={<LoginPage />} />
+        <Route path="/registerpage" element={<RegisterPage />} />
         <Route
           path="/app"
           element={

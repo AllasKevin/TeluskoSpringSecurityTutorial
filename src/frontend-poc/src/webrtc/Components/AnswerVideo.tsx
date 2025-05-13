@@ -124,7 +124,7 @@ const AnswerVideo = ({
         return;
       }
 
-      // Step4: adding the offer from caller
+      // Step 4: adding the offer from caller
       await peerConnection.setRemoteDescription(offerData.offer);
       console.log("Step 4: Recieved and adding offer from caller");
 
