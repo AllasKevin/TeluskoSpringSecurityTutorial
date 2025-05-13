@@ -1,5 +1,5 @@
 /**
- * @module Register
+ * @module RegisterPage
  * @description A registration page component that allows users to create a new account.
  * Features form validation, error handling, and integration with authentication system.
  */
@@ -8,7 +8,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import "./Register.css";
+import "./RegisterPage.css";
 import mandala from "../../assets/mandala.png";
 import RegisterService, {
   RegisterRequest,
@@ -37,15 +37,15 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 /**
- * Register component for user registration
+ * RegisterPage component for user registration
  * @component
  * @description Renders a registration form with validation and error handling
  * @example
  * ```tsx
- * <Register />
+ * <RegisterPage />
  * ```
  */
-export function Register() {
+export function RegisterPage() {
   const {
     register,
     handleSubmit,

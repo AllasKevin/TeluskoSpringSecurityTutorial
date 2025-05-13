@@ -2,10 +2,10 @@ import React from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import "./LoginTest.css";
+import "./LoginPage.css";
 import LoginService, { LoginCredentials } from "../../services/LoginService";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../components/auth/AuthContext";
+import { useAuth } from "../auth/AuthContext";
 import mandala from "../../assets/mandala.png";
 
 /**
@@ -30,9 +30,9 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 /**
- * Interface for the LoginTest component props
+ * Interface for the LoginPage component props
  */
-interface LoginTestProps {
+interface LoginPageProps {
   /** Optional callback for successful login */
   onLoginSuccess?: (data: LoginFormData) => void;
   /** Optional callback for signup click */
@@ -40,7 +40,7 @@ interface LoginTestProps {
 }
 
 /**
- * LoginTest Component
+ * LoginPage Component
  *
  * A mobile-friendly login form with validation and error handling.
  * Features:
@@ -53,13 +53,13 @@ interface LoginTestProps {
  * @component
  * @example
  * ```tsx
- * <LoginTest
+ * <LoginPage
  *   onLoginSuccess={(data) => console.log('Login success:', data)}
  *   onSignupClick={() => navigate('/signup')}
  * />
  * ```
  */
-const LoginTest: React.FC<LoginTestProps> = ({
+const LoginPage: React.FC<LoginPageProps> = ({
   //onLoginSuccess,
   onSignupClick,
 }) => {
@@ -201,4 +201,4 @@ const LoginTest: React.FC<LoginTestProps> = ({
   );
 };
 
-export default LoginTest;
+export default LoginPage;

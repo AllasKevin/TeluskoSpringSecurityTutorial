@@ -1,4 +1,4 @@
-# Register Component
+# RegisterPage Component
 
 A fully styled registration page component that handles user registration with form validation and error handling.
 
@@ -14,18 +14,18 @@ A fully styled registration page component that handles user registration with f
 ## Usage
 
 ```tsx
-import { Register } from "./scenes/Register";
+import { RegisterPage } from "./scenes/RegisterPage";
 
 // In your router
-<Route path="/register" element={<Register />} />;
+<Route path="/register" element={<RegisterPage />} />;
 ```
 
 ## Component Structure
 
 The component is organized into several files:
 
-- `Register.tsx`: Main component implementation
-- `Register.css`: Styles for the component
+- `RegisterPage.tsx`: Main component implementation
+- `RegisterPage.css`: Styles for the component
 - `index.ts`: Barrel file for clean exports
 - `RegisterService.ts`: API integration service
 
