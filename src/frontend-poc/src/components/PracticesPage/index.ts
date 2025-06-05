@@ -1,0 +1,1 @@
+export { PracticesPage } from "./PracticesPage";
