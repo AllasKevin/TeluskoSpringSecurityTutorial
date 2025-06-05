@@ -11,19 +11,19 @@ const ActionButtons = ({callStatus,localFeedEl, remoteFeedEl,updateCallStatus,lo
     return(
         <div id="menu-buttons" ref={menuButtons} className="row">
             <div className="left col-6">
-                <AudioButton 
-                    localFeedEl={localFeedEl}
-                    callStatus={callStatus}
-                    updateCallStatus={updateCallStatus}
-                    localStream={localStream}
-                    peerConnection={peerConnection}                    
-                />
                 <VideoButton 
                     localFeedEl={localFeedEl}
                     callStatus={callStatus}
                     localStream={localStream}
                     updateCallStatus={updateCallStatus}
                     peerConnection={peerConnection}
+                />
+                <AudioButton 
+                    localFeedEl={localFeedEl}
+                    callStatus={callStatus}
+                    updateCallStatus={updateCallStatus}
+                    localStream={localStream}
+                    peerConnection={peerConnection}                    
                 />
             </div>
             <div className="center justify-center text-end col-2 hangup-wrapper">

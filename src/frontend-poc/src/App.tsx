@@ -9,6 +9,7 @@ import { useCallManager } from "./webrtc/hooks/useCallManager";
 import { LoginPage } from "./components/LoginPage";
 import LandingPage from "./components/LandingPage/LandingPage";
 import { RegisterPage } from "./components/RegisterPage";
+import { PracticesPage } from "./components/PracticesPage";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -55,6 +56,14 @@ function App() {
         <Route path="/registerpage" element={<RegisterPage />} />
         <Route
           path="/app"
+          element={
+            <ProtectedRoute>
+              <PracticesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard
