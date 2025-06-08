@@ -9,7 +9,6 @@ import gabor from "../../assets/gabor-mate.jpg";
 import tony from "../../assets/tony-robbins.webp";
 import nadine from "../../assets/nadine.jpg";
 import swan from "../../assets/teal-swan.webp";
-import { useNavigate } from "react-router-dom";
 
 import { ListGroup } from "react-bootstrap";
 
@@ -26,6 +25,8 @@ export const PracticesPage: React.FC = () => {
       description:
         "Practice how to assert and protect your boundaries in a safe space.",
       imageUrl: gabor,
+      descriptionVideo:
+        "https://cdn.coverr.co/videos/coverr-woman-walking-on-beach-4215/1080p.mp4",
     },
     {
       title: "Gratitude Practice",
@@ -53,12 +54,6 @@ export const PracticesPage: React.FC = () => {
     },
     // Repeated for all practice cards
   ];
-  const navigate = useNavigate();
-
-  const goToDashboard = () => {
-    navigate("/dashboard");
-    console.log("Navigating to dashboard");
-  };
 
   return (
     <>
@@ -78,7 +73,6 @@ export const PracticesPage: React.FC = () => {
                 title={practice.title}
                 description={practice.description}
                 imageUrl={practice.imageUrl}
-                goToPractice={goToDashboard}
               />
             ))}
           </ListGroup>

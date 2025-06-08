@@ -1,22 +1,32 @@
-import React from "react";
-import { ListGroupItem } from "react-bootstrap";
+import React, { useState } from "react";
 import "../PracticesPage.css";
+import { ScheduleCallSection } from "./ScheduleCallSection";
 
 interface PracticeCardProps {
   title: string;
   description: string;
   imageUrl: string;
-  goToPractice?: () => void; // Optional function to handle click events
+  descriptionVideo?: string; // Optional video URL for the practice
 }
 
 export const PracticeCard: React.FC<PracticeCardProps> = ({
   title,
   description,
   imageUrl,
-  goToPractice = () => {}, // Default to an empty function if not provided
 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleCardClick = () => {
+    setIsExpanded((prev) => !prev);
+    // You can still call the external goToPractice if needed
+    // goToPractice();
+  };
+
   return (
-    <ListGroupItem className="practice-card" onClick={goToPractice}>
+    <div
+      className={`practice-card ${isExpanded ? "expanded" : ""}`}
+      onClick={handleCardClick}
+    >
       <div className="card-content">
         <img src={imageUrl} alt={title} className="practice-image" />
         <div className="practice-details">
@@ -26,6 +36,20 @@ export const PracticeCard: React.FC<PracticeCardProps> = ({
           </div>
         </div>
       </div>
-    </ListGroupItem>
+
+      {isExpanded && (
+        <div className="expanded-content">
+          <div className="expanded-row">
+            <div className="video-section" onClick={(e) => e.stopPropagation()}>
+              <video controls>
+                <source src="./noticing_game_fixed.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <ScheduleCallSection />
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
