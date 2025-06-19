@@ -107,19 +107,22 @@
 }
 
 .practices-list {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 12px;
+  padding-bottom: 24px;
+  overflow: visible;  /* important! */
   overflow-y: auto;
-  padding-bottom: 50px;
+  margin-bottom: 160px;
 }
 
+
 .practice-card {
-  width: 100%;
-  height: 100%;
+  position: relative;  /* allow internal stacking */
+  overflow: visible;   /* ✅ allow expanded content to grow! */
+  transition: all 0.3s ease;
+  cursor: pointer;
   border-radius: 30px;
-  padding: 32px 45px;
+  padding: 8px 6px 8px 6px;
   box-sizing: border-box;
   background-color: rgba(144, 112, 183, 0.898);
 }
@@ -132,10 +135,10 @@
 .card-content {
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: 1fr auto; /* makes both rows flexible */
+  grid-template-rows: 1fr auto;
   align-items: center;
   width: 100%;
-  gap: 10px;
+  gap: 16px; /* or whatever you like */
 }
 
 .practice-image {
@@ -162,10 +165,163 @@
 
 .practice-description {
   font-family: "Inder", sans-serif;
-  font-size: 10px;
+  font-size: 12px;
   color: black;
   line-height: 14px;
   letter-spacing: 0px;
+}
+
+.practice-card.expanded {
+  /* Optional: make it expand more visually */
+  background-color: rgba(144, 112, 183, 1);
+    padding-bottom: 0px;
+
+}
+
+.expanded-content {
+  display: block;
+  margin-top: 0.7rem;
+  overflow: visible;
+  transition: max-height 0.4s ease;
+}
+
+/* Container for video + actions side-by-side */
+.expanded-row {
+  display: flex;
+  flex-direction: row; /* default: stack vertically on small screens */
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.video-section {
+  flex: 0 1 auto; /* do NOT grow or shrink */
+  max-width: 400px;
+  min-width: 30px;
+}
+
+.video-section video {
+  width: 100%; /* << THIS makes the video fill .video-section */
+  height: auto; /* keep aspect ratio */
+  display: block; /* removes any inline spacing */
+  border-radius: 12px;
+}
+
+/* Action buttons styling */
+.call-section {
+  flex: 1 1 0; /* grow to fill remaining space */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 5px;
+  border-radius: 12px;
+  padding: 5px 0px 5px 0px;
+  background-color: #3b0f6e;
+  opacity: 0.75;
+  font-size: 20px;
+  font-family: "Abril Fatface", serif;
+  min-width: 140px;
+  gap: 0.3rem; /* space between buttons */
+  overflow: hidden;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.call-section button {
+  flex:1; /* make buttons take equal space */
+  font-size: 10px;
+  padding: 2px 16px;
+  border-radius: 12px;
+  background-color: #46157e;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+}
+
+.active-button {
+  background-color: #6a2ea5 !important;
+  border-radius: 12px; /* so it looks nice */
+}
+
+.call-section button:hover {
+  background-color: #5819a1 !important;
+  opacity: 1;
+}
+
+.call-section-item {
+  height: 3em;              /* Match text height */
+  width: auto;              /* Maintain aspect ratio */
+  vertical-align: middle;   /* Align nicely with text baseline */
+  opacity: 1;            /* Ensure visibility */
+
+
+}
+
+.call-section-logo-item {
+    animation: pulse 5s ease-in-out infinite;
+}
+
+.call-extra-content {
+  width: 100%; /* match call-section width */
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: white;
+  margin: 0 0.5rem; /* add some margin for spacing */
+}
+
+.join-call-content {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  max-width: 100%;   /* ✅ prevent overflow */
+  box-sizing: border-box;
+  overflow: hidden;  /* ensures clean rounding */
+  margin: 0 0.5rem;
+}
+
+.scheduler-section {
+  background-color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  align-items: center;
+  padding: 0.4rem;
+  border-radius: 12px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  max-width: 100%;   /* ✅ prevent overflow */
+  box-sizing: border-box;
+  overflow: hidden;  /* ensures clean rounding */
+  margin: 0 0.5rem;
+    display: flex;
+  flex-direction: column;
+  gap: 8px;                   /* spacing between content */
+  align-items: stretch;       /* ensures DatePicker aligns properly */
+}
+
+.react-datepicker {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;            /* fill the button */
+  max-width: 200px;       /* or whatever looks good in your call-section */
+  font-size: 14px;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  padding-right: 8px; /* Make it symmetrical with your left padding */
+  padding-left: 8px;
 }
 
 .navigation-bar {
@@ -202,6 +358,23 @@
 }
 
 @media (max-width: 991px) {
+ /* .expanded-row {
+    flex-direction: row;  
+    align-items: flex-start;
+  }
+
+  .video-section {
+    flex: 1;
+  }
+  */
+/*
+  .call-section {
+    flex: 1;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  */
 /*  .practices-content {
     padding: 30px 25px 0 25px;
   }
@@ -237,6 +410,32 @@
   .practices-content {
     padding: 20px 15px 0 15px;
   }
+
+  .react-datepicker {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    max-height: 75vh;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    font-size: 16px;
+  }
+
+  .react-datepicker__triangle {
+    display: none !important;
+  }
+
+  .react-datepicker__input-container input {
+  width: 100%;            /* fill the button */
+  font-size: 12px;
+  padding: 0px 0px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  padding-right: 3px; /* Make it symmetrical with your left padding */
+  padding-left: 4px;
+}
 /*
   .header-section {
     height: 150px;
