@@ -51,14 +51,38 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<PracticesPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/loginpage" element={<LoginPage />} />
         <Route path="/registerpage" element={<RegisterPage />} />
+        <Route
+          path="/practices"
+          element={
+            <ProtectedRoute>
+              <PracticesPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/app"
           element={
             <ProtectedRoute>
-              <PracticesPage />
+              <Dashboard
+                callStatus={callStatus}
+                updateCallStatus={updateCallStatus}
+                //                localStream={localStream}
+                setLocalStream={setLocalStream}
+                remoteStream={remoteStream}
+                setRemoteStream={setRemoteStream}
+                peerConnection={peerConnection}
+                setPeerConnection={setPeerConnection}
+                //                offerData={offerData}
+                setOfferData={setOfferData}
+                remoteFeedEl={remoteFeedEl}
+                localFeedEl={localFeedEl}
+                gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+                setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+                remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+              />
             </ProtectedRoute>
           }
         />

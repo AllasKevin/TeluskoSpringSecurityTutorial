@@ -1,3 +1,4 @@
+const Queue = require('./utils/Queue');
 console.log("Server is starting...");
 
 const fs = require('fs');
@@ -57,10 +58,14 @@ const connectedSockets = [
     //username, socketId
 ]
 
-io.on('connection',(socket)=>{
-    //console.log("Someone has connected");
+const userQueue = new Queue();
+
+io.on('connection', (socket) => {
     const userName = socket.handshake.auth.userName;
     const password = socket.handshake.auth.password;
+    const practice = socket.handshake.auth.practice;
+
+
     if(password !== "x"){
         socket.disconnect(true);
         return;
@@ -73,6 +78,9 @@ io.on('connection',(socket)=>{
         console.log(userName + " has connected with socketId: " + socket.id);
         connectedSockets.push({ userName, socketId: socket.id });
     }
+
+    socket.join(practice); // 👈 JOIN ROOM HERE
+    console.log(`${userName} joined practice room: ${practice}`);
     // console.log(connectedSockets)
 
     //test connectivity
@@ -97,9 +105,21 @@ io.on('connection',(socket)=>{
     if(offers.length){
         socket.emit('availableOffers',offers);
     }
+
+    socket.on('enterQueue', (data, ackFunction) => {
+        console.log("enterQueue called! practice: " + practice);
+        
+        userQueue.enqueue({ userName, socketId: socket.id, practice });
+        console.log("User " + userName + " added to queue. Queue size: " + userQueue.size());
+        console.log(userQueue.getItems());
+
+        //socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))
+        ackFunction(userQueue.getItems());
+    })
     
     socket.on('newOffer',newOffer=>{
         console.log("newOffer!")
+        console.log("Recieved Practice: " + practice);
         // console.log(newOffer)
         offers.push({
             offererUserName: userName,
@@ -112,7 +132,7 @@ io.on('connection',(socket)=>{
         // console.log(newOffer.sdp.slice(50))
         //send out to all connected sockets EXCEPT the caller
         console.log("Emmiting newOfferAwaiting")
-        socket.broadcast.emit('newOfferAwaiting',offers.slice(-1))
+        socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))
     })
 
     socket.on('newAnswer',(offerObj,ackFunction)=>{
