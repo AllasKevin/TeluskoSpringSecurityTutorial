@@ -6,9 +6,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CallStatus } from "../../../App";
 import {
-  WebRtcManagerNew,
+  WebRtcManager,
   WebRtcManagerNewHandle,
-} from "../../WebRtcManager/WebRtcManagerNew";
+} from "../../WebRtcManager/WebRtcManager";
 
 interface ScheduleCallSectionProps {
   practice: string; // Optional prop to pass the practice name
@@ -71,7 +71,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
 */
   return (
     <div className="call-section" onClick={(e) => e.stopPropagation()}>
-      <WebRtcManagerNew
+      <WebRtcManager
         ref={webRtcManagerRef}
         callStatus={callStatus}
         updateCallStatus={updateCallStatus}

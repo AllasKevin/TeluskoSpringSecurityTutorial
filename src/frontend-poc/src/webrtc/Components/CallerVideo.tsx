@@ -2,10 +2,16 @@ import React, { RefObject, useEffect, useState } from "react";
 import "./VideoPage.css";
 //import { useNavigate } from "react-router-dom";
 import { CallStatus } from "../../App";
-import { WebRtcManager } from "../../components/WebRtcManager/WebRtcManager";
 import { CallData } from "../../components/Dashboard";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
+import {
+  addAnswer,
+  addIceCandidatesAfterAnswerBeenSet,
+  createOffer,
+  setStreamsLocally,
+  WebRtcManager,
+} from "../../components/WebRtcManager/WebRtcManager";
 
 interface CallerVideoProps {
   callStatus: CallStatus | undefined;
@@ -82,17 +88,6 @@ const CallerVideo = ({
   }, [callStatus]);
 */
 
-  // Step 3: Set the local stream to the local video element
-  //send back to home if no localStream
-  useEffect(() => {
-    WebRtcManager.setLocalStream(
-      localStream,
-      localFeedEl,
-      remoteFeedEl,
-      remoteStream
-    );
-  }, []);
-
   //set video tags
   // useEffect(()=>{
   //     remoteFeedEl.current.srcObject = remoteStream
@@ -112,31 +107,31 @@ const CallerVideo = ({
     }
   }, [peerConnection]);
 
+  // Step 3: Set the local stream to the local video element
+  //send back to home if no localStream
+  setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
+
   // Step 4: Create an offer
-  //once the user has shared video, start WebRTC'ing :)
-  useEffect(() => {
-    WebRtcManager.enterQueue(
-      username,
-      /*callStatus,*/ peerConnection,
-      offerCreated,
-      callStatus,
-      setOfferCreated,
-      setVideoMessage
-    );
-  }, [callStatus?.videoEnabled, offerCreated]);
+  //once the user has started this component, start WebRTC'ing :)
+  createOffer(
+    peerConnection,
+    username,
+    offerCreated,
+    callStatus,
+    updateCallStatus,
+    setOfferCreated,
+    setVideoMessage,
+    localStream
+  );
 
   // Step 5: Set the remote description (answer)
   useEffect(() => {
-    WebRtcManager.addAnswer(
-      callStatus,
-      peerConnection,
-      setRemoteDescAddedForOfferer
-    );
+    addAnswer(callStatus, peerConnection, setRemoteDescAddedForOfferer);
   }, [callStatus]);
 
   // Step 6: Add ICE candidates That are received after the answer is set
   useEffect(() => {
-    WebRtcManager.addIceCandidatesAfterAnswerBeenSet(
+    addIceCandidatesAfterAnswerBeenSet(
       gatheredAnswerIceCandidatesRef,
       peerConnection,
       remoteDescAddedForOfferer
