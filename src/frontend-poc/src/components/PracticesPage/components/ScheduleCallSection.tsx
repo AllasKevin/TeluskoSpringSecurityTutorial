@@ -1,23 +1,92 @@
-import React, { useState } from "react";
+import React, { RefObject, useRef, useState } from "react";
 import MandalaImage from "../../../assets/mandala.png";
 import PlannerImage from "../../../assets/planner.png";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { CallStatus } from "../../../App";
+import {
+  WebRtcManagerNew,
+  WebRtcManagerNewHandle,
+} from "../../WebRtcManager/WebRtcManagerNew";
 
-export const ScheduleCallSection: React.FC = () => {
+interface ScheduleCallSectionProps {
+  practice: string; // Optional prop to pass the practice name
+  callStatus: CallStatus | undefined;
+  updateCallStatus: React.Dispatch<
+    React.SetStateAction<CallStatus | undefined>
+  >;
+  //  localStream: MediaStream | undefined;
+  setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
+  remoteStream: MediaStream | undefined;
+  setRemoteStream: React.Dispatch<
+    React.SetStateAction<MediaStream | undefined>
+  >;
+  peerConnection: RTCPeerConnection | undefined;
+  setPeerConnection: React.Dispatch<
+    React.SetStateAction<RTCPeerConnection | undefined>
+  >;
+  //  offerData: any;
+  setOfferData: React.Dispatch<React.SetStateAction<any>>;
+  remoteFeedEl: RefObject<HTMLVideoElement | null>;
+  localFeedEl: RefObject<HTMLVideoElement | null>;
+  gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
+  setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
+  remoteDescAddedForOfferer: boolean;
+}
+
+export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
+  practice,
+  callStatus,
+  updateCallStatus,
+  setLocalStream,
+  remoteStream,
+  setRemoteStream,
+  peerConnection,
+  setPeerConnection,
+  setOfferData,
+  remoteFeedEl,
+  localFeedEl,
+  gatheredAnswerIceCandidatesRef,
+  setIceCandidatesReadyTrigger,
+  remoteDescAddedForOfferer,
+}) => {
   const [activeTab, setActiveTab] = useState<"join" | "schedule">("join"); // default is "join"
   const [startDate, setStartDate] = useState<Date | null>(new Date());
 
   const navigate = useNavigate();
 
+  const webRtcManagerRef = useRef<WebRtcManagerNewHandle>(null);
+
+  const handlePracticeNow = () => {
+    console.log("handlePracticeNow CALLED with practice:", practice);
+
+    webRtcManagerRef.current?.checkMatch(practice); // or whatever type you want
+  };
+  /*
   const goToDashboard = () => {
     navigate("/dashboard");
     console.log("Navigating to dashboard");
   };
-
+*/
   return (
     <div className="call-section" onClick={(e) => e.stopPropagation()}>
+      <WebRtcManagerNew
+        ref={webRtcManagerRef}
+        callStatus={callStatus}
+        updateCallStatus={updateCallStatus}
+        setLocalStream={setLocalStream}
+        remoteStream={remoteStream}
+        setRemoteStream={setRemoteStream}
+        peerConnection={peerConnection}
+        setPeerConnection={setPeerConnection}
+        setOfferData={setOfferData}
+        remoteFeedEl={remoteFeedEl}
+        localFeedEl={localFeedEl}
+        gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+        setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+        remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+      />
       <div className="button-row">
         <button
           onClick={() => {
@@ -50,7 +119,7 @@ export const ScheduleCallSection: React.FC = () => {
 
       {activeTab === "join" && (
         <div className="join-call-content">
-          <button onClick={goToDashboard}>Practice Now</button>
+          <button onClick={handlePracticeNow}>Practice Now</button>
         </div>
       )}
 

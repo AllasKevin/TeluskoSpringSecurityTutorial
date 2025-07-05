@@ -2,7 +2,7 @@ import React, { RefObject, useEffect, useState } from "react";
 import "./VideoPage.css";
 //import { useNavigate } from "react-router-dom";
 import { CallStatus } from "../../App";
-import { CallManager } from "../../components/Callmanager/Callmanager";
+import { WebRtcManager } from "../../components/WebRtcManager/WebRtcManager";
 import { CallData } from "../../components/Dashboard";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
@@ -85,7 +85,7 @@ const CallerVideo = ({
   // Step 3: Set the local stream to the local video element
   //send back to home if no localStream
   useEffect(() => {
-    CallManager.setLocalStream(
+    WebRtcManager.setLocalStream(
       localStream,
       localFeedEl,
       remoteFeedEl,
@@ -115,7 +115,7 @@ const CallerVideo = ({
   // Step 4: Create an offer
   //once the user has shared video, start WebRTC'ing :)
   useEffect(() => {
-    CallManager.enterQueue(
+    WebRtcManager.enterQueue(
       username,
       /*callStatus,*/ peerConnection,
       offerCreated,
@@ -127,7 +127,7 @@ const CallerVideo = ({
 
   // Step 5: Set the remote description (answer)
   useEffect(() => {
-    CallManager.addAnswer(
+    WebRtcManager.addAnswer(
       callStatus,
       peerConnection,
       setRemoteDescAddedForOfferer
@@ -136,7 +136,7 @@ const CallerVideo = ({
 
   // Step 6: Add ICE candidates That are received after the answer is set
   useEffect(() => {
-    CallManager.addIceCandidatesAfterAnswerBeenSet(
+    WebRtcManager.addIceCandidatesAfterAnswerBeenSet(
       gatheredAnswerIceCandidatesRef,
       peerConnection,
       remoteDescAddedForOfferer

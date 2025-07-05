@@ -58,7 +58,21 @@ function App() {
           path="/practices"
           element={
             <ProtectedRoute>
-              <PracticesPage />
+              <PracticesPage
+                callStatus={callStatus}
+                updateCallStatus={updateCallStatus}
+                setLocalStream={setLocalStream}
+                remoteStream={remoteStream}
+                setRemoteStream={setRemoteStream}
+                peerConnection={peerConnection}
+                setPeerConnection={setPeerConnection}
+                setOfferData={setOfferData}
+                remoteFeedEl={remoteFeedEl}
+                localFeedEl={localFeedEl}
+                gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+                setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+                remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+              />
             </ProtectedRoute>
           }
         />

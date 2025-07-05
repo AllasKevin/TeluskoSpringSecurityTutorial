@@ -1,5 +1,5 @@
-import React from "react";
-import { PracticeCard } from "./components/PracticeCard";
+import React, { RefObject, useRef, useState } from "react";
+import { PracticeCard, PracticeCardHandle } from "./components/PracticeCard";
 import { FilterHeader } from "./components/FilterHeader";
 import { NavigationBar } from "./components/NavigationBar";
 import "./PracticesPage.css";
@@ -11,8 +11,51 @@ import nadine from "../../assets/nadine.jpg";
 import swan from "../../assets/teal-swan.webp";
 
 import { ListGroup } from "react-bootstrap";
+import { CallStatus } from "../../App";
 
-export const PracticesPage: React.FC = () => {
+interface PracticesPageProps {
+  callStatus: CallStatus | undefined;
+  updateCallStatus: React.Dispatch<
+    React.SetStateAction<CallStatus | undefined>
+  >;
+  //  localStream: MediaStream | undefined;
+  setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
+  remoteStream: MediaStream | undefined;
+  setRemoteStream: React.Dispatch<
+    React.SetStateAction<MediaStream | undefined>
+  >;
+  peerConnection: RTCPeerConnection | undefined;
+  setPeerConnection: React.Dispatch<
+    React.SetStateAction<RTCPeerConnection | undefined>
+  >;
+  //  offerData: any;
+  setOfferData: React.Dispatch<React.SetStateAction<any>>;
+  remoteFeedEl: RefObject<HTMLVideoElement | null>;
+  localFeedEl: RefObject<HTMLVideoElement | null>;
+  gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
+  setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
+  remoteDescAddedForOfferer: boolean;
+}
+
+export const PracticesPage: React.FC<PracticesPageProps> = ({
+  callStatus,
+  updateCallStatus,
+  setLocalStream,
+  remoteStream,
+  setRemoteStream,
+  peerConnection,
+  setPeerConnection,
+  setOfferData,
+  remoteFeedEl,
+  localFeedEl,
+  gatheredAnswerIceCandidatesRef,
+  setIceCandidatesReadyTrigger,
+  remoteDescAddedForOfferer,
+}) => {
+  console.log(callStatus);
+  console.log(updateCallStatus);
+  console.log(setLocalStream);
+
   const practices = [
     {
       title: "Noticing Game",
@@ -55,9 +98,28 @@ export const PracticesPage: React.FC = () => {
     // Repeated for all practice cards
   ];
 
+  const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
+    null
+  );
+
+  const handleCardClick = (index: number) => {
+    console.log("Card clicked, index: " + index);
+    setExpandedCardIndex((prev) => (prev === index ? null : index));
+  };
+
+  const handleClickOutsideCard = () => {
+    console.log("Clicked outside card, minimizing all cards");
+    setExpandedCardIndex(null);
+  };
+
+  /*  const cardRef = useRef<PracticeCardHandle>(null);
+ const handleClickOutsideCard = () => {
+    cardRef.current?.minimizeCard();
+  };
+*/
   return (
     <>
-      <div className="practices-container">
+      <div className="practices-container" onClick={handleClickOutsideCard}>
         <div className="shape-1" />
         <div className="shape-2" />
         <div className="shape-3" />
@@ -70,9 +132,24 @@ export const PracticesPage: React.FC = () => {
             {practices.map((practice, index) => (
               <PracticeCard
                 key={index}
+                isExpanded={expandedCardIndex === index}
+                onClick={() => handleCardClick(index)}
                 title={practice.title}
                 description={practice.description}
                 imageUrl={practice.imageUrl}
+                callStatus={callStatus}
+                updateCallStatus={updateCallStatus}
+                setLocalStream={setLocalStream}
+                remoteStream={remoteStream}
+                setRemoteStream={setRemoteStream}
+                peerConnection={peerConnection}
+                setPeerConnection={setPeerConnection}
+                setOfferData={setOfferData}
+                remoteFeedEl={remoteFeedEl}
+                localFeedEl={localFeedEl}
+                gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+                setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+                remoteDescAddedForOfferer={remoteDescAddedForOfferer}
               />
             ))}
           </ListGroup>
