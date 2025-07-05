@@ -4,7 +4,7 @@ import { CallStatus } from "../App";
 import apiClient from "../services/api-client";
 import clientSocketListeners from "../webrtc/webrtcUtilities/clientSocketListeners";
 import socketConnection from "../webrtc/webrtcUtilities/socketConnection";
-import { CallManager } from "./Callmanager/Callmanager";
+import { WebRtcManager } from "./WebRtcManager/WebRtcManager";
 
 interface Color {
   color: string;
@@ -108,7 +108,11 @@ const Dashboard = ({
   useEffect(() => {
     if (testValue.length > 2) {
       console.log("Step 0: testValue changed, length: ", testValue.length);
-      CallManager.initListeningForCalls(username, setAvailableCalls, testValue);
+      WebRtcManager.initListeningForCalls(
+        username,
+        setAvailableCalls,
+        testValue
+      );
     }
   }, [testValue]);
 
@@ -116,7 +120,7 @@ const Dashboard = ({
   //called on "Call" or "Answer"
   const initCall = async (typeOfCall: string) => {
     // set localStream and GUM
-    await CallManager.initCall(
+    await WebRtcManager.initCall(
       callStatus,
       updateCallStatus,
       setLocalStream,
@@ -138,7 +142,7 @@ const Dashboard = ({
   useEffect(() => {
     if (callStatus && username && callStatus.haveMedia && !peerConnection) {
       // prepForCall has finished running and updated callStatus
-      CallManager.setupPeerConnection(
+      WebRtcManager.setupPeerConnection(
         typeOfCall,
         username,
         setPeerConnection,

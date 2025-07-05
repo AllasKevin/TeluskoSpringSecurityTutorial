@@ -4,11 +4,11 @@ import prepForCall from "../../webrtc/webrtcUtilities/prepForCall";
 import socketConnection from "../../webrtc/webrtcUtilities/socketConnection";
 import { CallData } from "../Dashboard";
 
-export class CallManager {
+export class WebRtcManager {
   static initListeningForCalls(
     username: string | null,
     setAvailableCalls: (value: React.SetStateAction<never[]>) => void,
-    chosenPractice?: string
+    chosenPractice: string
   ) {
     console.log("Step 0: listening for available calls...");
     const setCalls = (data: []) => {
@@ -178,7 +178,7 @@ export class CallManager {
       console.log("setOfferCreated:", setOfferCreated);
       console.log("setVideoMessage:", setVideoMessage);
       // If the queue is empty, create an offer
-      await CallManager.createOffer(
+      await WebRtcManager.createOffer(
         peerConnection,
         username,
         offerCreated,

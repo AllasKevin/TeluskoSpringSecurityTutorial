@@ -24,6 +24,10 @@
 
     "allowJs": true,
 
+    // TODO: Remove these two lines below when the code is stable
+        "noUnusedLocals": false,
+    "noUnusedParameters": false
+
   },
   "include": ["src"]
 }

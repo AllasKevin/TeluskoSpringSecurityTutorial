@@ -59,6 +59,9 @@ const connectedSockets = [
 ]
 
 const userQueue = new Queue();
+const checkMatchMap = {};
+    const checkMatchQueue = new Queue(); // Jag kommer behöva en queue för varje practice
+
 
 io.on('connection', (socket) => {
     const userName = socket.handshake.auth.userName;
@@ -105,6 +108,30 @@ io.on('connection', (socket) => {
     if(offers.length){
         socket.emit('availableOffers',offers);
     }
+
+    
+
+    socket.on('checkMatch', (data, ackFunction) => {
+        checkMatchMap[practice] = { practice: practice, queue: checkMatchQueue };
+        currentQueue = checkMatchMap[practice].queue;
+
+        console.log("checkMatch called! practice: " + practice + " userName: " + userName);
+
+        if (currentQueue.size() < 1 ) {
+            console.log("User " + userName + " added to queue because queue was empty. currentQueue size: " + currentQueue.size());
+            currentQueue.enqueue({ userName, socketId: socket.id });
+            checkMatchMap[practice].queue = currentQueue;
+
+            console.log("Returning noMatchFound");
+            ackFunction(false);
+        }
+        else{
+            console.log("Returning matchFound");
+            ackFunction(true);
+        }
+        
+        //socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))
+    })
 
     socket.on('enterQueue', (data, ackFunction) => {
         console.log("enterQueue called! practice: " + practice);

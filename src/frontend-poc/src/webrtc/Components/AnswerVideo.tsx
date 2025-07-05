@@ -5,7 +5,7 @@ import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
 import { CallStatus } from "../../App";
 import { CallData } from "../../components/Dashboard";
-import { CallManager } from "../../components/Callmanager/Callmanager";
+import { WebRtcManager } from "../../components/WebRtcManager/WebRtcManager";
 
 interface AnswerVideoProps {
   callStatus: CallStatus | undefined;
@@ -76,7 +76,7 @@ const AnswerVideo = ({
   // Step 3: Set the local stream to the local video element
   //send back to home if no localStream
   useEffect(() => {
-    CallManager.setLocalStream(
+    WebRtcManager.setLocalStream(
       localStream,
       localFeedEl,
       remoteFeedEl,
@@ -106,7 +106,7 @@ const AnswerVideo = ({
   // Step 4 and 5: Recieved and adding offer from caller and handling it and sending back answer and ICE candidates
   //User has enabled video, but not made answer
   useEffect(() => {
-    CallManager.addRecievedOfferAndCreateAnswerAsync(
+    WebRtcManager.addRecievedOfferAndCreateAnswerAsync(
       peerConnection,
       offerData,
       answerCreated,
