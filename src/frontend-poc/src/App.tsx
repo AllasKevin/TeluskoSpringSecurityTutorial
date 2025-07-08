@@ -61,11 +61,13 @@ function App() {
               <PracticesPage
                 callStatus={callStatus}
                 updateCallStatus={updateCallStatus}
+                localStream={localStream}
                 setLocalStream={setLocalStream}
                 remoteStream={remoteStream}
                 setRemoteStream={setRemoteStream}
                 peerConnection={peerConnection}
                 setPeerConnection={setPeerConnection}
+                offerData={offerData}
                 setOfferData={setOfferData}
                 remoteFeedEl={remoteFeedEl}
                 localFeedEl={localFeedEl}
@@ -83,11 +85,13 @@ function App() {
               <PracticesPage
                 callStatus={callStatus}
                 updateCallStatus={updateCallStatus}
+                localStream={localStream}
                 setLocalStream={setLocalStream}
                 remoteStream={remoteStream}
                 setRemoteStream={setRemoteStream}
                 peerConnection={peerConnection}
                 setPeerConnection={setPeerConnection}
+                offerData={offerData}
                 setOfferData={setOfferData}
                 remoteFeedEl={remoteFeedEl}
                 localFeedEl={localFeedEl}

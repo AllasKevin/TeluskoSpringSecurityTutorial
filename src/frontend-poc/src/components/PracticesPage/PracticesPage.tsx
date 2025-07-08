@@ -1,4 +1,4 @@
-import React, { RefObject, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { PracticeCard, PracticeCardHandle } from "./components/PracticeCard";
 import { FilterHeader } from "./components/FilterHeader";
 import { NavigationBar } from "./components/NavigationBar";
@@ -12,13 +12,14 @@ import swan from "../../assets/teal-swan.webp";
 
 import { ListGroup } from "react-bootstrap";
 import { CallStatus } from "../../App";
+import { CallHandlerPopUp } from "./components/CallHandlerPopUp";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
   updateCallStatus: React.Dispatch<
     React.SetStateAction<CallStatus | undefined>
   >;
-  //  localStream: MediaStream | undefined;
+  localStream: MediaStream | undefined;
   setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
   remoteStream: MediaStream | undefined;
   setRemoteStream: React.Dispatch<
@@ -28,7 +29,7 @@ interface PracticesPageProps {
   setPeerConnection: React.Dispatch<
     React.SetStateAction<RTCPeerConnection | undefined>
   >;
-  //  offerData: any;
+  offerData: any;
   setOfferData: React.Dispatch<React.SetStateAction<any>>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   localFeedEl: RefObject<HTMLVideoElement | null>;
@@ -40,11 +41,13 @@ interface PracticesPageProps {
 export const PracticesPage: React.FC<PracticesPageProps> = ({
   callStatus,
   updateCallStatus,
+  localStream,
   setLocalStream,
   remoteStream,
   setRemoteStream,
   peerConnection,
   setPeerConnection,
+  offerData,
   setOfferData,
   remoteFeedEl,
   localFeedEl,
@@ -101,6 +104,11 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
     null
   );
+  const [showPopup, setShowPopup] = useState(false);
+  const [availableCalls, setAvailableCalls] = useState([
+    { id: 1, title: "Call with Alice" },
+    { id: 2, title: "Call with Bob" },
+  ]);
 
   const handleCardClick = (index: number) => {
     console.log("Card clicked, index: " + index);
@@ -111,6 +119,20 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     console.log("Clicked outside card, minimizing all cards");
     setExpandedCardIndex(null);
   };
+
+  const handleJoinCall = (callId: number) => {
+    console.log(`Joining call ${callId}`);
+    setShowPopup(false);
+  };
+
+  const handleStartCall = () => {
+    console.log("handleStartCall called, setting showPopup to false");
+    setShowPopup(false);
+  };
+
+  useEffect(() => {
+    console.log("showPopup:", showPopup);
+  }, []);
 
   /*  const cardRef = useRef<PracticeCardHandle>(null);
  const handleClickOutsideCard = () => {
@@ -125,7 +147,6 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
         <div className="shape-3" />
         <div className="shape-4" />
         <div className="shape-5" />
-
         <div className="practices-content">
           <FilterHeader />
           <ListGroup className="practices-list">
@@ -139,21 +160,32 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
                 imageUrl={practice.imageUrl}
                 callStatus={callStatus}
                 updateCallStatus={updateCallStatus}
+                localStream={localStream}
                 setLocalStream={setLocalStream}
                 remoteStream={remoteStream}
                 setRemoteStream={setRemoteStream}
                 peerConnection={peerConnection}
                 setPeerConnection={setPeerConnection}
+                offerData={offerData}
                 setOfferData={setOfferData}
                 remoteFeedEl={remoteFeedEl}
                 localFeedEl={localFeedEl}
                 gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+                setShowPopup={setShowPopup}
               />
             ))}
           </ListGroup>
         </div>
+        {showPopup && (
+          <CallHandlerPopUp
+            setShowPopup={setShowPopup}
+            availableCalls={availableCalls}
+            handleStartCall={handleStartCall}
+            handleJoinCall={handleJoinCall}
+          />
+        )}
       </div>
       <NavigationBar />
     </>

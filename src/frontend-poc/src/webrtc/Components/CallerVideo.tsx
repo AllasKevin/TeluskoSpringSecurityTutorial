@@ -107,10 +107,6 @@ const CallerVideo = ({
     }
   }, [peerConnection]);
 
-  // Step 3: Set the local stream to the local video element
-  //send back to home if no localStream
-  setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
-
   // Step 4: Create an offer
   //once the user has started this component, start WebRTC'ing :)
   createOffer(
@@ -123,6 +119,10 @@ const CallerVideo = ({
     setVideoMessage,
     localStream
   );
+
+  // Step 3: Set the local stream to the local video element
+  //send back to home if no localStream
+  setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
 
   // Step 5: Set the remote description (answer)
   useEffect(() => {
