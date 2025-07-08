@@ -25,7 +25,7 @@ interface WebRtcManagerNewProps {
   updateCallStatus: React.Dispatch<
     React.SetStateAction<CallStatus | undefined>
   >;
-  //  localStream: MediaStream | undefined;
+  localStream: MediaStream | undefined;
   setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
   remoteStream: MediaStream | undefined;
   setRemoteStream: React.Dispatch<
@@ -35,7 +35,7 @@ interface WebRtcManagerNewProps {
   setPeerConnection: React.Dispatch<
     React.SetStateAction<RTCPeerConnection | undefined>
   >;
-  //  offerData: any;
+  offerData: any;
   setOfferData: React.Dispatch<React.SetStateAction<any>>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   localFeedEl: RefObject<HTMLVideoElement | null>;
@@ -52,11 +52,13 @@ export const WebRtcManager = forwardRef<
     {
       callStatus,
       updateCallStatus,
+      localStream,
       setLocalStream,
       remoteStream,
       setRemoteStream,
       peerConnection,
       setPeerConnection,
+      offerData,
       setOfferData,
       remoteFeedEl,
       localFeedEl,
@@ -193,6 +195,26 @@ export const WebRtcManager = forwardRef<
       }
     }, [typeOfCall, peerConnection]);
 
+    const [offerCreated, setOfferCreated] = useState(false);
+    /*
+    // Step 4: Create an offer
+    //once the user has started this component, start WebRTC'ing :)
+    useEffect(() => {
+      if (typeOfCall === "offer") {
+        console.log("Step 4: Creating offer");
+        createOffer(
+          peerConnection,
+          username,
+          offerCreated,
+          callStatus,
+          updateCallStatus,
+          setOfferCreated,
+          //setVideoMessage,
+          localStream
+        );
+      }
+    }, [offerData]);
+*/
     //once remoteStream AND pc are ready, navigate
     useEffect(() => {
       if (remoteStream && peerConnection) {

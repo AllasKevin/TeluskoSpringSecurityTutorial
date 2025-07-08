@@ -16,7 +16,7 @@ interface ScheduleCallSectionProps {
   updateCallStatus: React.Dispatch<
     React.SetStateAction<CallStatus | undefined>
   >;
-  //  localStream: MediaStream | undefined;
+  localStream: MediaStream | undefined;
   setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
   remoteStream: MediaStream | undefined;
   setRemoteStream: React.Dispatch<
@@ -26,30 +26,34 @@ interface ScheduleCallSectionProps {
   setPeerConnection: React.Dispatch<
     React.SetStateAction<RTCPeerConnection | undefined>
   >;
-  //  offerData: any;
+  offerData: any;
   setOfferData: React.Dispatch<React.SetStateAction<any>>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   localFeedEl: RefObject<HTMLVideoElement | null>;
   gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   practice,
   callStatus,
   updateCallStatus,
+  localStream,
   setLocalStream,
   remoteStream,
   setRemoteStream,
   peerConnection,
   setPeerConnection,
+  offerData,
   setOfferData,
   remoteFeedEl,
   localFeedEl,
   gatheredAnswerIceCandidatesRef,
   setIceCandidatesReadyTrigger,
   remoteDescAddedForOfferer,
+  setShowPopup,
 }) => {
   const [activeTab, setActiveTab] = useState<"join" | "schedule">("join"); // default is "join"
   const [startDate, setStartDate] = useState<Date | null>(new Date());
@@ -59,9 +63,13 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   const webRtcManagerRef = useRef<WebRtcManagerNewHandle>(null);
 
   const handlePracticeNow = () => {
-    console.log("handlePracticeNow CALLED with practice:", practice);
+    console.log(
+      "handlePracticeNow CALLED and setShowPopup set to true with practice:",
+      practice
+    );
 
     webRtcManagerRef.current?.checkMatch(practice); // or whatever type you want
+    //setShowPopup(true);
   };
   /*
   const goToDashboard = () => {
@@ -75,11 +83,13 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         ref={webRtcManagerRef}
         callStatus={callStatus}
         updateCallStatus={updateCallStatus}
+        localStream={localStream}
         setLocalStream={setLocalStream}
         remoteStream={remoteStream}
         setRemoteStream={setRemoteStream}
         peerConnection={peerConnection}
         setPeerConnection={setPeerConnection}
+        offerData={offerData}
         setOfferData={setOfferData}
         remoteFeedEl={remoteFeedEl}
         localFeedEl={localFeedEl}

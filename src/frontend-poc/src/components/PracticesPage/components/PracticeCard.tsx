@@ -26,6 +26,7 @@ interface PracticeCardProps {
   updateCallStatus: React.Dispatch<
     React.SetStateAction<CallStatus | undefined>
   >;
+  localStream: MediaStream | undefined;
   setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
   remoteStream: MediaStream | undefined;
   setRemoteStream: React.Dispatch<
@@ -35,12 +36,14 @@ interface PracticeCardProps {
   setPeerConnection: React.Dispatch<
     React.SetStateAction<RTCPeerConnection | undefined>
   >;
+  offerData: any; // This can be a more specific type if needed
   setOfferData: React.Dispatch<React.SetStateAction<any>>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   localFeedEl: RefObject<HTMLVideoElement | null>;
   gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
@@ -54,17 +57,20 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
       imageUrl,
       callStatus,
       updateCallStatus,
+      localStream,
       setLocalStream,
       remoteStream,
       setRemoteStream,
       peerConnection,
       setPeerConnection,
+      offerData,
       setOfferData,
       remoteFeedEl,
       localFeedEl,
       gatheredAnswerIceCandidatesRef,
       setIceCandidatesReadyTrigger,
       remoteDescAddedForOfferer,
+      setShowPopup,
     },
     ref
   ) => {
@@ -123,17 +129,20 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
                 practice={title}
                 callStatus={callStatus}
                 updateCallStatus={updateCallStatus}
+                localStream={localStream}
                 setLocalStream={setLocalStream}
                 remoteStream={remoteStream}
                 setRemoteStream={setRemoteStream}
                 peerConnection={peerConnection}
                 setPeerConnection={setPeerConnection}
+                offerData={offerData}
                 setOfferData={setOfferData}
                 remoteFeedEl={remoteFeedEl}
                 localFeedEl={localFeedEl}
                 gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+                setShowPopup={setShowPopup}
               />
             </div>
           </div>
