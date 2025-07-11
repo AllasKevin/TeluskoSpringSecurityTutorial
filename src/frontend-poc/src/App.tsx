@@ -74,6 +74,7 @@ function App() {
                 gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+                setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
               />
             </ProtectedRoute>
           }
@@ -98,6 +99,7 @@ function App() {
                 gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+                setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
               />
             </ProtectedRoute>
           }

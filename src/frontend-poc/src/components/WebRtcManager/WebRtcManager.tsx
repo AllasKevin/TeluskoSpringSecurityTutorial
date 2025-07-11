@@ -42,6 +42,8 @@ interface WebRtcManagerNewProps {
   gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
+  setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
+  setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
 }
 
 export const WebRtcManager = forwardRef<
@@ -65,6 +67,8 @@ export const WebRtcManager = forwardRef<
       gatheredAnswerIceCandidatesRef,
       setIceCandidatesReadyTrigger,
       remoteDescAddedForOfferer,
+      setRemoteDescAddedForOfferer,
+      setAvailableCalls,
     },
     ref
   ) => {
@@ -74,11 +78,14 @@ export const WebRtcManager = forwardRef<
     console.log(callStatus);
     const initListeningForCalls = (
       username: string | null,
-      setAvailableCalls: (value: React.SetStateAction<never[]>) => void,
+      setAvailableCallsFromServer: (
+        value: React.SetStateAction<never[]>
+      ) => void,
       chosenPractice: string
     ) => {
       console.log("Step 0: listening for available calls...");
       const setCalls = (data: []) => {
+        setAvailableCallsFromServer(data);
         setAvailableCalls(data);
       };
       const socket = socketConnection(username, chosenPractice);
@@ -105,7 +112,7 @@ export const WebRtcManager = forwardRef<
         //setFoundMatch(true);
         //setCallType("answer");
         initCall("answer");
-        availableCalls.map((callData: CallData) => {
+        availableCallsFromServer.map((callData: CallData) => {
           setOfferData(callData);
         });
       } else {
@@ -145,15 +152,17 @@ export const WebRtcManager = forwardRef<
     };
 
     const [typeOfCall, setTypeOfCall] = useState("");
-    const [availableCalls, setAvailableCalls] = useState([]);
+    const [availableCallsFromServer, setAvailableCallsFromServer] = useState(
+      []
+    );
     const navigate = useNavigate();
     const username = sessionStorage.getItem("username");
 
-    console.log("availableCalls: ", availableCalls);
+    console.log("availableCallsFromServer: ", availableCallsFromServer);
     // Step 0: Listen for available calls
     useEffect(() => {
       console.log("Step 0: Listen for available calls");
-      initListeningForCalls(username, setAvailableCalls, "Hej");
+      initListeningForCalls(username, setAvailableCallsFromServer, "Hej");
     }, []);
 
     // Step 2: GUM access granted, now we can set up the peer connection
@@ -169,6 +178,9 @@ export const WebRtcManager = forwardRef<
         );
       }
     }, [callStatus?.haveMedia]);
+
+    const [clientSocketListenersInitiated, setClientSocketListenersInitiated] =
+      useState(false);
 
     //We know which type of client this is and have PC.
     //Add socketlisteners
@@ -190,18 +202,19 @@ export const WebRtcManager = forwardRef<
           gatheredAnswerIceCandidatesRef,
           setIceCandidatesReadyTrigger,
           remoteDescAddedForOfferer,
-          setOfferData
+          setOfferData,
+          setClientSocketListenersInitiated
         );
       }
     }, [typeOfCall, peerConnection]);
 
     const [offerCreated, setOfferCreated] = useState(false);
-    /*
-    // Step 4: Create an offer
+
+    // Step 3: Create an offer
     //once the user has started this component, start WebRTC'ing :)
     useEffect(() => {
       if (typeOfCall === "offer") {
-        console.log("Step 4: Creating offer");
+        console.log("Step 3: Creating offer");
         createOffer(
           peerConnection,
           username,
@@ -213,19 +226,33 @@ export const WebRtcManager = forwardRef<
           localStream
         );
       }
-    }, [offerData]);
-*/
+    }, [clientSocketListenersInitiated]);
+
+    // Step 4: Set the remote description (answer)
+    useEffect(() => {
+      if (offerCreated) {
+        addAnswer(callStatus, peerConnection, setRemoteDescAddedForOfferer);
+      }
+    }, [callStatus, offerCreated]);
+
     //once remoteStream AND pc are ready, navigate
     useEffect(() => {
+      console.log(
+        "Before navigating to video page, remoteStream and peerConnection are:",
+        remoteStream,
+        peerConnection,
+        "remoteDescAddedForOfferer:",
+        remoteDescAddedForOfferer
+      );
       if (remoteStream && peerConnection) {
         console.log("navigating to videocall page...");
-        if (typeOfCall === "offer") {
+        if (typeOfCall === "offer" && remoteDescAddedForOfferer) {
           navigate("/offer", { replace: false });
         } else if (typeOfCall === "answer") {
           navigate("/answer", { replace: false });
         }
       }
-    }, [remoteStream, peerConnection]);
+    }, [remoteStream, peerConnection, remoteDescAddedForOfferer]);
 
     useImperativeHandle(ref, () => ({
       initCall,
@@ -243,7 +270,7 @@ export const setStreamsLocally = (
   remoteStream: MediaStream | undefined
 ) => {
   if (localFeedEl.current && localStream) {
-    console.log("Step 3: Set the local stream to the local video element");
+    console.log("Step 5: Set the local stream to the local video element");
     //set video tags
     if (remoteFeedEl.current && remoteStream) {
       remoteFeedEl.current.srcObject = remoteStream;
@@ -263,11 +290,11 @@ export const createOffer = async (
     React.SetStateAction<CallStatus | undefined>
   >,
   setOfferCreated: (value: React.SetStateAction<boolean>) => void,
-  setVideoMessage: (value: React.SetStateAction<string>) => void,
+  //setVideoMessage: (value: React.SetStateAction<string>) => void,
   localStream: MediaStream | undefined
 ) => {
   console.log(
-    "Trying to Step 4: Making offer  offerCreated: " +
+    "Trying to Step 3: Making offer  offerCreated: " +
       offerCreated +
       " callStatus?.videoEnabled: " +
       callStatus?.videoEnabled
@@ -277,7 +304,7 @@ export const createOffer = async (
     console.log("Init video! from createOffer");
     initVideo(peerConnection, callStatus, updateCallStatus, localStream);
 
-    console.log("Step 4: Making offer");
+    console.log("Step 3: Making offer");
     const offer = await peerConnection?.createOffer();
     peerConnection?.setLocalDescription(offer);
 
@@ -287,7 +314,7 @@ export const createOffer = async (
     socket.emit("newOffer", offer);
 
     setOfferCreated(true); //so that our useEffect doesn't make an offer again
-    setVideoMessage("Awaiting answer..."); //update our videoMessage box
+    //setVideoMessage("Awaiting answer..."); //update our videoMessage box
   }
 };
 
@@ -297,7 +324,7 @@ export const addAnswer = async (
   setRemoteDescAddedForOfferer: (value: React.SetStateAction<boolean>) => void
 ) => {
   if (callStatus?.answer) {
-    console.log("Step 5: Recieved and setting answer.");
+    console.log("Step 4: Recieved and setting answer.");
 
     if (callStatus?.answer === undefined) {
       console.error("Answer is undefined!");

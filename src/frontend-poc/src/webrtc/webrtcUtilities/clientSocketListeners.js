@@ -2,7 +2,7 @@ import { set } from "react-hook-form";
 
 const clientSocketListeners = (socket,typeOfCall,callStatus,updateCallStatus,peerConnection,
     remoteFeedEl,localFeedEl,gatheredAnswerIceCandidatesRef,setIceCandidatesReadyTrigger,
-    remoteDescAddedForOfferer,setOfferData)=>{
+    remoteDescAddedForOfferer,setOfferData,setClientSocketListenersInitiated)=>{
 
     socket.on('answerResponse',entireOfferObj=>{
         setOfferData(entireOfferObj);
@@ -34,6 +34,7 @@ const clientSocketListeners = (socket,typeOfCall,callStatus,updateCallStatus,pee
         }
 
     })
+    setClientSocketListenersInitiated(true);
 }
 
 export default clientSocketListeners

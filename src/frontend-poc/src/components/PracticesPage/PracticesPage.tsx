@@ -13,6 +13,7 @@ import swan from "../../assets/teal-swan.webp";
 import { ListGroup } from "react-bootstrap";
 import { CallStatus } from "../../App";
 import { CallHandlerPopUp } from "./components/CallHandlerPopUp";
+import { CallData } from "../Dashboard";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
@@ -36,6 +37,7 @@ interface PracticesPageProps {
   gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
+  setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const PracticesPage: React.FC<PracticesPageProps> = ({
@@ -54,6 +56,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   gatheredAnswerIceCandidatesRef,
   setIceCandidatesReadyTrigger,
   remoteDescAddedForOfferer,
+  setRemoteDescAddedForOfferer,
 }) => {
   console.log(callStatus);
   console.log(updateCallStatus);
@@ -105,29 +108,18 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     null
   );
   const [showPopup, setShowPopup] = useState(false);
-  const [availableCalls, setAvailableCalls] = useState([
-    { id: 1, title: "Call with Alice" },
-    { id: 2, title: "Call with Bob" },
-  ]);
+  const [chosenPractice, setChosenPractice] = useState<string>("");
+  const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
 
-  const handleCardClick = (index: number) => {
+  const handleCardClick = (index: number, practice: string) => {
     console.log("Card clicked, index: " + index);
     setExpandedCardIndex((prev) => (prev === index ? null : index));
+    setChosenPractice(practice);
   };
 
   const handleClickOutsideCard = () => {
     console.log("Clicked outside card, minimizing all cards");
     setExpandedCardIndex(null);
-  };
-
-  const handleJoinCall = (callId: number) => {
-    console.log(`Joining call ${callId}`);
-    setShowPopup(false);
-  };
-
-  const handleStartCall = () => {
-    console.log("handleStartCall called, setting showPopup to false");
-    setShowPopup(false);
   };
 
   useEffect(() => {
@@ -154,7 +146,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
               <PracticeCard
                 key={index}
                 isExpanded={expandedCardIndex === index}
-                onClick={() => handleCardClick(index)}
+                onClick={() => handleCardClick(index, practice.title)}
                 title={practice.title}
                 description={practice.description}
                 imageUrl={practice.imageUrl}
@@ -174,6 +166,8 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setShowPopup={setShowPopup}
+                setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+                setAvailableCalls={setAvailableCalls}
               />
             ))}
           </ListGroup>
@@ -182,8 +176,24 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
           <CallHandlerPopUp
             setShowPopup={setShowPopup}
             availableCalls={availableCalls}
-            handleStartCall={handleStartCall}
-            handleJoinCall={handleJoinCall}
+            callStatus={callStatus}
+            updateCallStatus={updateCallStatus}
+            localStream={localStream}
+            setLocalStream={setLocalStream}
+            remoteStream={remoteStream}
+            setRemoteStream={setRemoteStream}
+            peerConnection={peerConnection}
+            setPeerConnection={setPeerConnection}
+            offerData={offerData}
+            setOfferData={setOfferData}
+            remoteFeedEl={remoteFeedEl}
+            localFeedEl={localFeedEl}
+            gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+            setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+            remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+            setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+            setAvailableCalls={setAvailableCalls}
+            practice={chosenPractice} // Pass the chosen practice to the popup
           />
         )}
       </div>

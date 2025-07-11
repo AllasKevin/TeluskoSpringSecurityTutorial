@@ -9,6 +9,7 @@ import {
   WebRtcManager,
   WebRtcManagerNewHandle,
 } from "../../WebRtcManager/WebRtcManager";
+import { CallData } from "../../Dashboard";
 
 interface ScheduleCallSectionProps {
   practice: string; // Optional prop to pass the practice name
@@ -34,6 +35,8 @@ interface ScheduleCallSectionProps {
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
+  setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
 }
 
 export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
@@ -54,49 +57,24 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   setIceCandidatesReadyTrigger,
   remoteDescAddedForOfferer,
   setShowPopup,
+  setRemoteDescAddedForOfferer,
+  setAvailableCalls,
 }) => {
   const [activeTab, setActiveTab] = useState<"join" | "schedule">("join"); // default is "join"
   const [startDate, setStartDate] = useState<Date | null>(new Date());
 
   const navigate = useNavigate();
 
-  const webRtcManagerRef = useRef<WebRtcManagerNewHandle>(null);
-
   const handlePracticeNow = () => {
     console.log(
-      "handlePracticeNow CALLED and setShowPopup set to true with practice:",
-      practice
+      "handlePracticeNow CALLED and setShowPopup set to true BUT NO CALL IS INITIATED YET"
     );
 
-    webRtcManagerRef.current?.checkMatch(practice); // or whatever type you want
-    //setShowPopup(true);
+    setShowPopup(true);
   };
-  /*
-  const goToDashboard = () => {
-    navigate("/dashboard");
-    console.log("Navigating to dashboard");
-  };
-*/
+
   return (
     <div className="call-section" onClick={(e) => e.stopPropagation()}>
-      <WebRtcManager
-        ref={webRtcManagerRef}
-        callStatus={callStatus}
-        updateCallStatus={updateCallStatus}
-        localStream={localStream}
-        setLocalStream={setLocalStream}
-        remoteStream={remoteStream}
-        setRemoteStream={setRemoteStream}
-        peerConnection={peerConnection}
-        setPeerConnection={setPeerConnection}
-        offerData={offerData}
-        setOfferData={setOfferData}
-        remoteFeedEl={remoteFeedEl}
-        localFeedEl={localFeedEl}
-        gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
-        setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
-        remoteDescAddedForOfferer={remoteDescAddedForOfferer}
-      />
       <div className="button-row">
         <button
           onClick={() => {
