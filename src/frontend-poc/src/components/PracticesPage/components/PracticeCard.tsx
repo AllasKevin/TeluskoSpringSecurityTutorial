@@ -7,6 +7,7 @@ import React, {
 import "../PracticesPage.css";
 import { ScheduleCallSection } from "./ScheduleCallSection";
 import { CallStatus } from "../../../App";
+import { CallData } from "../../Dashboard";
 
 export interface PracticeCardHandle {
   minimizeCard: () => void;
@@ -16,7 +17,7 @@ interface PracticeCardProps {
   key: number; // Unique key for each card
   title: string;
   isExpanded: boolean; // Optional prop to control expansion state
-  onClick?: (index: number) => void; // Optional click handler
+  onClick: (index: number, practice: String) => void;
   description: string;
   imageUrl: string;
   descriptionVideo?: string; // Optional video URL for the practice
@@ -44,6 +45,8 @@ interface PracticeCardProps {
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
+  setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
 }
 
 export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
@@ -71,6 +74,8 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
       setIceCandidatesReadyTrigger,
       remoteDescAddedForOfferer,
       setShowPopup,
+      setRemoteDescAddedForOfferer,
+      setAvailableCalls,
     },
     ref
   ) => {
@@ -99,7 +104,7 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
             "PracticeCard clicked stopping proppegation for: " + title
           );
           e.stopPropagation(); // Stop the click from reaching the parent
-          if (onClick) onClick(key); // Call the onClick handler if provided
+          onClick(key, title); // Call the onClick handler if provided
           //setIsExpanded((prev) => !prev);
         }}
       >
@@ -143,6 +148,8 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setShowPopup={setShowPopup}
+                setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+                setAvailableCalls={setAvailableCalls}
               />
             </div>
           </div>

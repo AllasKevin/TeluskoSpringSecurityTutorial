@@ -106,7 +106,7 @@ const CallerVideo = ({
       };
     }
   }, [peerConnection]);
-
+  /*
   // Step 4: Create an offer
   //once the user has started this component, start WebRTC'ing :)
   createOffer(
@@ -119,16 +119,16 @@ const CallerVideo = ({
     setVideoMessage,
     localStream
   );
-
-  // Step 3: Set the local stream to the local video element
+*/
+  // Step 5: Set the local stream to the local video element
   //send back to home if no localStream
   setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
-
+  /*
   // Step 5: Set the remote description (answer)
   useEffect(() => {
     addAnswer(callStatus, peerConnection, setRemoteDescAddedForOfferer);
   }, [callStatus]);
-
+*/
   // Step 6: Add ICE candidates That are received after the answer is set
   useEffect(() => {
     addIceCandidatesAfterAnswerBeenSet(
