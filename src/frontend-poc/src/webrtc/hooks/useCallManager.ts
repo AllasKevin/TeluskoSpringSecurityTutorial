@@ -6,6 +6,7 @@ import socketConnection from "../webrtcUtilities/socketConnection";
 interface UseCallManagerProps {
   peerConnection: RTCPeerConnection | undefined;
   setPeerConnection: React.Dispatch<React.SetStateAction<RTCPeerConnection | undefined>>;
+  callStatus: CallStatus | undefined;
   updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>;
   localFeedEl: React.RefObject<HTMLVideoElement | null>;
   remoteFeedEl: React.RefObject<HTMLVideoElement | null>;
@@ -28,10 +29,17 @@ export function useCallManager({
   setRemoteStream,
   offerData,
 }: UseCallManagerProps) {
-  const hangupCall = useCallback(() => {
+const hangupCall = useCallback((callStatus: CallStatus | undefined) => {
     if (peerConnection) {
+
+      const otherCallerUserName = callStatus?.otherCallerUserName;
       console.log("Hanging up...");
+      console.log("callStatus before hangUp forreal foreal:");
+      console.log(callStatus);
+      console.log("1notify hangUp to: " + otherCallerUserName);
+
       updateCallStatus((prev) => {
+        console.log("Updating callStatus to hang up");
         if (!prev) return undefined;
         return {
           ...prev,
@@ -42,6 +50,7 @@ export function useCallManager({
           callInitiated: false,
           answer: undefined,
           myRole: undefined,
+          otherCallerUserName: undefined,
         };
       });
 
@@ -63,10 +72,13 @@ export function useCallManager({
       if (localFeedEl.current) localFeedEl.current.srcObject = null;
       if (remoteFeedEl.current) remoteFeedEl.current.srcObject = null;
 
+      console.log("sessionStorage keys:", Object.keys(sessionStorage));
+      console.log("username:", sessionStorage.getItem("username"));
+
       const username = sessionStorage.getItem("username");
-      console.log("notify hangUp to: " + offerData?.answererUserName);
+      console.log("2notify hangUp to: " + otherCallerUserName);
       socketConnection(username).emit("notify", {
-        receiver: offerData?.answererUserName,
+        receiver: otherCallerUserName,
         message: "hangUp",
       });
     }

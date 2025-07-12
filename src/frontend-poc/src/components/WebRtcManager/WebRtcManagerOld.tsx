@@ -20,7 +20,7 @@ export class WebRtcManagerOld {
   }
 
   static async initCall(
-    callStatus: CallStatus | undefined,
+    callStatus: CallStatus,
     updateCallStatus: React.Dispatch<
       React.SetStateAction<CallStatus | undefined>
     >,
@@ -140,52 +140,6 @@ export class WebRtcManagerOld {
       });
 
       gatheredAnswerIceCandidatesRef.current = []; //clear the array
-    }
-  }
-
-  static async enterQueue(
-    username: string | null,
-    //callStatus: CallStatus | undefined,
-    peerConnection: RTCPeerConnection | undefined,
-    offerCreated: boolean,
-    callStatus: CallStatus | undefined,
-    setOfferCreated: (value: React.SetStateAction<boolean>) => void,
-    setVideoMessage: (value: React.SetStateAction<string>) => void
-  ) {
-    console.log("Step ?: Entering queue for practiceOneOne");
-    //const offer = await peerConnection?.createOffer();
-    //peerConnection?.setLocalDescription(offer);
-
-    //we can now start collecing ice candidates!
-    // we need to emit the offer to the server
-    const socket = socketConnection(username, "practiceOneOne");
-    const queue = await socket.emitWithAck("enterQueue", {});
-    console.log("Returned queue:", queue);
-
-    if (queue.length > 1 && false) {
-      console.log(
-        "No other user in the queue, [IMPLEMENTATION NEEDED FOR SENDING ANSWER]..."
-      );
-      // Here you can handle the queue, e.g., set state or notify the user
-      // SendAnswer();
-    } else {
-      console.log("Queue only contains this user, create offer...");
-      console.log("Reached call site");
-      console.log("peerConnection:", peerConnection);
-      console.log("username:", username);
-      console.log("offerCreated:", offerCreated);
-      console.log("callStatus:", callStatus);
-      console.log("setOfferCreated:", setOfferCreated);
-      console.log("setVideoMessage:", setVideoMessage);
-      // If the queue is empty, create an offer
-      await WebRtcManagerOld.createOffer(
-        peerConnection,
-        username,
-        offerCreated,
-        callStatus,
-        setOfferCreated,
-        setVideoMessage
-      );
     }
   }
 

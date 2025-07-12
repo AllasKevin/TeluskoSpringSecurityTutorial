@@ -58,6 +58,8 @@ const Dashboard = ({
   setIceCandidatesReadyTrigger,
   remoteDescAddedForOfferer,
 }: DashboardProps) => {
+  return <></>;
+  /*
   const getStudents = () => {
     apiClient
       .get("/students", {
@@ -262,6 +264,7 @@ const Dashboard = ({
       </button>
     </div>
   );
+  */
 };
 
 export default Dashboard;

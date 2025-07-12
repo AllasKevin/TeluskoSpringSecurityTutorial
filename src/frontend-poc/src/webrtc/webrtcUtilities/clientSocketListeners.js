@@ -9,7 +9,10 @@ const clientSocketListeners = (socket,typeOfCall,callStatus,updateCallStatus,pee
         const copyCallStatus = {...callStatus}
         copyCallStatus.answer = entireOfferObj.answer
         copyCallStatus.myRole = typeOfCall
+        copyCallStatus.otherCallerUserName = entireOfferObj.answererUserName;
         updateCallStatus(copyCallStatus)
+        console.log("Recieved and setting answer. answererUserName: " + entireOfferObj.answererUserName);
+        console.log(copyCallStatus);
     })
 
     socket.on('receivedIceCandidateFromServer',iceC=>{

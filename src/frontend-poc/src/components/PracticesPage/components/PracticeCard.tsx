@@ -37,7 +37,7 @@ interface PracticeCardProps {
   setPeerConnection: React.Dispatch<
     React.SetStateAction<RTCPeerConnection | undefined>
   >;
-  offerData: any; // This can be a more specific type if needed
+  offerData: CallData | undefined;
   setOfferData: React.Dispatch<React.SetStateAction<any>>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   localFeedEl: RefObject<HTMLVideoElement | null>;
