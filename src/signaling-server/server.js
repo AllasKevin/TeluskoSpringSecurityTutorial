@@ -126,8 +126,10 @@ io.on('connection', (socket) => {
             ackFunction(false);
         }
         else{
-            console.log("Returning matchFound");
-            ackFunction(true);
+            const matchSuggestion = currentQueue.dequeue();
+
+            console.log("Returning matchSuggestion: " + matchSuggestion.userName);
+            ackFunction(matchSuggestion);
         }
         
         //socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))

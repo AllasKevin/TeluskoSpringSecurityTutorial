@@ -9,6 +9,7 @@ import {
   addRecievedOfferAndCreateAnswerAsync,
   setStreamsLocally,
 } from "../../components/WebRtcManager/WebRtcManager";
+import { ca } from "date-fns/locale";
 
 interface AnswerVideoProps {
   callStatus: CallStatus | undefined;
@@ -28,7 +29,7 @@ interface AnswerVideoProps {
   localFeedEl: RefObject<HTMLVideoElement | null>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   offerData: CallData | undefined;
-  hangupCall: () => void;
+  hangupCall: (callStatus: CallStatus | undefined) => void;
 }
 const AnswerVideo = ({
   remoteStream,
@@ -50,14 +51,20 @@ const AnswerVideo = ({
   );
   const [answerCreated] = useState(false); // TODO: This is never changed and therefore it should be possible to remove it
 
+  console.log("AnswerVideo component mounted offerData:", offerData);
   // Clean on route/component change
   useEffect(() => {
-    return () => hangupCall();
+    console.log("Before calling hangupCall in AnswerVideo");
+    console.log(callStatus);
+    return () => hangupCall(callStatus);
   }, []);
 
   // Clean on browser unload
   useEffect(() => {
-    const handleUnload = () => hangupCall();
+    console.log("Cleaning up on browser unload callStatus:", callStatus);
+    console.log(callStatus);
+
+    const handleUnload = () => hangupCall(callStatus);
     window.addEventListener("beforeunload", handleUnload);
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);

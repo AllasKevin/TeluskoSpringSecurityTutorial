@@ -12,6 +12,7 @@ import {
   setStreamsLocally,
   WebRtcManager,
 } from "../../components/WebRtcManager/WebRtcManager";
+import { ca } from "date-fns/locale";
 
 interface CallerVideoProps {
   callStatus: CallStatus | undefined;
@@ -35,7 +36,7 @@ interface CallerVideoProps {
   iceCandidatesReadyTrigger: number;
   remoteDescAddedForOfferer: boolean;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
-  hangupCall: () => void;
+  hangupCall: (callStatus: CallStatus | undefined) => void;
 }
 
 const CallerVideo = ({
@@ -62,14 +63,21 @@ const CallerVideo = ({
   const [offerCreated, setOfferCreated] = useState(false);
   const username = sessionStorage.getItem("username");
 
+  console.log("CallerVideo component mounted, callstatus:", callStatus);
+  console.log(callStatus);
   // Clean on route/component change
   useEffect(() => {
-    return () => hangupCall();
+    console.log("Before calling hangupCall in CallerVideo");
+    console.log(callStatus);
+    return () => hangupCall(callStatus);
   }, []);
 
   // Clean on browser unload
   useEffect(() => {
-    const handleUnload = () => hangupCall();
+    console.log("Cleaning up on browser unload, callstatus:", callStatus);
+    console.log(callStatus);
+
+    const handleUnload = () => hangupCall(callStatus);
     window.addEventListener("beforeunload", handleUnload);
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);

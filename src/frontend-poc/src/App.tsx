@@ -19,6 +19,7 @@ export interface CallStatus {
   current?: string;
   answer?: RTCSessionDescriptionInit;
   myRole?: "offer" | "answer";
+  otherCallerUserName?: string | null | undefined;
 }
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
   const { hangupCall } = useCallManager({
     peerConnection,
     setPeerConnection,
+    callStatus,
     updateCallStatus,
     localFeedEl,
     remoteFeedEl,

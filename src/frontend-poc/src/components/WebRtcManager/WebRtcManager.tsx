@@ -35,7 +35,7 @@ interface WebRtcManagerNewProps {
   setPeerConnection: React.Dispatch<
     React.SetStateAction<RTCPeerConnection | undefined>
   >;
-  offerData: any;
+  offerData: CallData | undefined;
   setOfferData: React.Dispatch<React.SetStateAction<any>>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   localFeedEl: RefObject<HTMLVideoElement | null>;
@@ -72,7 +72,7 @@ export const WebRtcManager = forwardRef<
     },
     ref
   ) => {
-    const [foundMatch, setFoundMatch] = useState(false);
+    //const [foundMatch, setFoundMatch] = useState(false);
     const [callType, setCallType] = useState<String | undefined>(undefined);
 
     console.log(callStatus);
@@ -107,11 +107,14 @@ export const WebRtcManager = forwardRef<
 
       if (foundMatch) {
         console.log(
-          "Making answer. Found a match in the queue for " + chosenPractice
+          "Making answer. Found a match " +
+            foundMatch.userName +
+            "  in the queue for " +
+            chosenPractice
         );
         //setFoundMatch(true);
         //setCallType("answer");
-        initCall("answer");
+        initCall("answer", foundMatch.userName);
         availableCallsFromServer.map((callData: CallData) => {
           setOfferData(callData);
         });
@@ -124,9 +127,14 @@ export const WebRtcManager = forwardRef<
       }
     };
 
-    const initCall = async (typeOfCall: string) => {
+    const initCall = async (typeOfCall: string, foundMatch?: string) => {
       console.log("Step 1: Initialize call and get GUM access");
-      await prepForCall({ callStatus, updateCallStatus, setLocalStream });
+      await prepForCall({
+        callStatus,
+        updateCallStatus,
+        setLocalStream,
+        foundMatch,
+      });
       setTypeOfCall(typeOfCall); //offer or answer
     };
 
@@ -223,6 +231,7 @@ export const WebRtcManager = forwardRef<
           updateCallStatus,
           setOfferCreated,
           //setVideoMessage,
+          offerData,
           localStream
         );
       }
@@ -230,8 +239,18 @@ export const WebRtcManager = forwardRef<
 
     // Step 4: Set the remote description (answer)
     useEffect(() => {
-      if (offerCreated) {
-        addAnswer(callStatus, peerConnection, setRemoteDescAddedForOfferer);
+      if (callStatus?.answer && offerCreated) {
+        addAnswer(
+          callStatus,
+          peerConnection,
+          setRemoteDescAddedForOfferer,
+          updateCallStatus,
+          offerData
+        );
+        console.log(
+          "After Adding answer, offerdata.answererUserName:" +
+            offerData?.answererUserName
+        );
       }
     }, [callStatus, offerCreated]);
 
@@ -291,6 +310,7 @@ export const createOffer = async (
   >,
   setOfferCreated: (value: React.SetStateAction<boolean>) => void,
   //setVideoMessage: (value: React.SetStateAction<string>) => void,
+  offerData: CallData | undefined,
   localStream: MediaStream | undefined
 ) => {
   console.log(
@@ -302,7 +322,7 @@ export const createOffer = async (
 
   if (!offerCreated && callStatus && peerConnection && localStream) {
     console.log("Init video! from createOffer");
-    initVideo(peerConnection, callStatus, updateCallStatus, localStream);
+    initVideo(peerConnection, callStatus, localStream);
 
     console.log("Step 3: Making offer");
     const offer = await peerConnection?.createOffer();
@@ -321,7 +341,11 @@ export const createOffer = async (
 export const addAnswer = async (
   callStatus: CallStatus | undefined,
   peerConnection: RTCPeerConnection | undefined,
-  setRemoteDescAddedForOfferer: (value: React.SetStateAction<boolean>) => void
+  setRemoteDescAddedForOfferer: (value: React.SetStateAction<boolean>) => void,
+  updateCallStatus: React.Dispatch<
+    React.SetStateAction<CallStatus | undefined>
+  >,
+  offerData?: CallData
 ) => {
   if (callStatus?.answer) {
     console.log("Step 4: Recieved and setting answer.");
@@ -330,8 +354,13 @@ export const addAnswer = async (
       console.error("Answer is undefined!");
       return;
     }
+    console.log(
+      "Recieved and setting answer. callStatus.answer: " + callStatus.answer
+    );
+    console.log(callStatus);
     await peerConnection?.setRemoteDescription(callStatus.answer);
 
+    setCallStatusForOfferer(offerData, callStatus, updateCallStatus);
     setRemoteDescAddedForOfferer(true);
   }
 };
@@ -384,11 +413,17 @@ export const addRecievedOfferAndCreateAnswerAsync = async (
     console.log("No localstream, returning...");
     return;
   } else if (!answerCreated && callStatus) {
+    setCallStatusForAnswerer(offerData, callStatus, updateCallStatus);
     console.log("Init video! from addRecievedOfferAndCreateAnswerAsync");
-    initVideo(peerConnection, callStatus, updateCallStatus, localStream);
+    initVideo(peerConnection, callStatus, localStream);
 
     const username = sessionStorage.getItem("username");
 
+    console.log("Recieved offer from caller, adding it to peerConnection.");
+
+    console.log(offerData.offer);
+    console.log("offererUserName: " + offerData.offererUserName);
+    console.log("answererUserName: " + offerData.answererUserName);
     // Step 4: adding the offer from caller
     await peerConnection.setRemoteDescription(offerData.offer);
     console.log("Step 4: Recieved and adding offer from caller");
@@ -415,19 +450,49 @@ export const addRecievedOfferAndCreateAnswerAsync = async (
   }
 };
 
+const setCallStatusForAnswerer = (
+  offerData: CallData | undefined,
+  callStatus: CallStatus,
+  updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>
+) => {
+  console.log("setCallStatusForAnswerer!");
+  const copyCallStatus = { ...callStatus };
+  copyCallStatus.videoEnabled = true;
+  copyCallStatus.callInitiated = true;
+  copyCallStatus.otherCallerUserName = offerData?.offererUserName;
+  console.log(
+    "setCallStatusForAnswerer().otherCallerUserName: " +
+      copyCallStatus.otherCallerUserName
+  );
+  console.log(offerData);
+  updateCallStatus(copyCallStatus);
+};
+
+const setCallStatusForOfferer = (
+  offerData: CallData | undefined,
+  callStatus: CallStatus,
+  updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>
+) => {
+  console.log("setCallStatusForOfferer!");
+  console.log("before setting otherCallerUserName in callStatus for offerer");
+  console.log(callStatus);
+  const copyCallStatus = { ...callStatus };
+  copyCallStatus.videoEnabled = true;
+  copyCallStatus.callInitiated = true;
+  copyCallStatus.otherCallerUserName = offerData?.answererUserName;
+  console.log(
+    "setCallStatusForOfferer().otherCallerUserName: " +
+      copyCallStatus.otherCallerUserName
+  );
+  console.log(offerData);
+  updateCallStatus(copyCallStatus);
+};
+
 const initVideo = (
   peerConnection: RTCPeerConnection,
   callStatus: CallStatus,
-  updateCallStatus: React.Dispatch<
-    React.SetStateAction<CallStatus | undefined>
-  >,
   localStream: MediaStream
 ) => {
-  console.log("Init video!");
-  const copyCallStatus = callStatus;
-  copyCallStatus.videoEnabled = true;
-  copyCallStatus.callInitiated = true;
-  updateCallStatus(copyCallStatus);
   // we are not adding tracks so they are visible
   // in the video tag. We are addign them
   // to the PC, so they can be sent
@@ -435,3 +500,13 @@ const initVideo = (
     peerConnection.addTrack(track, localStream);
   });
 };
+/*
+export const safeUpdateCallStatus = (updateFn: React.SetStateAction<CallStatus | undefined>) => {
+  updateCallStatus((prev) => {
+    const next = typeof updateFn === 'function' ? updateFn(prev) : updateFn;
+    console.log("🔍 Updating callStatus");
+    console.log("Previous:", prev);
+    console.log("Next:", next);
+    return next;
+  });
+};*/
