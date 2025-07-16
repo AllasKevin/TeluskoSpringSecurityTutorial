@@ -14,10 +14,21 @@ import { ca } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import clientSocketListeners from "../../webrtc/webrtcUtilities/clientSocketListeners";
 import peerConfiguration from "../../webrtc/webrtcUtilities/stunServers";
+import clientSocketForMatchmakingListeners from "../../webrtc/webrtcUtilities/clientSocketForMatchmakingListeners";
+import socketConnectionMatchmaking from "../../webrtc/webrtcUtilities/socketConnectionMatchmaking";
 
 export interface WebRtcManagerNewHandle {
   initCall: (typeOfCall: string) => void;
-  checkMatch: (chosenPractice: string) => Promise<void>;
+  findMatch: (chosenPractice: string) => Promise<void>;
+  acceptMatch: (
+    chosenPractice: string,
+    otherCallerUserName: string | null | undefined
+  ) => void;
+  startNewCall: (chosenPractice: string) => Promise<void>;
+  joinCall: (
+    chosenPractice: string,
+    otherCallerUserName: string | null | undefined
+  ) => void;
 }
 
 interface WebRtcManagerNewProps {
@@ -44,6 +55,15 @@ interface WebRtcManagerNewProps {
   remoteDescAddedForOfferer: boolean;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
+  setAvailableMatches: React.Dispatch<
+    React.SetStateAction<
+      {
+        userName: string;
+        practice: string;
+      }[]
+    >
+  >;
+  practice: string; // Optional prop to pass the practice name
 }
 
 export const WebRtcManager = forwardRef<
@@ -69,13 +89,18 @@ export const WebRtcManager = forwardRef<
       remoteDescAddedForOfferer,
       setRemoteDescAddedForOfferer,
       setAvailableCalls,
+      setAvailableMatches,
+      practice,
     },
     ref
   ) => {
     //const [foundMatch, setFoundMatch] = useState(false);
     const [callType, setCallType] = useState<String | undefined>(undefined);
+    const [matchMutuallyAccepted, setMatchMutuallyAccepted] =
+      useState<string>();
 
     console.log(callStatus);
+
     const initListeningForCalls = (
       username: string | null,
       setAvailableCallsFromServer: (
@@ -89,12 +114,111 @@ export const WebRtcManager = forwardRef<
         setAvailableCalls(data);
       };
       const socket = socketConnection(username, chosenPractice);
+      const socketMatchmaking = socketConnectionMatchmaking(
+        username,
+        chosenPractice
+      );
       socket.on("availableOffers", setCalls);
       socket.on("newOfferAwaiting", setCalls);
+      clientSocketForMatchmakingListeners(
+        socketMatchmaking,
+        setMatchMutuallyAccepted,
+        setAvailableMatches,
+        chosenPractice
+      );
     };
 
-    const checkMatch = async (chosenPractice: string) => {
-      console.log("checkMatch CALLED with chosenPractice:", chosenPractice);
+    const findMatch = async (chosenPractice: string) => {
+      console.log("findMatch CALLED with chosenPractice:", chosenPractice);
+
+      console.log(
+        "CHANGED. Step 0.1: Check if there is a match in the queue for the specific practice " +
+          chosenPractice
+      );
+      const foundMatch = await socketConnectionMatchmaking(
+        username,
+        chosenPractice
+      ).emitWithAck("findMatch", {});
+
+      if (foundMatch) {
+        console.log(
+          " Found a match " +
+            foundMatch.userName +
+            "  in the queue for " +
+            chosenPractice
+        );
+
+        console.log(
+          "before setting availableMatches with foundMatch:",
+          foundMatch
+        );
+
+        setAvailableMatches((prevMatches) => [
+          ...prevMatches,
+          { userName: foundMatch.userName, practice: chosenPractice },
+        ]);
+      } else {
+        console.log(
+          "No match found in the queue for " +
+            chosenPractice +
+            ". Waiting for a match..."
+        );
+      }
+    };
+
+    const startNewCall = async (chosenPractice: string) => {
+      console.log("startNewCall CALLED with chosenPractice:", chosenPractice);
+
+      console.log(
+        "CHANGED. Step 0.1: startNewCall() practice: " + chosenPractice
+      );
+
+      console.log(
+        "Making Offer. No match found in the queue for " + chosenPractice
+      );
+      initCall("offer");
+    };
+
+    const acceptMatch = async (
+      chosenPractice: string,
+      otherCallerUserName: string | null | undefined
+    ) => {
+      console.log("acceptMatch CALLED with chosenPractice:", chosenPractice);
+
+      console.log(
+        "CHANGED. Step 0.1: acceptMatch() practice: " + chosenPractice
+      );
+
+      const foundMatch = await socketConnectionMatchmaking(
+        username,
+        chosenPractice
+      ).emitWithAck("acceptMatch", {});
+    };
+
+    const joinCall = async (
+      chosenPractice: string,
+      otherCallerUserName: string | null | undefined
+    ) => {
+      console.log("joinCall CALLED with chosenPractice:", chosenPractice);
+
+      if (otherCallerUserName) {
+        console.log(
+          "Making answer. Found a match " +
+            otherCallerUserName +
+            "  in the queue for " +
+            chosenPractice
+        );
+        //setFoundMatch(true);
+        //setCallType("answer");
+        initCall("answer", otherCallerUserName);
+        availableCallsFromServer.map((callData: CallData) => {
+          setOfferData(callData);
+        });
+      }
+    };
+
+    const findMatchOld = async (chosenPractice: string) => {
+      console.log("findMatch CALLED with chosenPractice:", chosenPractice);
 
       console.log(
         "CHANGED. Step 0.1: Check if there is a match in the queue for the specific practice " +
@@ -103,7 +227,7 @@ export const WebRtcManager = forwardRef<
       const foundMatch = await socketConnection(
         username,
         chosenPractice
-      ).emitWithAck("checkMatch", {});
+      ).emitWithAck("findMatch", {});
 
       if (foundMatch) {
         console.log(
@@ -149,7 +273,8 @@ export const WebRtcManager = forwardRef<
       ) => void
     ) => {
       console.log(
-        "Step 2: GUM access granted, now we can set up the peer connection"
+        "Step 2: GUM access granted, now we can set up the peer connection with typeOfCall:",
+        typeOfCall
       );
       // prepForCall has finished running and updated callStatus
       const result = createPeerConnection(username, typeOfCall);
@@ -166,13 +291,56 @@ export const WebRtcManager = forwardRef<
     const navigate = useNavigate();
     const username = sessionStorage.getItem("username");
 
-    console.log("availableCallsFromServer: ", availableCallsFromServer);
+    useEffect(() => {
+      console.log(
+        "availableCallsFromServer or matchMutuallyAccepted has changed",
+        matchMutuallyAccepted
+      );
+      if (matchMutuallyAccepted === "Offerer") {
+        console.log("Offerer role given by matchMutuallyAccepted");
+        initCall("offer");
+      } else if (
+        matchMutuallyAccepted === "Answerer" &&
+        availableCallsFromServer.length > 0
+      ) {
+        console.log("Answerer role given by matchMutuallyAccepted");
+        availableCallsFromServer.map((callData: CallData) => {
+          if (callData && callData.offererUserName) {
+            console.log(
+              "Calling initCall with answer for: ",
+              callData.offererUserName
+            );
+            initCall("answer", callData?.offererUserName);
+            setOfferData(callData);
+          }
+        });
+      }
+    }, [availableCallsFromServer, matchMutuallyAccepted]);
+
+    // Step -0.1: Listen for available matches
+    useEffect(() => {
+      /* console.log("Step -0.1: Listen for available matches");
+      const socket = socketConnection(username);
+      socket.on("foundMatch", () => {
+        console.log("foundMatch called!!   availableMatch: ");
+        //setAvailableMatches((prev) => [...prev, availableMatch]);
+      });*/
+      /* clientSocketForMatchingListeners(
+        socket,
+        setMatchMutuallyAccepted,
+        setAvailableMatches
+      );*/
+    }, []);
     // Step 0: Listen for available calls
     useEffect(() => {
       console.log("Step 0: Listen for available calls");
       initListeningForCalls(username, setAvailableCallsFromServer, "Hej");
     }, []);
 
+    const [
+      step2SetupPeerConnectionExecuted,
+      setStep2SetupPeerConnectionExecuted,
+    ] = useState(false);
     // Step 2: GUM access granted, now we can set up the peer connection
     //We have media via GUM. setup the peerConnection w/listeners
     useEffect(() => {
@@ -184,6 +352,7 @@ export const WebRtcManager = forwardRef<
           setPeerConnection,
           setRemoteStream
         );
+        setStep2SetupPeerConnectionExecuted(true);
       }
     }, [callStatus?.haveMedia]);
 
@@ -198,20 +367,31 @@ export const WebRtcManager = forwardRef<
           "Step ?: Adding socket listeners for typeOfCall:",
           typeOfCall
         );
+        const socketMatchmaking = socketConnectionMatchmaking(
+          username,
+          practice
+        );
         const socket = socketConnection(username);
         clientSocketListeners(
           socket,
           typeOfCall,
+          setTypeOfCall,
           callStatus,
           updateCallStatus,
           peerConnection,
+          setPeerConnection,
           remoteFeedEl,
           localFeedEl,
           gatheredAnswerIceCandidatesRef,
           setIceCandidatesReadyTrigger,
           remoteDescAddedForOfferer,
           setOfferData,
-          setClientSocketListenersInitiated
+          setClientSocketListenersInitiated,
+          setMatchMutuallyAccepted,
+          setAvailableMatches,
+          setOfferCreated,
+          setAvailableCallsFromServer,
+          socketMatchmaking
         );
       }
     }, [typeOfCall, peerConnection]);
@@ -221,7 +401,9 @@ export const WebRtcManager = forwardRef<
     // Step 3: Create an offer
     //once the user has started this component, start WebRTC'ing :)
     useEffect(() => {
-      if (typeOfCall === "offer") {
+      console.log("Step 3 (Before): Creating offer typeOfCall:", typeOfCall);
+
+      if (typeOfCall === "offer" && step2SetupPeerConnectionExecuted) {
         console.log("Step 3: Creating offer");
         createOffer(
           peerConnection,
@@ -235,14 +417,18 @@ export const WebRtcManager = forwardRef<
           localStream
         );
       }
-    }, [clientSocketListenersInitiated]);
+    }, [step2SetupPeerConnectionExecuted]);
 
     // Step 4: Set the remote description (answer)
     useEffect(() => {
+      console.log("Step 4 (Before): Setting remote description (answer)");
+      console.log(callStatus);
+      console.log(offerCreated);
       if (callStatus?.answer && offerCreated) {
         addAnswer(
           callStatus,
           peerConnection,
+          remoteDescAddedForOfferer,
           setRemoteDescAddedForOfferer,
           updateCallStatus,
           offerData
@@ -275,7 +461,10 @@ export const WebRtcManager = forwardRef<
 
     useImperativeHandle(ref, () => ({
       initCall,
-      checkMatch,
+      findMatch,
+      acceptMatch,
+      startNewCall,
+      joinCall,
     }));
 
     return null; // This component does not return any JSX, it is a utility manager
@@ -341,14 +530,16 @@ export const createOffer = async (
 export const addAnswer = async (
   callStatus: CallStatus | undefined,
   peerConnection: RTCPeerConnection | undefined,
+  remoteDescAddedForOfferer: boolean,
   setRemoteDescAddedForOfferer: (value: React.SetStateAction<boolean>) => void,
   updateCallStatus: React.Dispatch<
     React.SetStateAction<CallStatus | undefined>
   >,
   offerData?: CallData
 ) => {
-  if (callStatus?.answer) {
+  if (callStatus?.answer && !remoteDescAddedForOfferer) {
     console.log("Step 4: Recieved and setting answer.");
+    console.log(callStatus);
 
     if (callStatus?.answer === undefined) {
       console.error("Answer is undefined!");
@@ -434,6 +625,7 @@ export const addRecievedOfferAndCreateAnswerAsync = async (
     const answer = await peerConnection.createAnswer();
     peerConnection.setLocalDescription(answer);
     console.log("Step 5: creating answer and sending it back to caller");
+    console.log("settting answererUserName: " + username);
 
     const copyOfferData = { ...offerData };
     copyOfferData.answer = answer;

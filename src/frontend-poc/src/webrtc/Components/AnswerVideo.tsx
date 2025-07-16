@@ -117,7 +117,7 @@ const AnswerVideo = ({
       updateCallStatus,
       localStream
     );
-  }, [answerCreated]);
+  }, []);
 
   return (
     <div>

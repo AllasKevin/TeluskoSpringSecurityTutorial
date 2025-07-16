@@ -4,6 +4,7 @@ import React, {
   useState,
   forwardRef,
   useRef,
+  useEffect,
 } from "react";
 import "../PracticesPage.css";
 import { ScheduleCallSection } from "./ScheduleCallSection";
@@ -76,20 +77,46 @@ export const CallHandlerPopUp = forwardRef<
     },
     ref
   ) => {
-    const handleJoinCall = () => {
+    const [availableMatches, setAvailableMatches] = useState<
+      { userName: string; practice: string }[]
+    >([]);
+
+    const handleJoinCall = (otherCallerUserName: string | null | undefined) => {
       console.log(`Joining call`);
-      webRtcManagerRef.current?.checkMatch(practice);
+      webRtcManagerRef.current?.joinCall(practice, otherCallerUserName);
+
+      //setShowPopup(false);
+    };
+    const handleAcceptCall = (
+      otherCallerUserName: string | null | undefined
+    ) => {
+      console.log("handleStartCall called, setting showPopup to false");
+      webRtcManagerRef.current?.acceptMatch(practice, otherCallerUserName);
 
       //setShowPopup(false);
     };
     const handleStartCall = () => {
       console.log("handleStartCall called, setting showPopup to false");
-      webRtcManagerRef.current?.checkMatch(practice);
+      webRtcManagerRef.current?.startNewCall(practice);
+
+      //setShowPopup(false);
+    };
+    const handleFindMatch = () => {
+      console.log("handleStartCall called, setting showPopup to false");
+      webRtcManagerRef.current?.findMatch(practice);
 
       //setShowPopup(false);
     };
 
+    useEffect(() => {
+      console.log("availableMatches updated: " + availableMatches);
+      console.log(availableMatches);
+    }, [availableMatches]);
+
     const webRtcManagerRef = useRef<WebRtcManagerNewHandle>(null);
+
+    console.log("availableMatches:", availableMatches); // ✅ Log here
+    console.log(availableMatches);
 
     return (
       <div className="popup-overlay" onClick={() => setShowPopup(false)}>
@@ -112,20 +139,29 @@ export const CallHandlerPopUp = forwardRef<
           remoteDescAddedForOfferer={remoteDescAddedForOfferer}
           setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
           setAvailableCalls={setAvailableCalls}
+          setAvailableMatches={setAvailableMatches}
+          practice={practice}
         />
         <div className="popup-content" onClick={(e) => e.stopPropagation()}>
           <div className="popup-text">
-            <h2>Available Calls</h2>
+            <h2>Potential matches found </h2>{" "}
             <ul>
-              {availableCalls.map((call, index) => (
-                <li key={index}>
-                  {call.offererUserName}
-                  {" Calling"}
-                  <button onClick={() => handleJoinCall()}>Join</button>
-                </li>
-              ))}
+              {Array.isArray(availableMatches) &&
+                availableMatches.map((match, index) => (
+                  <li key={index}>
+                    {match.userName}
+                    {" Calling"}
+                    <button onClick={() => handleJoinCall(match.userName)}>
+                      Join
+                    </button>
+                    <button onClick={() => handleAcceptCall(match.userName)}>
+                      Accept
+                    </button>
+                  </li>
+                ))}
             </ul>
             <button onClick={handleStartCall}>Start New Call</button>
+            <button onClick={handleFindMatch}>Check Match</button>
             <button onClick={() => setShowPopup(false)}>Close</button>
           </div>
         </div>

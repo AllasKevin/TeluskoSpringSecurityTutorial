@@ -1,17 +1,17 @@
 import { set } from "react-hook-form";
 
-const clientSocketListeners = (socket,typeOfCall,callStatus,updateCallStatus,peerConnection,
+const clientSocketListeners = (socket,typeOfCall,setTypeOfCall,callStatus,updateCallStatus,peerConnection,setPeerConnection,
     remoteFeedEl,localFeedEl,gatheredAnswerIceCandidatesRef,setIceCandidatesReadyTrigger,
-    remoteDescAddedForOfferer,setOfferData,setClientSocketListenersInitiated)=>{
+    remoteDescAddedForOfferer, setRemoteDescAddedForOfferer,setOfferData,setClientSocketListenersInitiated, setMatchMutuallyAccepted, setAvailableMatches, setOfferCreated,setAvailableCallsFromServer, setRemoteStream, setLocalStream,socketMatchmaking)=>{
 
     socket.on('answerResponse',entireOfferObj=>{
+        console.log("Recieved and setting answer. answererUserName: " + entireOfferObj.answererUserName);
         setOfferData(entireOfferObj);
         const copyCallStatus = {...callStatus}
         copyCallStatus.answer = entireOfferObj.answer
         copyCallStatus.myRole = typeOfCall
         copyCallStatus.otherCallerUserName = entireOfferObj.answererUserName;
         updateCallStatus(copyCallStatus)
-        console.log("Recieved and setting answer. answererUserName: " + entireOfferObj.answererUserName);
         console.log(copyCallStatus);
     })
 
@@ -33,10 +33,31 @@ const clientSocketListeners = (socket,typeOfCall,callStatus,updateCallStatus,pee
     socket.on('notification',message=>{
         console.log("notification: " + message)
         if(message === "hangUp"){
-            remoteFeedEl.current.srcObject = null;
+            remoteFeedEl = null;
+            socket.disconnect();
+            socket = null;
+            setTypeOfCall(null);
+            updateCallStatus(null);
+            setPeerConnection(null);
+            remoteFeedEl = null;
+            localFeedEl = null;
+            gatheredAnswerIceCandidatesRef = [];
+            setIceCandidatesReadyTrigger(null);
+            setRemoteDescAddedForOfferer(false)
+            setOfferData(null);
+            setClientSocketListenersInitiated(null); 
+            setMatchMutuallyAccepted(null); 
+            //setAvailableMatches(null);
+            setOfferCreated(null);
+            setAvailableCallsFromServer(null);
+            setRemoteStream(null);
+            setLocalStream(null);
+            socketMatchmaking.disconnect();
+            socketMatchmaking = null;
         }
 
     })
+    console.log("clientSocketListeners initialized!!!!");
     setClientSocketListenersInitiated(true);
 }
 
