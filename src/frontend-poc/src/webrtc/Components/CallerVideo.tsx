@@ -72,6 +72,15 @@ const CallerVideo = ({
     return () => hangupCall(callStatus);
   }, []);
 
+  // Step 5: Set the local stream to the local video element
+  //send back to home if no localStream
+  useEffect(() => {
+    if (localStream && localFeedEl?.current) {
+      console.log("Calling setStreamsLocally...");
+      setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
+    }
+  }, [localStream, remoteStream, localFeedEl, remoteFeedEl]);
+  
   // Clean on browser unload
   useEffect(() => {
     console.log("Cleaning up on browser unload, callstatus:", callStatus);
@@ -128,9 +137,7 @@ const CallerVideo = ({
     localStream
   );
 */
-  // Step 5: Set the local stream to the local video element
-  //send back to home if no localStream
-  setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
+
   /*
   // Step 5: Set the remote description (answer)
   useEffect(() => {
