@@ -391,7 +391,7 @@ export const WebRtcManager = forwardRef<
     useEffect(() => {
       console.log("Step 3 (Before): Creating offer typeOfCall:", typeOfCall);
 
-      if (typeOfCall === "offer" && step2SetupPeerConnectionExecuted) {
+      if (typeOfCall === "offer" && step3InitSocketListenersExecuted) {
         console.log("Step 3: Creating offer");
         createOffer(
           peerConnection,
