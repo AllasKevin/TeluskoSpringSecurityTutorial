@@ -1,8 +1,9 @@
 import { set } from "react-hook-form";
 
-const clientSocketListeners = (socket,typeOfCall,setTypeOfCall,callStatus,updateCallStatus,peerConnection,setPeerConnection,
+const clientSocketListeners = (setStep5AnswerReceivedExecuted,socket,typeOfCall,setTypeOfCall,callStatus,updateCallStatus,peerConnection,setPeerConnection,
     remoteFeedEl,localFeedEl,gatheredAnswerIceCandidatesRef,setIceCandidatesReadyTrigger,
-    remoteDescAddedForOfferer, setRemoteDescAddedForOfferer,setOfferData,setClientSocketListenersInitiated, setMatchMutuallyAccepted, setAvailableMatches, setOfferCreated,setAvailableCallsFromServer, setRemoteStream, setLocalStream,socketMatchmaking)=>{
+    remoteDescAddedForOfferer, setRemoteDescAddedForOfferer,setOfferData,setClientSocketListenersInitiated, setMatchMutuallyAccepted,
+     setAvailableMatches,setOfferCreated,setAvailableCallsFromServer,setRemoteStream,setLocalStream,socketMatchmaking)=>{
 
     socket.on('answerResponse',entireOfferObj=>{
         console.log("Recieved and setting answer. answererUserName: " + entireOfferObj.answererUserName);
@@ -12,6 +13,7 @@ const clientSocketListeners = (socket,typeOfCall,setTypeOfCall,callStatus,update
         copyCallStatus.myRole = typeOfCall
         copyCallStatus.otherCallerUserName = entireOfferObj.answererUserName;
         updateCallStatus(copyCallStatus)
+        setStep5AnswerReceivedExecuted(true);
         console.log(copyCallStatus);
     })
 
