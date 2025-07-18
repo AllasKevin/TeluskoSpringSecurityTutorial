@@ -187,7 +187,7 @@ io.on('connection', (socket) => {
             const offerInOffers = offers.find(o=>o.answererUserName === iceUserName);
             const socketToSendTo = connectedSockets.find(s=>s.userName === offerInOffers.offererUserName);
             if(socketToSendTo){
-                socket.to(socketToSendTo.socketId).emit('receivedIceCandidateFromServer',iceCandidate)
+                socket.to(socketToSendTo.defaultSocketId).emit('receivedIceCandidateFromServer',iceCandidate)
             }else{
                 console.log("Ice candidate recieved but could not find offerer")
             }

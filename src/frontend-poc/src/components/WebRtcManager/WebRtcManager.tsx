@@ -99,6 +99,29 @@ export const WebRtcManager = forwardRef<
     const [matchMutuallyAccepted, setMatchMutuallyAccepted] =
       useState<string>();
 
+    const [
+      step0InitListeningForCallsAndMatchesExecuted,
+      setStep0InitListeningForCallsAndMatchesExecuted,
+    ] = useState(false);
+    console.log(callStatus);
+
+    const [step1InitCallExecuted, setStep1InitCallExecuted] = useState(false);
+
+    const [
+      step2SetupPeerConnectionExecuted,
+      setStep2SetupPeerConnectionExecuted,
+    ] = useState(false);
+
+    const [
+      step3InitSocketListenersExecuted,
+      setStep3InitSocketListenersExecuted,
+    ] = useState(false);
+
+    const [step4CreateOfferExecuted, setStep4CreateOfferExecuted] =
+      useState(false);
+
+    const [step5AnswerReceivedExecuted, setStep5AnswerReceivedExecuted] =
+      useState(false);
     console.log(callStatus);
 
     const initListeningForCalls = (
@@ -108,7 +131,7 @@ export const WebRtcManager = forwardRef<
       ) => void,
       chosenPractice: string
     ) => {
-      console.log("Step 0: listening for available calls...");
+      console.log("Step 0: listening for available calls and matches...");
       const setCalls = (data: []) => {
         setAvailableCallsFromServer(data);
         setAvailableCalls(data);
@@ -126,6 +149,7 @@ export const WebRtcManager = forwardRef<
         setAvailableMatches,
         chosenPractice
       );
+      setStep0InitListeningForCallsAndMatchesExecuted(true);
     };
 
     const findMatch = async (chosenPractice: string) => {
@@ -217,40 +241,6 @@ export const WebRtcManager = forwardRef<
       }
     };
 
-    const findMatchOld = async (chosenPractice: string) => {
-      console.log("findMatch CALLED with chosenPractice:", chosenPractice);
-
-      console.log(
-        "CHANGED. Step 0.1: Check if there is a match in the queue for the specific practice " +
-          chosenPractice
-      );
-      const foundMatch = await socketConnection(
-        username,
-        chosenPractice
-      ).emitWithAck("findMatch", {});
-
-      if (foundMatch) {
-        console.log(
-          "Making answer. Found a match " +
-            foundMatch.userName +
-            "  in the queue for " +
-            chosenPractice
-        );
-        //setFoundMatch(true);
-        //setCallType("answer");
-        initCall("answer", foundMatch.userName);
-        availableCallsFromServer.map((callData: CallData) => {
-          setOfferData(callData);
-        });
-      } else {
-        console.log(
-          "Making Offer. No match found in the queue for " + chosenPractice
-        );
-        //setCallType("offer");
-        initCall("offer");
-      }
-    };
-
     const initCall = async (typeOfCall: string, foundMatch?: string) => {
       console.log("Step 1: Initialize call and get GUM access");
       await prepForCall({
@@ -260,6 +250,7 @@ export const WebRtcManager = forwardRef<
         foundMatch,
       });
       setTypeOfCall(typeOfCall); //offer or answer
+      setStep1InitCallExecuted(true);
     };
 
     const setupPeerConnection = (
@@ -333,18 +324,13 @@ export const WebRtcManager = forwardRef<
     }, []);
     // Step 0: Listen for available calls
     useEffect(() => {
-      console.log("Step 0: Listen for available calls");
       initListeningForCalls(username, setAvailableCallsFromServer, "Hej");
     }, []);
 
-    const [
-      step2SetupPeerConnectionExecuted,
-      setStep2SetupPeerConnectionExecuted,
-    ] = useState(false);
     // Step 2: GUM access granted, now we can set up the peer connection
     //We have media via GUM. setup the peerConnection w/listeners
     useEffect(() => {
-      if (callStatus && username && callStatus.haveMedia && !peerConnection) {
+      if (step1InitCallExecuted && username) {
         // prepForCall has finished running and updated callStatus
         setupPeerConnection(
           typeOfCall,
@@ -354,7 +340,7 @@ export const WebRtcManager = forwardRef<
         );
         setStep2SetupPeerConnectionExecuted(true);
       }
-    }, [callStatus?.haveMedia]);
+    }, [step1InitCallExecuted]);
 
     const [clientSocketListenersInitiated, setClientSocketListenersInitiated] =
       useState(false);
@@ -373,6 +359,7 @@ export const WebRtcManager = forwardRef<
         );
         const socket = socketConnection(username);
         clientSocketListeners(
+          setStep5AnswerReceivedExecuted,
           socket,
           typeOfCall,
           setTypeOfCall,
@@ -393,6 +380,7 @@ export const WebRtcManager = forwardRef<
           setAvailableCallsFromServer,
           socketMatchmaking
         );
+        setStep3InitSocketListenersExecuted(true);
       }
     }, [typeOfCall, peerConnection]);
 
@@ -416,15 +404,16 @@ export const WebRtcManager = forwardRef<
           offerData,
           localStream
         );
+        setStep4CreateOfferExecuted(true);
       }
-    }, [step2SetupPeerConnectionExecuted]);
+    }, [step3InitSocketListenersExecuted]);
 
     // Step 4: Set the remote description (answer)
     useEffect(() => {
       console.log("Step 4 (Before): Setting remote description (answer)");
       console.log(callStatus);
       console.log(offerCreated);
-      if (callStatus?.answer && offerCreated) {
+      if (callStatus?.answer && offerCreated && step5AnswerReceivedExecuted) {
         addAnswer(
           callStatus,
           peerConnection,
@@ -438,7 +427,7 @@ export const WebRtcManager = forwardRef<
             offerData?.answererUserName
         );
       }
-    }, [callStatus, offerCreated]);
+    }, [step5AnswerReceivedExecuted]);
 
     //once remoteStream AND pc are ready, navigate
     useEffect(() => {
@@ -451,13 +440,22 @@ export const WebRtcManager = forwardRef<
       );
       if (remoteStream && peerConnection) {
         console.log("navigating to videocall page...");
-        if (typeOfCall === "offer" && remoteDescAddedForOfferer) {
+        if (
+          typeOfCall === "offer" &&
+          remoteDescAddedForOfferer &&
+          step4CreateOfferExecuted
+        ) {
           navigate("/offer", { replace: false });
         } else if (typeOfCall === "answer") {
           navigate("/answer", { replace: false });
         }
       }
-    }, [remoteStream, peerConnection, remoteDescAddedForOfferer]);
+    }, [
+      remoteStream,
+      peerConnection,
+      remoteDescAddedForOfferer,
+      step4CreateOfferExecuted,
+    ]);
 
     useImperativeHandle(ref, () => ({
       initCall,

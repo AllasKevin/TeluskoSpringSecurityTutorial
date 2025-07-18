@@ -60,11 +60,12 @@ const CallerVideo = ({
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
   );
-  const [offerCreated, setOfferCreated] = useState(false);
   const username = sessionStorage.getItem("username");
 
+  console.log("CallerVideo component mounted, peerConnection:", peerConnection);
+  console.log(peerConnection?.ontrack);
+
   console.log("CallerVideo component mounted, callstatus:", callStatus);
-  console.log(callStatus);
   // Clean on route/component change
   useEffect(() => {
     console.log("Before calling hangupCall in CallerVideo");
@@ -80,7 +81,7 @@ const CallerVideo = ({
       setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
     }
   }, [localStream, remoteStream, localFeedEl, remoteFeedEl]);
-  
+
   // Clean on browser unload
   useEffect(() => {
     console.log("Cleaning up on browser unload, callstatus:", callStatus);
@@ -113,7 +114,10 @@ const CallerVideo = ({
 
   //if we have tracks, disable the video message
   useEffect(() => {
+    console.log("Before setting video message.");
     if (peerConnection) {
+      console.log("Actually setting video message.");
+
       peerConnection.ontrack = (e) => {
         if (e?.streams?.length) {
           setVideoMessage("");
