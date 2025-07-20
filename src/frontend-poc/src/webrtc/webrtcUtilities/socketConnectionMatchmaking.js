@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 
 let socket;
-const socketConnection = (userName, chosenPractice) =>{
+const socketConnectionForMatchmaking = (userName, chosenPractice) =>{
     //check to see if the socket is already connected
     if(socket && socket.connected){
         //if so, then just return it so whoever needs it, can use it
@@ -32,4 +32,4 @@ const socketConnection = (userName, chosenPractice) =>{
     }
 }
 
-export default socketConnection;
+export default socketConnectionForMatchmaking;
