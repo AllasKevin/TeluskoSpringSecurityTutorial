@@ -20,6 +20,7 @@ interface UseCallManagerProps {
 export function useCallManager({
   peerConnection,
   setPeerConnection,
+  callStatus,
   updateCallStatus,
   localFeedEl,
   remoteFeedEl,
@@ -29,10 +30,11 @@ export function useCallManager({
   setRemoteStream,
   offerData,
 }: UseCallManagerProps) {
-const hangupCall = useCallback((callStatus: CallStatus | undefined) => {
+const hangupCall = useCallback(() => {
     if (peerConnection) {
 
-      const otherCallerUserName = callStatus?.otherCallerUserName;
+      const otherCallerUserName = sessionStorage.getItem("otherCallerUserName");
+      
       console.log("Hanging up...");
       console.log("callStatus before hangUp forreal foreal:");
       console.log(callStatus);
