@@ -207,8 +207,14 @@ export const WebRtcManager = forwardRef<
       console.log("acceptMatch CALLED with chosenPractice:", chosenPractice);
 
       console.log(
-        "CHANGED. Step 0.1: acceptMatch() practice: " + chosenPractice
+        "CHANGED. Step 0.1: acceptMatch() practice: " +
+          chosenPractice +
+          " otherCallerUserName: " +
+          otherCallerUserName
       );
+      if (otherCallerUserName) {
+        sessionStorage.setItem("otherCallerUserName", otherCallerUserName);
+      }
 
       const foundMatch = await socketConnectionMatchmaking(
         username,
@@ -297,6 +303,13 @@ export const WebRtcManager = forwardRef<
     const navigate = useNavigate();
     const username = sessionStorage.getItem("username");
 
+    // Step 0: Listen for available matches
+    useEffect(() => {
+      initListeningForMatches(username, "Hej");
+      initListeningForCalls(username, setAvailableCallsFromServer, practice);
+    }, []);
+
+    // Step 1: initialize call after both have accepted the match
     useEffect(() => {
       console.log(
         "availableCallsFromServer or matchMutuallyAccepted has changed",
@@ -322,12 +335,6 @@ export const WebRtcManager = forwardRef<
         });
       }
     }, [availableCallsFromServer, matchMutuallyAccepted]);
-
-    // Step 0: Listen for available matches
-    useEffect(() => {
-      initListeningForMatches(username, "Hej");
-      initListeningForCalls(username, setAvailableCallsFromServer, practice);
-    }, []);
 
     // Step 2: GUM access granted, now we can set up the peer connection
     //We have media via GUM. setup the peerConnection w/listeners
@@ -551,7 +558,7 @@ export const addAnswer = async (
     console.log(callStatus);
     await peerConnection?.setRemoteDescription(callStatus.answer);
 
-    setCallStatusForOfferer(offerData, callStatus, updateCallStatus);
+    setCallStatusForOfferer(callStatus, updateCallStatus);
     setRemoteDescAddedForOfferer(true);
   }
 };
@@ -604,7 +611,7 @@ export const addRecievedOfferAndCreateAnswerAsync = async (
     console.log("No localstream, returning...");
     return;
   } else if (!answerCreated && callStatus) {
-    setCallStatusForAnswerer(offerData, callStatus, updateCallStatus);
+    setCallStatusForAnswerer(callStatus, updateCallStatus);
     console.log("Init video! from addRecievedOfferAndCreateAnswerAsync");
     initVideo(peerConnection, callStatus, localStream);
 
@@ -643,7 +650,6 @@ export const addRecievedOfferAndCreateAnswerAsync = async (
 };
 
 const setCallStatusForAnswerer = (
-  offerData: CallData | undefined,
   callStatus: CallStatus,
   updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>
 ) => {
@@ -651,17 +657,17 @@ const setCallStatusForAnswerer = (
   const copyCallStatus = { ...callStatus };
   copyCallStatus.videoEnabled = true;
   copyCallStatus.callInitiated = true;
-  copyCallStatus.otherCallerUserName = offerData?.offererUserName;
+  copyCallStatus.otherCallerUserName = sessionStorage.getItem(
+    "otherCallerUserName"
+  );
   console.log(
     "setCallStatusForAnswerer().otherCallerUserName: " +
       copyCallStatus.otherCallerUserName
   );
-  console.log(offerData);
   updateCallStatus(copyCallStatus);
 };
 
 const setCallStatusForOfferer = (
-  offerData: CallData | undefined,
   callStatus: CallStatus,
   updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>
 ) => {
@@ -671,12 +677,13 @@ const setCallStatusForOfferer = (
   const copyCallStatus = { ...callStatus };
   copyCallStatus.videoEnabled = true;
   copyCallStatus.callInitiated = true;
-  copyCallStatus.otherCallerUserName = offerData?.answererUserName;
+  copyCallStatus.otherCallerUserName = sessionStorage.getItem(
+    "otherCallerUserName"
+  );
   console.log(
     "setCallStatusForOfferer().otherCallerUserName: " +
       copyCallStatus.otherCallerUserName
   );
-  console.log(offerData);
   updateCallStatus(copyCallStatus);
 };
 

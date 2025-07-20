@@ -166,7 +166,7 @@ io.on('connection', (socket) => {
             //this ice is coming from the offerer. Send to the answerer
             const offerInOffers = offers.find(o=>o.offererUserName === iceUserName);
             if(offerInOffers){
-                console.log("Found the offer in offers! username: " + offerInOffers.offererUserName);
+                console.log("Received ice C. from offerer: " + offerInOffers.offererUserName);
                 offerInOffers.offerIceCandidates.push(iceCandidate)
                 // 1. When the answerer answers, all existing ice candidates are sent
                 // 2. Any candidates that come in after the offer has been answered, will be passed through
@@ -270,7 +270,7 @@ io.of("/matching").on("connection", socket => {
             console.log("Both users accepted the match: " + userName);
 
             const socketIdOfMatch = connectedSockets.find(s=>s.userName === getPairedUserOf(userName)).matchingSocketId;
-            console.log("Emitting matchMutuallyAccepted to both users: " + userName +  " " + senderSocketId +" and " + getPairedUserOf(userName) + " " + socketIdOfMatch);
+            console.log("Emitting matchMutuallyAccepted to both users: " + userName +  " " + senderSocketId +" who will be offerer and " + getPairedUserOf(userName) + " " + socketIdOfMatch + " who will be answerer.");
 
 
             namespaceSocketServer.to(senderSocketId).emit('matchMutuallyAccepted', "Offerer");
