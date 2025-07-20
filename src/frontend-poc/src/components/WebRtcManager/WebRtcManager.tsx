@@ -100,8 +100,13 @@ export const WebRtcManager = forwardRef<
       useState<string>();
 
     const [
-      step0InitListeningForCallsAndMatchesExecuted,
-      setStep0InitListeningForCallsAndMatchesExecuted,
+      step0InitListeningForMatchesExecuted,
+      setStep0InitListeningForMatchesExecuted,
+    ] = useState(false);
+
+    const [
+      step0InitListeningForCallsExecuted,
+      setStep0InitListeningForCallsExecuted,
     ] = useState(false);
     console.log(callStatus);
 
@@ -124,32 +129,24 @@ export const WebRtcManager = forwardRef<
       useState(false);
     console.log(callStatus);
 
-    const initListeningForCalls = (
+    const initListeningForMatches = (
       username: string | null,
-      setAvailableCallsFromServer: (
-        value: React.SetStateAction<never[]>
-      ) => void,
       chosenPractice: string
     ) => {
-      console.log("Step 0: listening for available calls and matches...");
-      const setCalls = (data: []) => {
-        setAvailableCallsFromServer(data);
-        setAvailableCalls(data);
-      };
-      const socket = socketConnection(username, chosenPractice);
+      console.log("Step 0: listening for available matches...");
+
       const socketMatchmaking = socketConnectionMatchmaking(
         username,
         chosenPractice
       );
-      socket.on("availableOffers", setCalls);
-      socket.on("newOfferAwaiting", setCalls);
+
       clientSocketForMatchmakingListeners(
         socketMatchmaking,
         setMatchMutuallyAccepted,
         setAvailableMatches,
         chosenPractice
       );
-      setStep0InitListeningForCallsAndMatchesExecuted(true);
+      setStep0InitListeningForMatchesExecuted(true);
     };
 
     const findMatch = async (chosenPractice: string) => {
@@ -241,6 +238,24 @@ export const WebRtcManager = forwardRef<
       }
     };
 
+    const initListeningForCalls = (
+      username: string | null,
+      setAvailableCallsFromServer: (
+        value: React.SetStateAction<never[]>
+      ) => void,
+      chosenPractice: string
+    ) => {
+      console.log("Step 0: listening for available calls...");
+      const setCalls = (data: []) => {
+        setAvailableCallsFromServer(data);
+        setAvailableCalls(data);
+      };
+      const socket = socketConnection(username, chosenPractice);
+      socket.on("availableOffers", setCalls);
+      socket.on("newOfferAwaiting", setCalls);
+      setStep0InitListeningForCallsExecuted(true);
+    };
+
     const initCall = async (typeOfCall: string, foundMatch?: string) => {
       console.log("Step 1: Initialize call and get GUM access");
       await prepForCall({
@@ -308,23 +323,10 @@ export const WebRtcManager = forwardRef<
       }
     }, [availableCallsFromServer, matchMutuallyAccepted]);
 
-    // Step -0.1: Listen for available matches
+    // Step 0: Listen for available matches
     useEffect(() => {
-      /* console.log("Step -0.1: Listen for available matches");
-      const socket = socketConnection(username);
-      socket.on("foundMatch", () => {
-        console.log("foundMatch called!!   availableMatch: ");
-        //setAvailableMatches((prev) => [...prev, availableMatch]);
-      });*/
-      /* clientSocketForMatchingListeners(
-        socket,
-        setMatchMutuallyAccepted,
-        setAvailableMatches
-      );*/
-    }, []);
-    // Step 0: Listen for available calls
-    useEffect(() => {
-      initListeningForCalls(username, setAvailableCallsFromServer, "Hej");
+      initListeningForMatches(username, "Hej");
+      initListeningForCalls(username, setAvailableCallsFromServer, practice);
     }, []);
 
     // Step 2: GUM access granted, now we can set up the peer connection
