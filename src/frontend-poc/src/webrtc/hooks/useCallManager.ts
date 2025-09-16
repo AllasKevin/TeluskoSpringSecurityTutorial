@@ -82,7 +82,7 @@ const hangupCall = useCallback(() => {
       socketConnection(username).emit("notify", {
         receiver: otherCallerUserName,
         message: "hangUp",
-      });
+      }).disconnect();
     }
   }, [peerConnection, updateCallStatus, localFeedEl, remoteFeedEl]);
 
