@@ -343,7 +343,7 @@ export const WebRtcManager = forwardRef<
           setRemoteStream
         );
         setStep2SetupPeerConnectionExecuted(true);
-        //setStep1InitCallExecuted(false);
+        setStep1InitCallExecuted(false);
       }
     }, [step1InitCallExecuted]);
 
@@ -376,7 +376,7 @@ export const WebRtcManager = forwardRef<
     // We know which type of client this is and have PC.
     // Add socketlisteners
     useEffect(() => {
-      if (typeOfCall && peerConnection) {
+      if (typeOfCall && peerConnection && step2SetupPeerConnectionExecuted) {
         console.log(
           "Step 3: Adding socket listeners for typeOfCall:",
           typeOfCall
@@ -414,8 +414,9 @@ export const WebRtcManager = forwardRef<
           disconnectSocket
         );
         setStep3InitSocketListenersExecuted(true);
+        setStep2SetupPeerConnectionExecuted(false);
       }
-    }, [typeOfCall, peerConnection]);
+    }, [typeOfCall, peerConnection, step2SetupPeerConnectionExecuted]);
 
     const [offerCreated, setOfferCreated] = useState(false);
 
@@ -437,6 +438,7 @@ export const WebRtcManager = forwardRef<
           localStream
         );
         setStep4CreateOfferExecuted(true);
+        setStep3InitSocketListenersExecuted(false);
       }
     }, [step3InitSocketListenersExecuted]);
 
@@ -459,6 +461,7 @@ export const WebRtcManager = forwardRef<
           "After Adding answer, offerdata.answererUserName:" +
             offerData?.answererUserName
         );
+        setStep5AnswerReceivedExecuted(false);
       }
     }, [step5AnswerReceivedExecuted]);
 
@@ -478,6 +481,8 @@ export const WebRtcManager = forwardRef<
           step4CreateOfferExecuted
         ) {
           console.log("navigating as offerer to videocall page...");
+          setStep4CreateOfferExecuted(false);
+
           navigate("/offer", { replace: false });
         } else if (typeOfCall === "answer") {
           console.log("navigating as answerer to videocall page...");
