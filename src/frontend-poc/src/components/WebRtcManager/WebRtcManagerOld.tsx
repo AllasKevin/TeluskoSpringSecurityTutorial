@@ -1,7 +1,7 @@
 import { CallStatus } from "../../App";
 import createPeerConnection from "../../webrtc/webrtcUtilities/createPeerConn";
 import prepForCall from "../../webrtc/webrtcUtilities/prepForCall";
-import socketConnection from "../../webrtc/webrtcUtilities/socketConnection";
+import { socketConnection } from "../../webrtc/webrtcUtilities/socketConnection";
 import { CallData } from "../Dashboard";
 
 export class WebRtcManagerOld {

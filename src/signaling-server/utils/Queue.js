@@ -26,6 +26,10 @@ class Queue {
   getItems() {
     return this.items;
   }
+
+  removeByUserName(userName) {
+    this.items = this.items.filter(item => item.userName !== userName);
+  }
 }
 
 module.exports = Queue;

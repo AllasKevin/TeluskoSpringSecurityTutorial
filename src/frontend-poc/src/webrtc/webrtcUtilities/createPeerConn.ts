@@ -1,5 +1,5 @@
 import peerConfiguration from './stunServers'
-import socketConnection from "./socketConnection";
+import {socketConnection} from "./socketConnection";
 
 const createPeerConnection = (userName: string,typeOfCall: string)=>{
     //token for example
@@ -22,6 +22,7 @@ const createPeerConnection = (userName: string,typeOfCall: string)=>{
 
         peerConnection.addEventListener('icecandidate',e=>{
             if(e.candidate){
+                //console.log("New ICE candidate: ", e.candidate);
                 // emit the new ice cand. to the signaling server
                 socket.emit('sendIceCandidateToSignalingServer',{
                     iceCandidate: e.candidate,

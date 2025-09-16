@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
     const userName = socket.handshake.auth.userName;
     const password = socket.handshake.auth.password;
     const practice = socket.handshake.auth.practice;
-    console.log(`${userName} connected with socketId: ${socket.id} default NS`);
+    console.log(`${userName} connected with socketId: ${socket.id} default NS for practice: ${practice}`);
 
 
     if(password !== "x"){
@@ -196,9 +196,15 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect',()=>{
+        console.log("Client disconnected from default NS: " + userName + " with socketId: " + socket.id)
         const offerToClear = offers.findIndex(o=>o.offererUserName === userName)
         offers.splice(offerToClear,1)
         socket.emit('availableOffers',offers);
+
+        const socketIndex = connectedSockets.findIndex(s => s.userName === userName);
+        if (socketIndex !== -1) {
+          connectedSockets.splice(socketIndex, 1);
+        }
     })
 
     
@@ -248,6 +254,7 @@ io.of("/matching").on("connection", socket => {
         else{
             const matchSuggestion = currentQueue.dequeue();
 
+            // TODO ta bort mathedPair ifall den in fyller någon funktionsom just nu verkar vara fallet.
             addMatchedPair(userName, matchSuggestion.userName);
 
             const socketIdOfMatch = connectedSockets.find(s=>s.userName === matchSuggestion.userName).matchingSocketId;
@@ -275,9 +282,33 @@ io.of("/matching").on("connection", socket => {
 
             namespaceSocketServer.to(senderSocketId).emit('matchMutuallyAccepted', "Offerer");
             namespaceSocketServer.to(socketIdOfMatch).emit('matchMutuallyAccepted', "Answerer");
+
+            removePairByUsernameInMatchedPairs(userName);
+
+            findMatchQueue.removeByUserName(userName);
+
+/*
+            socket.disconnect(true);
+
+
+            const socketToDisconnect = io.of("/matching").sockets.get(socketIdOfMatch).disconnect(true);
+
+            if (socketToDisconnect) {
+              socketToDisconnect.disconnect(true);
+              console.log(`✅ Disconnected ${userToKick.userName} from ${userToKick.namespace}`);
+            } else {
+              console.warn(`⚠️ No socket found in ${userToKick.namespace} for ID ${userToKick.socketId}`);
+            }
+
+
+            console.log("disconnected both sockets after match accepted");*/
         }
 
         //socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))
+    })
+
+    socket.on('disconnect',()=>{
+        console.log("Client disconnected from matching NS: " + userName + " with socketId: " + socket.id)
     })
 });
 
@@ -356,4 +387,17 @@ function addMatchingSocketId(userName, socketId) {
   } else {
     connectedSockets.push({ userName, matchingSocketId: socketId });
   }
+}
+
+function removePairByUsernameInMatchedPairs(usernameToRemove) {
+  for (let i = matchedPairs.length - 1; i >= 0; i--) {
+    const pair = matchedPairs[i];
+    if (pair.userA === usernameToRemove || pair.userB === usernameToRemove) {
+      matchedPairs.splice(i, 1);
+    }
+  }
+}
+
+function removeUserFromFindMatchQueue(usernameToRemove) {
+  findMatchQueue.items = findMatchQueue.items.filter(item => item.userName !== usernameToRemove);
 }

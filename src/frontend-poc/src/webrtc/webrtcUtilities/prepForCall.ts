@@ -17,7 +17,7 @@ const prepForCall = ({callStatus,updateCallStatus,setLocalStream, foundMatch}: P
     return new Promise<void>(async (resolve, reject) => {
         //can bring constraints in as a param
         const constraints = {
-            video: false, //must have one constraint, dont have to show it yet
+            video: true, //must have one constraint, dont have to show it yet
             audio: {
                 sampleRate: 48000,         // match WebRTC's preferred rate
                 channelCount: 2,           // stereo

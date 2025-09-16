@@ -1,6 +1,6 @@
 import { set } from "react-hook-form";
 
-const clientSocketForMatchmakingListeners = (socket, setMatchMutuallyAccepted, setAvailableMatches, chosenPractice)=>{
+const clientSocketForMatchmakingListeners = (socket,matchMutuallyAccepted, setMatchMutuallyAccepted, setAvailableMatches, chosenPractice)=>{
 
     socket.on('foundMatch',availableMatch=>{
         console.log("availableMatch: " + availableMatch)
@@ -10,8 +10,10 @@ const clientSocketForMatchmakingListeners = (socket, setMatchMutuallyAccepted, s
         ]);    })
 
     socket.on('matchMutuallyAccepted', role=>{
+        console.log("🔌 matchMutuallyAccepted handler on socket id:", socket.id);
         console.log("matchMutuallyAccepted: " + role)
         setMatchMutuallyAccepted(role);
+        socket.disconnect();
     })
 
     console.log("clientSocketForMatchmakingListeners initialized");

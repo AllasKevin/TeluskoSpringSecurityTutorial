@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { CallStatus } from "../../App";
 import { CallData } from "../../components/Dashboard";
-import socketConnection from "../webrtcUtilities/socketConnection";
+import {socketConnection} from "../webrtcUtilities/socketConnection";
 
 interface UseCallManagerProps {
   peerConnection: RTCPeerConnection | undefined;
