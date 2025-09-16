@@ -1,12 +1,18 @@
 import { set } from "react-hook-form";
 
-const clientSocketListeners = (setStep5AnswerReceivedExecuted,socket,typeOfCall,setTypeOfCall,callStatus,updateCallStatus,peerConnection,setPeerConnection,
+const clientSocketListeners = (step5AnswerReceivedExecuted,setStep5AnswerReceivedExecuted,socket,typeOfCall,setTypeOfCall,callStatus,updateCallStatus,peerConnection,setPeerConnection,
     remoteFeedEl,localFeedEl,gatheredAnswerIceCandidatesRef,setIceCandidatesReadyTrigger,
     remoteDescAddedForOfferer, setRemoteDescAddedForOfferer,setOfferData,setClientSocketListenersInitiated, setMatchMutuallyAccepted,
-     setAvailableMatches,setOfferCreated,setAvailableCallsFromServer,setRemoteStream,setLocalStream,socketMatchmaking)=>{
+     setAvailableMatches,setOfferCreated,setAvailableCallsFromServer,setRemoteStream,setLocalStream,socketMatchmaking,disconnectSocket)=>{
 
     socket.on('answerResponse',entireOfferObj=>{
-        console.log("Recieved and setting answer. answererUserName: " + entireOfferObj.answererUserName);
+
+        if (step5AnswerReceivedExecuted) {
+            console.warn("🔁 Duplicate answerResponse received, ignoring.");
+            return;
+        }
+
+        console.log("✅ Recieved and setting answer. answererUserName: " + entireOfferObj.answererUserName);
         setOfferData(entireOfferObj);
         const copyCallStatus = {...callStatus}
         copyCallStatus.answer = entireOfferObj.answer
@@ -36,27 +42,45 @@ const clientSocketListeners = (setStep5AnswerReceivedExecuted,socket,typeOfCall,
         console.log("notification: " + message)
         if(message === "hangUp"){
             remoteFeedEl = null;
-            socket.disconnect();
-            socket = null;
+            disconnectSocket();
+                        console.log("notification: " + message + " 1handled");
+
             setTypeOfCall(null);
             updateCallStatus(null);
             setPeerConnection(null);
+                        console.log("notification: " + message + " 2handled");
+
             remoteFeedEl = null;
             localFeedEl = null;
             gatheredAnswerIceCandidatesRef = [];
+                        console.log("notification: " + message + " 3handled");
+
             setIceCandidatesReadyTrigger(null);
-            setRemoteDescAddedForOfferer(false)
+            setRemoteDescAddedForOfferer(false);
+
+            console.log("notification: " + message + " 4handled");
+
             setOfferData(null);
+                                    console.log("notification: " + message + " 5handled");
+
             setClientSocketListenersInitiated(null); 
+                        console.log("notification: " + message + " 6handled");
+
             setMatchMutuallyAccepted(null); 
             //setAvailableMatches(null);
+                        console.log("notification: " + message + " 7handled");
             setOfferCreated(null);
+                        console.log("notification: " + message + " 7handled");
             setAvailableCallsFromServer(null);
+                        console.log("notification: " + message + " 8handled");
             setRemoteStream(null);
+                        console.log("notification: " + message + " 9handled");
+
             setLocalStream(null);
             socketMatchmaking.disconnect();
             socketMatchmaking = null;
         }
+        console.log("notification: " + message + " handled");
 
     })
     console.log("clientSocketListeners initialized!!!!");

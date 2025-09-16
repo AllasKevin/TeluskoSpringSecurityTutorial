@@ -32,4 +32,18 @@ const socketConnection = (userName, chosenPractice) =>{
     }
 }
 
-export default socketConnection;
+const disconnectSocket = () => {
+  if (socket) {
+    console.log("Disconnecting socket...");
+    socket.disconnect();
+    socket = null;
+  }
+};
+
+const getCurrentSocket = () => socket;
+
+export {
+  socketConnection,
+  disconnectSocket,
+  getCurrentSocket
+};

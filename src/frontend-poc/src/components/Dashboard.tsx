@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CallStatus } from "../App";
 import apiClient from "../services/api-client";
 import clientSocketListeners from "../webrtc/webrtcUtilities/clientSocketListeners";
-import socketConnection from "../webrtc/webrtcUtilities/socketConnection";
+import { socketConnection } from "../webrtc/webrtcUtilities/socketConnection";
 import { WebRtcManagerOld } from "./WebRtcManager/WebRtcManagerOld";
 
 interface Color {
