@@ -67,6 +67,7 @@ const Home = ({callStatus,updateCallStatus,setLocalStream,
     //Add socketlisteners
     useEffect(()=>{
         if(typeOfCall && peerConnection){
+            console.log("socketConection being called in Home.js");
             const socket = socketConnection(userName)
             clientSocketListeners(socket,typeOfCall,callStatus,
                 updateCallStatus,peerConnection,remoteFeedEl,localFeedEl)
