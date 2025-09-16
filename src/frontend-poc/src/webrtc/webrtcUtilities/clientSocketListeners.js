@@ -3,7 +3,7 @@ import { set } from "react-hook-form";
 const clientSocketListeners = (step5AnswerReceivedExecuted,setStep5AnswerReceivedExecuted,socket,typeOfCall,setTypeOfCall,callStatus,updateCallStatus,peerConnection,setPeerConnection,
     remoteFeedEl,localFeedEl,gatheredAnswerIceCandidatesRef,setIceCandidatesReadyTrigger,
     remoteDescAddedForOfferer, setRemoteDescAddedForOfferer,setOfferData,setClientSocketListenersInitiated, setMatchMutuallyAccepted,
-     setAvailableMatches,setOfferCreated,setAvailableCallsFromServer,setRemoteStream,setLocalStream,socketMatchmaking,disconnectSocket)=>{
+     setAvailableMatches,setOfferCreated,setAvailableCallsFromServer,setRemoteStream,setLocalStream,/*socketMatchmaking,*/disconnectSocket)=>{
 
     socket.on('answerResponse',entireOfferObj=>{
 
@@ -77,8 +77,8 @@ const clientSocketListeners = (step5AnswerReceivedExecuted,setStep5AnswerReceive
                         console.log("notification: " + message + " 9handled");
 
             setLocalStream(null);
-            socketMatchmaking.disconnect();
-            socketMatchmaking = null;
+            //socketMatchmaking.disconnect();
+            //socketMatchmaking = null;
         }
         console.log("notification: " + message + " handled");
 

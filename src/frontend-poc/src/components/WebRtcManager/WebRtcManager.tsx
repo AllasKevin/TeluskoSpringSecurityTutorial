@@ -381,10 +381,10 @@ export const WebRtcManager = forwardRef<
           "Step 3: Adding socket listeners for typeOfCall:",
           typeOfCall
         );
-        const socketMatchmaking = socketConnectionMatchmaking(
+        /*const socketMatchmaking = socketConnectionMatchmaking(
           username,
           practice
-        );
+        );*/
         const socket = socketConnection(username, practice);
         clientSocketListeners(
           step5AnswerReceivedExecuted,
@@ -410,7 +410,7 @@ export const WebRtcManager = forwardRef<
           setAvailableCallsFromServer,
           setRemoteStream,
           setLocalStream,
-          socketMatchmaking,
+          //socketMatchmaking,
           disconnectSocket
         );
         setStep3InitSocketListenersExecuted(true);
