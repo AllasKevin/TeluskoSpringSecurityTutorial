@@ -247,7 +247,14 @@ io.of("/matching").on("connection", socket => {
 
         console.log("findMatch called! practice: " + practice + " userName: " + userName);
 
-        if (currentQueue.size() < 1 ) {
+        if(currentQueue.containsUserName(userName))
+        {
+            console.log("User " + userName + " is already in the queue, not adding again.");
+            ackFunction(false);
+            return;
+        }
+
+        if (currentQueue.size() < 1) {
             console.log("User " + userName + " added to queue because queue was empty. currentQueue size: " + currentQueue.size());
             currentQueue.enqueue({ userName, socketId: socket.id });
             findMatchMap[practice].queue = currentQueue;
@@ -258,7 +265,7 @@ io.of("/matching").on("connection", socket => {
         else{
             const matchSuggestion = currentQueue.dequeue();
 
-            // TODO ta bort mathedPair ifall den in fyller någon funktionsom just nu verkar vara fallet.
+            // TODO ta bort mathedPair ifall den inte fyller någon funktionsom just nu verkar vara fallet.
             addMatchedPair(userName, matchSuggestion.userName);
 
             const socketIdOfMatch = connectedSockets.find(s=>s.userName === matchSuggestion.userName).matchingSocketId;
