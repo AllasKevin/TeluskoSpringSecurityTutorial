@@ -1,11 +1,10 @@
 import { RefObject, useEffect, useState } from "react";
-import apiClient from "../services/api-client";
-import socketConnection from "../webrtc/webrtcUtilities/socketConnection";
-import createPeerConnection from "../webrtc/webrtcUtilities/createPeerConn";
 import { useNavigate } from "react-router-dom";
 import { CallStatus } from "../App";
-import prepForCall from "../webrtc/webrtcUtilities/prepForCall";
+import apiClient from "../services/api-client";
 import clientSocketListeners from "../webrtc/webrtcUtilities/clientSocketListeners";
+import { socketConnection } from "../webrtc/webrtcUtilities/socketConnection";
+import { WebRtcManagerOld } from "./WebRtcManager/WebRtcManagerOld";
 
 interface Color {
   color: string;
@@ -59,6 +58,8 @@ const Dashboard = ({
   setIceCandidatesReadyTrigger,
   remoteDescAddedForOfferer,
 }: DashboardProps) => {
+  return <></>;
+  /*
   const getStudents = () => {
     apiClient
       .get("/students", {
@@ -103,14 +104,31 @@ const Dashboard = ({
   const navigate = useNavigate();
   const username = sessionStorage.getItem("username");
 
+  const [testValue, setTestValue] = useState("");
+
+  // Step 0: Listen for available calls
+  useEffect(() => {
+    if (testValue.length > 2) {
+      console.log("Step 0: testValue changed, length: ", testValue.length);
+      WebRtcManagerOld.initListeningForCalls(
+        username,
+        setAvailableCalls,
+        testValue
+      );
+    }
+  }, [testValue]);
+
   // Step 1: Initialize call and get GUM access
   //called on "Call" or "Answer"
   const initCall = async (typeOfCall: string) => {
     // set localStream and GUM
-    console.log("Step 1: Initialize call and get GUM access");
-    await prepForCall({ callStatus, updateCallStatus, setLocalStream });
-    // console.log("gum access granted!")
-    setTypeOfCall(typeOfCall); //offer or answer
+    await WebRtcManagerOld.initCall(
+      callStatus,
+      updateCallStatus,
+      setLocalStream,
+      setTypeOfCall,
+      typeOfCall
+    );
   };
 
   //Test backend connection
@@ -121,29 +139,17 @@ const Dashboard = ({
   //     test()
   // },[])
 
-  useEffect(() => {
-    console.log("listening for available calls...");
-    const setCalls = (data: []) => {
-      setAvailableCalls(data);
-    };
-    const socket = socketConnection(username);
-    socket.on("availableOffers", setCalls);
-    socket.on("newOfferAwaiting", setCalls);
-  }, []);
-
   // Step 2: GUM access granted, now we can set up the peer connection
   //We have media via GUM. setup the peerConnection w/listeners
   useEffect(() => {
     if (callStatus && username && callStatus.haveMedia && !peerConnection) {
-      console.log(
-        "Step 2: GUM access granted, now we can set up the peer connection"
-      );
       // prepForCall has finished running and updated callStatus
-      const result = createPeerConnection(username, typeOfCall);
-      if (result) {
-        setPeerConnection(result.peerConnection);
-        setRemoteStream(result.remoteStream);
-      }
+      WebRtcManagerOld.setupPeerConnection(
+        typeOfCall,
+        username,
+        setPeerConnection,
+        setRemoteStream
+      );
     }
   }, [callStatus?.haveMedia]);
 
@@ -195,6 +201,15 @@ const Dashboard = ({
     <div className="container">
       <div className="row">
         <h1>{username}</h1>
+        <div>
+          <input
+            type="text"
+            placeholder="Type something..."
+            value={testValue}
+            onChange={(e) => setTestValue(e.target.value)}
+          />
+          <p>You typed: {testValue}</p>
+        </div>
         <div className="col-6">
           <h2>Make a call</h2>
           <button
@@ -249,6 +264,7 @@ const Dashboard = ({
       </button>
     </div>
   );
+  */
 };
 
 export default Dashboard;

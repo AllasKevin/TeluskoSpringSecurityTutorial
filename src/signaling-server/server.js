@@ -1,3 +1,4 @@
+const Queue = require('./utils/Queue');
 console.log("Server is starting...");
 
 const fs = require('fs');
@@ -57,22 +58,27 @@ const connectedSockets = [
     //username, socketId
 ]
 
-io.on('connection',(socket)=>{
-    //console.log("Someone has connected");
+
+
+
+
+io.on('connection', (socket) => {
+    
+
     const userName = socket.handshake.auth.userName;
     const password = socket.handshake.auth.password;
+    const practice = socket.handshake.auth.practice;
+    console.log(`${userName} connected with socketId: ${socket.id} default NS for practice: ${practice}`);
+
+
     if(password !== "x"){
         socket.disconnect(true);
         return;
     }
-    const existing = connectedSockets.find(s => s.userName === userName);
-    if (existing) {
-        console.log(userName + " already connected, updating socketId: " + socket.id);
-        existing.socketId = socket.id;
-    } else {
-        console.log(userName + " has connected with socketId: " + socket.id);
-        connectedSockets.push({ userName, socketId: socket.id });
-    }
+    addDefaultSocketId(userName, socket.id);
+
+    socket.join(practice); // 👈 JOIN ROOM HERE
+    //console.log(`${userName} joined practice room: ${practice}`);
     // console.log(connectedSockets)
 
     //test connectivity
@@ -80,13 +86,17 @@ io.on('connection',(socket)=>{
         ack('pong')
     })
 
-    //test connectivity
+    //This is used to send hangUp notifications
     socket.on('notify',({ receiver, message })=>{
         if(connectedSockets.find(s=>s.userName === receiver))
         {
-        console.log("socket.on() notify called with message: " + message + " to: " + receiver)
+        console.log("socket.on() notify called by: " + " username" + " with message: " + message + ". Sending it both to: " + receiver + " and : " + userName);
         const socketToAnswer = connectedSockets.find(s=>s.userName === receiver)
-        socket.to(socketToAnswer.socketId).emit('notification',message)
+        
+        // Send to receiver
+        socket.to(socketToAnswer.defaultSocketId).emit('notification', message);
+        // Send to sender (yourself)
+        socket.emit('notification', message);
         } else {
             console.log("Could not find socket to send notify to: " + receiver)
         }
@@ -97,9 +107,14 @@ io.on('connection',(socket)=>{
     if(offers.length){
         socket.emit('availableOffers',offers);
     }
+
+    
+
+
     
     socket.on('newOffer',newOffer=>{
         console.log("newOffer!")
+        console.log("Recieved Practice: " + practice);
         // console.log(newOffer)
         offers.push({
             offererUserName: userName,
@@ -112,7 +127,7 @@ io.on('connection',(socket)=>{
         // console.log(newOffer.sdp.slice(50))
         //send out to all connected sockets EXCEPT the caller
         console.log("Emmiting newOfferAwaiting")
-        socket.broadcast.emit('newOfferAwaiting',offers.slice(-1))
+        socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))
     })
 
     socket.on('newAnswer',(offerObj,ackFunction)=>{
@@ -127,7 +142,7 @@ io.on('connection',(socket)=>{
             return;
         }
         //we found the matching socket, so we can emit to it!
-        const socketIdToAnswer = socketToAnswer.socketId;
+        const socketIdToAnswer = socketToAnswer.defaultSocketId;
         //we find the offer to update so we can emit it
         const offerToUpdate = offers.find(o=>o.offererUserName === offerObj.offererUserName)
         if(!offerToUpdate){
@@ -143,7 +158,7 @@ io.on('connection',(socket)=>{
         //socket has a .to() which allows emiting to a "room"
         //every socket has it's own room
         console.log(socketIdToAnswer)
-        socket.to(socketIdToAnswer).emit('answerResponse',offerToUpdate)
+        io.to(socketIdToAnswer).emit('answerResponse',offerToUpdate)
     })
 
     socket.on('sendIceCandidateToSignalingServer',iceCandidateObj=>{
@@ -155,7 +170,7 @@ io.on('connection',(socket)=>{
             //this ice is coming from the offerer. Send to the answerer
             const offerInOffers = offers.find(o=>o.offererUserName === iceUserName);
             if(offerInOffers){
-                console.log("Found the offer in offers! username: " + offerInOffers.offererUserName);
+                console.log("Received ice C. from offerer: " + offerInOffers.offererUserName);
                 offerInOffers.offerIceCandidates.push(iceCandidate)
                 // 1. When the answerer answers, all existing ice candidates are sent
                 // 2. Any candidates that come in after the offer has been answered, will be passed through
@@ -164,7 +179,7 @@ io.on('connection',(socket)=>{
                     //pass it through to the other socket
                     const socketToSendTo = connectedSockets.find(s=>s.userName === offerInOffers.answererUserName);
                     if(socketToSendTo){
-                        socket.to(socketToSendTo.socketId).emit('receivedIceCandidateFromServer',iceCandidate)
+                        socket.to(socketToSendTo.defaultSocketId).emit('receivedIceCandidateFromServer',iceCandidate)
                     }else{
                         console.log("Ice candidate recieved but could not find answere")
                     }
@@ -176,7 +191,7 @@ io.on('connection',(socket)=>{
             const offerInOffers = offers.find(o=>o.answererUserName === iceUserName);
             const socketToSendTo = connectedSockets.find(s=>s.userName === offerInOffers.offererUserName);
             if(socketToSendTo){
-                socket.to(socketToSendTo.socketId).emit('receivedIceCandidateFromServer',iceCandidate)
+                socket.to(socketToSendTo.defaultSocketId).emit('receivedIceCandidateFromServer',iceCandidate)
             }else{
                 console.log("Ice candidate recieved but could not find offerer")
             }
@@ -185,8 +200,208 @@ io.on('connection',(socket)=>{
     })
 
     socket.on('disconnect',()=>{
+        console.log("Client disconnected from default NS: " + userName + " with socketId: " + socket.id)
         const offerToClear = offers.findIndex(o=>o.offererUserName === userName)
         offers.splice(offerToClear,1)
         socket.emit('availableOffers',offers);
+
+        const socketIndex = connectedSockets.findIndex(s => s.userName === userName);
+        if (socketIndex !== -1) {
+          connectedSockets.splice(socketIndex, 1);
+        }
     })
+
+    
 })
+
+const findMatchMap = {};
+const findMatchQueue = new Queue(); // Jag kommer behöva en queue för varje practice
+const acceptedMatchMap = {};
+const matchedPairs = []; // This will hold pairs of users who have accepted each other
+
+io.of("/matching").on("connection", socket => {
+
+
+    const userName = socket.handshake.auth.userName;
+    const password = socket.handshake.auth.password;
+    const practice = socket.handshake.auth.practice;
+    console.log(`${userName} connected with socketId: ${socket.id} matching NS`);
+
+    const senderSocketId = socket.id;
+    const namespaceSocketServer = io.of("/matching");
+
+    if(password !== "x"){
+        socket.disconnect(true);
+        return;
+    }
+
+    addMatchingSocketId(userName, socket.id);
+
+
+    socket.join(practice); // 👈 JOIN ROOM HERE
+    console.log(`${userName} joined practice room: ${practice}`);
+
+    socket.on('findMatch', (data, ackFunction) => {
+        findMatchMap[practice] = { practice: practice, queue: findMatchQueue };
+        currentQueue = findMatchMap[practice].queue;
+
+        console.log("findMatch called! practice: " + practice + " userName: " + userName);
+
+        if (currentQueue.size() < 1 ) {
+            console.log("User " + userName + " added to queue because queue was empty. currentQueue size: " + currentQueue.size());
+            currentQueue.enqueue({ userName, socketId: socket.id });
+            findMatchMap[practice].queue = currentQueue;
+
+            console.log("Returning noMatchFound");
+            ackFunction(false);
+        }
+        else{
+            const matchSuggestion = currentQueue.dequeue();
+
+            // TODO ta bort mathedPair ifall den in fyller någon funktionsom just nu verkar vara fallet.
+            addMatchedPair(userName, matchSuggestion.userName);
+
+            const socketIdOfMatch = connectedSockets.find(s=>s.userName === matchSuggestion.userName).matchingSocketId;
+            console.log(connectedSockets);
+
+            console.log("Emitting foundMatch to " + matchSuggestion.userName + " with socketId: " + socketIdOfMatch + " and sening it: " + userName);
+            namespaceSocketServer.to(socketIdOfMatch).emit('foundMatch', userName);
+
+            console.log("Returning matchSuggestion: " + matchSuggestion.userName);
+            ackFunction(matchSuggestion);
+        }
+    
+    //socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))
+    })
+
+    socket.on('acceptMatch', (data, ackFunction) => {
+        acceptCall(userName);
+        
+        if (bothAcceptedCall(userName)) {
+            console.log("Both users accepted the match: " + userName);
+
+            const socketIdOfMatch = connectedSockets.find(s=>s.userName === getPairedUserOf(userName)).matchingSocketId;
+            console.log("Emitting matchMutuallyAccepted to both users: " + userName +  " " + senderSocketId +" who will be offerer and " + getPairedUserOf(userName) + " " + socketIdOfMatch + " who will be answerer.");
+
+
+            namespaceSocketServer.to(senderSocketId).emit('matchMutuallyAccepted', "Offerer");
+            namespaceSocketServer.to(socketIdOfMatch).emit('matchMutuallyAccepted', "Answerer");
+
+            removePairByUsernameInMatchedPairs(userName);
+
+            findMatchQueue.removeByUserName(userName);
+
+/*
+            socket.disconnect(true);
+
+
+            const socketToDisconnect = io.of("/matching").sockets.get(socketIdOfMatch).disconnect(true);
+
+            if (socketToDisconnect) {
+              socketToDisconnect.disconnect(true);
+              console.log(`✅ Disconnected ${userToKick.userName} from ${userToKick.namespace}`);
+            } else {
+              console.warn(`⚠️ No socket found in ${userToKick.namespace} for ID ${userToKick.socketId}`);
+            }
+
+
+            console.log("disconnected both sockets after match accepted");*/
+        }
+
+        //socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))
+    })
+
+    socket.on('disconnect',()=>{
+        console.log("Client disconnected from matching NS: " + userName + " with socketId: " + socket.id)
+    })
+});
+
+
+
+function addMatchedPair(userA, userB) {
+  matchedPairs.push({
+    userA,
+    userB,
+    accepted: {
+      [userA]: null,
+      [userB]: null,
+    },
+  });
+}
+
+function acceptCall(acceptingUser) {
+  const pair = matchedPairs.find(
+    (p) => p.userA === acceptingUser || p.userB === acceptingUser
+  );
+
+  if (!pair) return;
+
+  pair.accepted[acceptingUser] = true;
+}
+
+function rejectCall(acceptingUser) {
+  const pair = matchedPairs.find(
+    (p) => p.userA === acceptingUser || p.userB === acceptingUser
+  );
+
+  if (!pair) return;
+
+  pair.accepted[acceptingUser] = true;
+}
+
+function bothAcceptedCall(userName) {
+  const pair = matchedPairs.find(
+    (p) => p.userA === userName || p.userB === userName
+  );
+
+  if (!pair) return false;
+
+  const { userA, userB, accepted } = pair;
+  return accepted[userA] && accepted[userB];
+}
+
+function rejectedCall(callPair) {
+  return Object.values(callPair.accepted).some((status) => status === false);
+}
+
+function getPairedUserOf(username) {
+  const pair = matchedPairs.find(
+    (p) => p.userA === username || p.userB === username
+  );
+
+  if (!pair) return null;
+
+  return pair.userA === username ? pair.userB : pair.userA;
+}
+
+
+function addDefaultSocketId(userName, socketId) {
+  const existing = connectedSockets.find(s => s.userName === userName);
+  if (existing) {
+    existing.defaultSocketId = socketId;
+  } else {
+    connectedSockets.push({ userName, defaultSocketId: socketId });
+  }
+}
+
+function addMatchingSocketId(userName, socketId) {
+  const existing = connectedSockets.find(s => s.userName === userName);
+  if (existing) {
+    existing.matchingSocketId = socketId;
+  } else {
+    connectedSockets.push({ userName, matchingSocketId: socketId });
+  }
+}
+
+function removePairByUsernameInMatchedPairs(usernameToRemove) {
+  for (let i = matchedPairs.length - 1; i >= 0; i--) {
+    const pair = matchedPairs[i];
+    if (pair.userA === usernameToRemove || pair.userB === usernameToRemove) {
+      matchedPairs.splice(i, 1);
+    }
+  }
+}
+
+function removeUserFromFindMatchQueue(usernameToRemove) {
+  findMatchQueue.items = findMatchQueue.items.filter(item => item.userName !== usernameToRemove);
+}

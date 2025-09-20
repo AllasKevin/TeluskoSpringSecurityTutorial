@@ -7,16 +7,13 @@ interface PrepForCallProps {
     callStatus: CallStatus | undefined; 
     updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>;
     setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
+    foundMatch?: string; // Optional, used for answerer to set the other user name
   }
 
-  const defaultCallStatus: CallStatus = {
-    haveMedia: false,
-    videoEnabled: false,
-    audioEnabled: false,
-    callInitiated: false,
-  };
 
-const prepForCall = ({callStatus,updateCallStatus,setLocalStream}: PrepForCallProps)=>{
+
+const prepForCall = ({callStatus,updateCallStatus,setLocalStream, foundMatch}: PrepForCallProps)=>{
+    console.log("prepForCall called and fucking up callstatus");
     return new Promise<void>(async (resolve, reject) => {
         //can bring constraints in as a param
         const constraints = {
@@ -32,13 +29,25 @@ const prepForCall = ({callStatus,updateCallStatus,setLocalStream}: PrepForCallPr
         try{
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-            //update bools
-            const copyCallStatus = callStatus === undefined ? defaultCallStatus : {...callStatus};
+            console.log("prepForCall. : " + foundMatch ? foundMatch : null);
+            console.log("prepForCall. : " + foundMatch);
+            updateCallStatus((prev) => ({
+                ...prev,
+                haveMedia: true,
+                videoEnabled: false,
+                audioEnabled: false,
+                callInitiated: true,
+                current: "initialized",
+                otherCallerUserName: foundMatch ? foundMatch : null,
+            }));
+           /* //update bools
+            const copyCallStatus = {...callStatus};
             copyCallStatus.haveMedia = true //signals to the app that we have media
             copyCallStatus.videoEnabled = false //init both to false, you can init to true
             copyCallStatus.audioEnabled = false
             copyCallStatus.current = "initialized"
-            updateCallStatus(copyCallStatus)
+            copyCallStatus.otherCallerUserName = "bajs";
+            updateCallStatus(copyCallStatus)*/
             setLocalStream(stream)
             resolve()
         }catch(err){

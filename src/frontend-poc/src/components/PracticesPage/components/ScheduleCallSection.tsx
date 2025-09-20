@@ -1,19 +1,76 @@
-import React, { useState } from "react";
+import React, { RefObject, useRef, useState } from "react";
 import MandalaImage from "../../../assets/mandala.png";
 import PlannerImage from "../../../assets/planner.png";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { CallStatus } from "../../../App";
+import {
+  WebRtcManager,
+  WebRtcManagerNewHandle,
+} from "../../WebRtcManager/WebRtcManager";
+import { CallData } from "../../Dashboard";
 
-export const ScheduleCallSection: React.FC = () => {
+interface ScheduleCallSectionProps {
+  practice: string; // Optional prop to pass the practice name
+  callStatus: CallStatus | undefined;
+  updateCallStatus: React.Dispatch<
+    React.SetStateAction<CallStatus | undefined>
+  >;
+  localStream: MediaStream | undefined;
+  setLocalStream: React.Dispatch<React.SetStateAction<MediaStream | undefined>>;
+  remoteStream: MediaStream | undefined;
+  setRemoteStream: React.Dispatch<
+    React.SetStateAction<MediaStream | undefined>
+  >;
+  peerConnection: RTCPeerConnection | undefined;
+  setPeerConnection: React.Dispatch<
+    React.SetStateAction<RTCPeerConnection | undefined>
+  >;
+  offerData: CallData | undefined;
+  setOfferData: React.Dispatch<React.SetStateAction<any>>;
+  remoteFeedEl: RefObject<HTMLVideoElement | null>;
+  localFeedEl: RefObject<HTMLVideoElement | null>;
+  gatheredAnswerIceCandidatesRef: React.RefObject<RTCIceCandidateInit[]>;
+  setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
+  remoteDescAddedForOfferer: boolean;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
+  setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
+}
+
+export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
+  practice,
+  callStatus,
+  updateCallStatus,
+  localStream,
+  setLocalStream,
+  remoteStream,
+  setRemoteStream,
+  peerConnection,
+  setPeerConnection,
+  offerData,
+  setOfferData,
+  remoteFeedEl,
+  localFeedEl,
+  gatheredAnswerIceCandidatesRef,
+  setIceCandidatesReadyTrigger,
+  remoteDescAddedForOfferer,
+  setShowPopup,
+  setRemoteDescAddedForOfferer,
+  setAvailableCalls,
+}) => {
   const [activeTab, setActiveTab] = useState<"join" | "schedule">("join"); // default is "join"
   const [startDate, setStartDate] = useState<Date | null>(new Date());
 
   const navigate = useNavigate();
 
-  const goToDashboard = () => {
-    navigate("/dashboard");
-    console.log("Navigating to dashboard");
+  const handlePracticeNow = () => {
+    console.log(
+      "handlePracticeNow CALLED and setShowPopup set to true BUT NO CALL IS INITIATED YET"
+    );
+
+    setShowPopup(true);
   };
 
   return (
@@ -50,7 +107,7 @@ export const ScheduleCallSection: React.FC = () => {
 
       {activeTab === "join" && (
         <div className="join-call-content">
-          <button onClick={goToDashboard}>Practice Now</button>
+          <button onClick={handlePracticeNow}>Practice Now</button>
         </div>
       )}
 

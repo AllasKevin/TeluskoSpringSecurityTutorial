@@ -3,6 +3,7 @@ const VideoButton = ({localFeedEl,callStatus,localStream,updateCallStatus,peerCo
 
     //handle user clicking on video button
     const startStopVideo = ()=>{
+        console.log("Start/Stop Video clicked")
         const copyCallStatus = {...callStatus}
         // useCases:
         if(copyCallStatus?.callInitiated && copyCallStatus?.videoEnabled){
