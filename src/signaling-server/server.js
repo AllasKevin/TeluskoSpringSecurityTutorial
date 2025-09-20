@@ -254,7 +254,8 @@ io.of("/matching").on("connection", socket => {
             return;
         }
 
-        if (currentQueue.size() < 1) {
+        if (currentQueue.size() < 1) 
+        {
             console.log("User " + userName + " added to queue because queue was empty. currentQueue size: " + currentQueue.size());
             currentQueue.enqueue({ userName, socketId: socket.id });
             findMatchMap[practice].queue = currentQueue;
