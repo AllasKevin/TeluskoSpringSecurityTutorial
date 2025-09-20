@@ -184,13 +184,6 @@ export const WebRtcManager = forwardRef<
     const startNewCall = async (chosenPractice: string) => {
       console.log("startNewCall CALLED with chosenPractice:", chosenPractice);
 
-      console.log(
-        "CHANGED. Step 0.1: startNewCall() practice: " + chosenPractice
-      );
-
-      console.log(
-        "Making Offer. No match found in the queue for " + chosenPractice
-      );
       initCall("offer");
     };
 

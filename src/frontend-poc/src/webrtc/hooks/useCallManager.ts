@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { CallStatus } from "../../App";
 import { CallData } from "../../components/Dashboard";
-import {socketConnection} from "../webrtcUtilities/socketConnection";
+import {socketConnection, getCurrentSocket} from "../webrtcUtilities/socketConnection";
 
 interface UseCallManagerProps {
   peerConnection: RTCPeerConnection | undefined;
@@ -78,11 +78,19 @@ const hangupCall = useCallback(() => {
       console.log("username:", sessionStorage.getItem("username"));
 
       const username = sessionStorage.getItem("username");
-      console.log("2notify hangUp to: " + otherCallerUserName);
-      socketConnection(username).emit("notify", {
-        receiver: otherCallerUserName,
-        message: "hangUp",
-      }).disconnect();
+      const socket = getCurrentSocket();
+      if(socket === null) {
+        console.log("Socket is not connected. Cannot send hangUp notification.");
+      }
+      else if(socket.connected)
+      {
+        console.log("Socket is connected. Emitting hangUp notification to: " + otherCallerUserName);
+        socket.emit("notify", {
+                  receiver: otherCallerUserName,
+                  message: "hangUp",  
+                  });
+      }
+
     }
   }, [peerConnection, updateCallStatus, localFeedEl, remoteFeedEl]);
 
