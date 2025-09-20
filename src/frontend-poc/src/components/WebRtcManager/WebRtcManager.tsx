@@ -292,7 +292,7 @@ export const WebRtcManager = forwardRef<
       );
       if (matchMutuallyAccepted === "Offerer") {
         console.log("Offerer role given by matchMutuallyAccepted");
-        //initCall("offer");
+        initCall("offer");
       } else if (
         matchMutuallyAccepted === "Answerer" &&
         availableCallsFromServer.length > 0

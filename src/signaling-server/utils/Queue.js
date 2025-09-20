@@ -27,6 +27,10 @@ class Queue {
     return this.items;
   }
 
+  containsUserName(userName) {
+    return this.items.some(item => item.userName === userName);
+  }
+
   removeByUserName(userName) {
     this.items = this.items.filter(item => item.userName !== userName);
   }
