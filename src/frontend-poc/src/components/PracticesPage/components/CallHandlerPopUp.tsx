@@ -151,16 +151,16 @@ export const CallHandlerPopUp = forwardRef<
                   <li key={index}>
                     {match.userName}
                     {" Calling"}
-                    <button onClick={() => handleJoinCall(match.userName)}>
+                    {/* <button onClick={() => handleJoinCall(match.userName)}>
                       Join
-                    </button>
+                    </button>  */}
                     <button onClick={() => handleAcceptCall(match.userName)}>
                       Accept
                     </button>
                   </li>
                 ))}
             </ul>
-            <button onClick={handleStartCall}>Start New Call</button>
+            {/* <button onClick={handleStartCall}>Start New Call</button>  */}
             <button onClick={handleFindMatch}>Check Match</button>
             <button onClick={() => setShowPopup(false)}>Close</button>
           </div>
