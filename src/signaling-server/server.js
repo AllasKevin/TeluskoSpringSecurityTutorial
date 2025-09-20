@@ -86,13 +86,17 @@ io.on('connection', (socket) => {
         ack('pong')
     })
 
-    //test connectivity
+    //This is used to send hangUp notifications
     socket.on('notify',({ receiver, message })=>{
         if(connectedSockets.find(s=>s.userName === receiver))
         {
-        console.log("socket.on() notify called with message: " + message + " to: " + receiver)
+        console.log("socket.on() notify called by: " + " username" + " with message: " + message + ". Sending it both to: " + receiver + " and : " + userName);
         const socketToAnswer = connectedSockets.find(s=>s.userName === receiver)
-        socket.to(socketToAnswer.defaultSocketId).emit('notification',message)
+        
+        // Send to receiver
+        socket.to(socketToAnswer.defaultSocketId).emit('notification', message);
+        // Send to sender (yourself)
+        socket.emit('notification', message);
         } else {
             console.log("Could not find socket to send notify to: " + receiver)
         }
