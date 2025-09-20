@@ -1,11 +1,15 @@
 import { RefObject, useEffect, useState } from "react";
 import "./VideoPage.css";
 //import { useNavigate } from "react-router-dom";
-import socketConnection from "../webrtcUtilities/socketConnection";
 import ActionButtons from "./ActionButtons/ActionButtons";
 import VideoMessageBox from "./VideoMessageBox";
 import { CallStatus } from "../../App";
 import { CallData } from "../../components/Dashboard";
+import {
+  addRecievedOfferAndCreateAnswerAsync,
+  setStreamsLocally,
+} from "../../components/WebRtcManager/WebRtcManager";
+import { ca } from "date-fns/locale";
 
 interface AnswerVideoProps {
   callStatus: CallStatus | undefined;
@@ -25,7 +29,7 @@ interface AnswerVideoProps {
   localFeedEl: RefObject<HTMLVideoElement | null>;
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   offerData: CallData | undefined;
-  hangupCall: () => void;
+  hangupCall: (callStatus: CallStatus | undefined) => void;
 }
 const AnswerVideo = ({
   remoteStream,
@@ -46,16 +50,21 @@ const AnswerVideo = ({
     "Please enable video to start!"
   );
   const [answerCreated] = useState(false); // TODO: This is never changed and therefore it should be possible to remove it
-  const username = sessionStorage.getItem("username");
 
+  console.log("AnswerVideo component mounted offerData:", offerData);
   // Clean on route/component change
   useEffect(() => {
-    return () => hangupCall();
+    console.log("Before calling hangupCall in AnswerVideo");
+    console.log(callStatus);
+    return () => hangupCall(callStatus);
   }, []);
 
   // Clean on browser unload
   useEffect(() => {
-    const handleUnload = () => hangupCall();
+    console.log("Cleaning up on browser unload callStatus:", callStatus);
+    console.log(callStatus);
+
+    const handleUnload = () => hangupCall(callStatus);
     window.addEventListener("beforeunload", handleUnload);
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);
@@ -76,22 +85,7 @@ const AnswerVideo = ({
 
   // Step 3: Set the local stream to the local video element
   //send back to home if no localStream
-  useEffect(() => {
-    if (!localStream) {
-      //navigate(`/`);
-    } else {
-      //set video tags
-      if (remoteFeedEl.current && remoteStream) {
-        remoteFeedEl.current.srcObject = remoteStream;
-      }
-
-      if (localFeedEl.current && localStream) {
-        console.log("Step 3: Set the local stream to the local video element");
-        const localStreamCopy = new MediaStream(localStream.getVideoTracks());
-        localFeedEl.current.srcObject = localStreamCopy;
-      }
-    }
-  }, []);
+  setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
 
   //set video tags
   // useEffect(()=>{
@@ -115,44 +109,15 @@ const AnswerVideo = ({
   // Step 4 and 5: Recieved and adding offer from caller and handling it and sending back answer and ICE candidates
   //User has enabled video, but not made answer
   useEffect(() => {
-    const addOfferAndCreateAnswerAsync = async () => {
-      if (!peerConnection) {
-        console.log("No peerConnection, returning...");
-        return;
-      } else if (!offerData) {
-        console.log("No offerData, returning...");
-        return;
-      }
-
-      // Step 4: adding the offer from caller
-      await peerConnection.setRemoteDescription(offerData.offer);
-      console.log("Step 4: Recieved and adding offer from caller");
-
-      // Step 5: creating answer and sending it back to caller
-      //now that we have the offer set, make our answer
-      // when calling createAnswer, 'icecandidate' event in createPeerConnection is triggered
-      const answer = await peerConnection.createAnswer();
-      peerConnection.setLocalDescription(answer);
-      console.log("Step 5: creating answer and sending it back to caller");
-
-      const copyOfferData = { ...offerData };
-      copyOfferData.answer = answer;
-      copyOfferData.answererUserName = username;
-      const socket = socketConnection(username);
-      const offerIceCandidates = await socket.emitWithAck(
-        "newAnswer",
-        copyOfferData
-      );
-      // use the ICE candidates from the offerer
-      offerIceCandidates.forEach((c: RTCIceCandidateInit) => {
-        peerConnection.addIceCandidate(c);
-      });
-    };
-
-    if (!answerCreated && callStatus?.videoEnabled) {
-      addOfferAndCreateAnswerAsync();
-    }
-  }, [callStatus?.videoEnabled, answerCreated]);
+    addRecievedOfferAndCreateAnswerAsync(
+      peerConnection,
+      offerData,
+      answerCreated,
+      callStatus,
+      updateCallStatus,
+      localStream
+    );
+  }, []);
 
   return (
     <div>

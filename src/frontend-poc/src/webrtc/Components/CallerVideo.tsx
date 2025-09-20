@@ -1,11 +1,18 @@
 import React, { RefObject, useEffect, useState } from "react";
 import "./VideoPage.css";
 //import { useNavigate } from "react-router-dom";
-import socketConnection from "../webrtcUtilities/socketConnection";
-import ActionButtons from "./ActionButtons/ActionButtons";
-import VideoMessageBox from "./VideoMessageBox";
 import { CallStatus } from "../../App";
 import { CallData } from "../../components/Dashboard";
+import ActionButtons from "./ActionButtons/ActionButtons";
+import VideoMessageBox from "./VideoMessageBox";
+import {
+  addAnswer,
+  addIceCandidatesAfterAnswerBeenSet,
+  createOffer,
+  setStreamsLocally,
+  WebRtcManager,
+} from "../../components/WebRtcManager/WebRtcManager";
+import { ca } from "date-fns/locale";
 
 interface CallerVideoProps {
   callStatus: CallStatus | undefined;
@@ -29,7 +36,7 @@ interface CallerVideoProps {
   iceCandidatesReadyTrigger: number;
   remoteDescAddedForOfferer: boolean;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
-  hangupCall: () => void;
+  hangupCall: (callStatus: CallStatus | undefined) => void;
 }
 
 const CallerVideo = ({
@@ -53,17 +60,34 @@ const CallerVideo = ({
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
   );
-  const [offerCreated, setOfferCreated] = useState(false);
   const username = sessionStorage.getItem("username");
 
+  console.log("CallerVideo component mounted, peerConnection:", peerConnection);
+  console.log(peerConnection?.ontrack);
+
+  console.log("CallerVideo component mounted, callstatus:", callStatus);
   // Clean on route/component change
   useEffect(() => {
-    return () => hangupCall();
+    console.log("Before calling hangupCall in CallerVideo");
+    console.log(callStatus);
+    return () => hangupCall(callStatus);
   }, []);
+
+  // Step 5: Set the local stream to the local video element
+  //send back to home if no localStream
+  useEffect(() => {
+    if (localStream && localFeedEl?.current) {
+      console.log("Calling setStreamsLocally...");
+      setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
+    }
+  }, [localStream, remoteStream, localFeedEl, remoteFeedEl]);
 
   // Clean on browser unload
   useEffect(() => {
-    const handleUnload = () => hangupCall();
+    console.log("Cleaning up on browser unload, callstatus:", callStatus);
+    console.log(callStatus);
+
+    const handleUnload = () => hangupCall(callStatus);
     window.addEventListener("beforeunload", handleUnload);
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);
@@ -82,25 +106,6 @@ const CallerVideo = ({
   }, [callStatus]);
 */
 
-  // Step 3: Set the local stream to the local video element
-  //send back to home if no localStream
-  useEffect(() => {
-    if (!localStream) {
-      //navigate(`/`);
-    } else {
-      //set video tags
-      if (remoteFeedEl.current && remoteStream) {
-        remoteFeedEl.current.srcObject = remoteStream;
-      }
-      if (localFeedEl.current && localStream) {
-        console.log("Step 3: Set the local stream to the local video element");
-        // Setting local stream to only have video tracks
-        const localStreamCopy = new MediaStream(localStream.getVideoTracks());
-        localFeedEl.current.srcObject = localStreamCopy;
-      }
-    }
-  }, []);
-
   //set video tags
   // useEffect(()=>{
   //     remoteFeedEl.current.srcObject = remoteStream
@@ -109,7 +114,10 @@ const CallerVideo = ({
 
   //if we have tracks, disable the video message
   useEffect(() => {
+    console.log("Before setting video message.");
     if (peerConnection) {
+      console.log("Actually setting video message.");
+
       peerConnection.ontrack = (e) => {
         if (e?.streams?.length) {
           setVideoMessage("");
@@ -119,61 +127,34 @@ const CallerVideo = ({
       };
     }
   }, [peerConnection]);
-
+  /*
   // Step 4: Create an offer
-  //once the user has shared video, start WebRTC'ing :)
-  useEffect(() => {
-    const shareVideoAsync = async () => {
-      console.log("Step 4: Making offer");
-      const offer = await peerConnection?.createOffer();
-      peerConnection?.setLocalDescription(offer);
+  //once the user has started this component, start WebRTC'ing :)
+  createOffer(
+    peerConnection,
+    username,
+    offerCreated,
+    callStatus,
+    updateCallStatus,
+    setOfferCreated,
+    setVideoMessage,
+    localStream
+  );
+*/
 
-      //we can now start collecing ice candidates!
-      // we need to emit the offer to the server
-      const socket = socketConnection(username);
-      socket.emit("newOffer", offer);
-      setOfferCreated(true); //so that our useEffect doesn't make an offer again
-      setVideoMessage("Awaiting answer..."); //update our videoMessage box
-    };
-    if (!offerCreated && callStatus?.videoEnabled) {
-      shareVideoAsync();
-    }
-  }, [callStatus?.videoEnabled, offerCreated]);
-
+  /*
   // Step 5: Set the remote description (answer)
   useEffect(() => {
-    const addAnswerAsync = async () => {
-      console.log("Step 5: Recieved and setting answer.");
-
-      if (callStatus?.answer === undefined) {
-        console.error("Answer is undefined!");
-        return;
-      }
-
-      await peerConnection?.setRemoteDescription(callStatus.answer);
-      setRemoteDescAddedForOfferer(true);
-    };
-    if (callStatus?.answer) {
-      addAnswerAsync();
-    }
+    addAnswer(callStatus, peerConnection, setRemoteDescAddedForOfferer);
   }, [callStatus]);
-
+*/
   // Step 6: Add ICE candidates That are received after the answer is set
   useEffect(() => {
-    if (remoteDescAddedForOfferer) {
-      console.log(
-        "Step 6: Adding more Ice.C's. from answerer after the call is connected."
-      );
-
-      gatheredAnswerIceCandidatesRef.current.forEach((iceCandidate) => {
-        peerConnection?.addIceCandidate(iceCandidate).catch((err) => {
-          console.log("Chrome thinks there is an error. There isn't...");
-          console.log(err);
-        });
-      });
-
-      gatheredAnswerIceCandidatesRef.current = []; //clear the array
-    }
+    addIceCandidatesAfterAnswerBeenSet(
+      gatheredAnswerIceCandidatesRef,
+      peerConnection,
+      remoteDescAddedForOfferer
+    );
   }, [iceCandidatesReadyTrigger, remoteDescAddedForOfferer]);
 
   return (

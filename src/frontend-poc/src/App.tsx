@@ -19,6 +19,7 @@ export interface CallStatus {
   current?: string;
   answer?: RTCSessionDescriptionInit;
   myRole?: "offer" | "answer";
+  otherCallerUserName?: string | null | undefined;
 }
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
   const { hangupCall } = useCallManager({
     peerConnection,
     setPeerConnection,
+    callStatus,
     updateCallStatus,
     localFeedEl,
     remoteFeedEl,
@@ -51,14 +53,56 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<PracticesPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/loginpage" element={<LoginPage />} />
         <Route path="/registerpage" element={<RegisterPage />} />
+        <Route
+          path="/practices"
+          element={
+            <ProtectedRoute>
+              <PracticesPage
+                callStatus={callStatus}
+                updateCallStatus={updateCallStatus}
+                localStream={localStream}
+                setLocalStream={setLocalStream}
+                remoteStream={remoteStream}
+                setRemoteStream={setRemoteStream}
+                peerConnection={peerConnection}
+                setPeerConnection={setPeerConnection}
+                offerData={offerData}
+                setOfferData={setOfferData}
+                remoteFeedEl={remoteFeedEl}
+                localFeedEl={localFeedEl}
+                gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+                setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+                remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+                setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+              />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/app"
           element={
             <ProtectedRoute>
-              <PracticesPage />
+              <PracticesPage
+                callStatus={callStatus}
+                updateCallStatus={updateCallStatus}
+                localStream={localStream}
+                setLocalStream={setLocalStream}
+                remoteStream={remoteStream}
+                setRemoteStream={setRemoteStream}
+                peerConnection={peerConnection}
+                setPeerConnection={setPeerConnection}
+                offerData={offerData}
+                setOfferData={setOfferData}
+                remoteFeedEl={remoteFeedEl}
+                localFeedEl={localFeedEl}
+                gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+                setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+                remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+                setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+              />
             </ProtectedRoute>
           }
         />

@@ -5,6 +5,7 @@ const HangupButton = ({remoteFeedEl, localFeedEl,peerConnection,setPeerConnectio
     const { hangupCall } = useCallManager({
         peerConnection,
         setPeerConnection,
+        callStatus,
         updateCallStatus,
         localFeedEl,
         remoteFeedEl,

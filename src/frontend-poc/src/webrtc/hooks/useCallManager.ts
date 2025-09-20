@@ -1,11 +1,12 @@
 import { useCallback } from "react";
 import { CallStatus } from "../../App";
 import { CallData } from "../../components/Dashboard";
-import socketConnection from "../webrtcUtilities/socketConnection";
+import {socketConnection, getCurrentSocket} from "../webrtcUtilities/socketConnection";
 
 interface UseCallManagerProps {
   peerConnection: RTCPeerConnection | undefined;
   setPeerConnection: React.Dispatch<React.SetStateAction<RTCPeerConnection | undefined>>;
+  callStatus: CallStatus | undefined;
   updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>;
   localFeedEl: React.RefObject<HTMLVideoElement | null>;
   remoteFeedEl: React.RefObject<HTMLVideoElement | null>;
@@ -19,6 +20,7 @@ interface UseCallManagerProps {
 export function useCallManager({
   peerConnection,
   setPeerConnection,
+  callStatus,
   updateCallStatus,
   localFeedEl,
   remoteFeedEl,
@@ -28,10 +30,18 @@ export function useCallManager({
   setRemoteStream,
   offerData,
 }: UseCallManagerProps) {
-  const hangupCall = useCallback(() => {
+const hangupCall = useCallback(() => {
     if (peerConnection) {
+
+      const otherCallerUserName = sessionStorage.getItem("otherCallerUserName");
+      
       console.log("Hanging up...");
+      console.log("callStatus before hangUp forreal foreal:");
+      console.log(callStatus);
+      console.log("1notify hangUp to: " + otherCallerUserName);
+
       updateCallStatus((prev) => {
+        console.log("Updating callStatus to hang up");
         if (!prev) return undefined;
         return {
           ...prev,
@@ -42,6 +52,7 @@ export function useCallManager({
           callInitiated: false,
           answer: undefined,
           myRole: undefined,
+          otherCallerUserName: undefined,
         };
       });
 
@@ -63,12 +74,23 @@ export function useCallManager({
       if (localFeedEl.current) localFeedEl.current.srcObject = null;
       if (remoteFeedEl.current) remoteFeedEl.current.srcObject = null;
 
+      console.log("sessionStorage keys:", Object.keys(sessionStorage));
+      console.log("username:", sessionStorage.getItem("username"));
+
       const username = sessionStorage.getItem("username");
-      console.log("notify hangUp to: " + offerData?.answererUserName);
-      socketConnection(username).emit("notify", {
-        receiver: offerData?.answererUserName,
-        message: "hangUp",
-      });
+      const socket = getCurrentSocket();
+      if(socket === null) {
+        console.log("Socket is not connected. Cannot send hangUp notification.");
+      }
+      else if(socket.connected)
+      {
+        console.log("Socket is connected. Emitting hangUp notification to: " + otherCallerUserName);
+        socket.emit("notify", {
+                  receiver: otherCallerUserName,
+                  message: "hangUp",  
+                  });
+      }
+
     }
   }, [peerConnection, updateCallStatus, localFeedEl, remoteFeedEl]);
 
