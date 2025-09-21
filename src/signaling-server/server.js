@@ -327,8 +327,13 @@ io.of("/matching").on("connection", socket => {
         }
         else
         {
+            const socketIdOfMatch = connectedSockets.find(s=>s.userName === getPairedUserOf(userName)).matchingSocketId;
+
             console.log("Match got declined by: " + userName);
             declineCall(userName, socket, practice);
+
+            namespaceSocketServer.to(senderSocketId).emit('matchDeclined');
+            namespaceSocketServer.to(socketIdOfMatch).emit('matchDeclined');
         }
         
 
