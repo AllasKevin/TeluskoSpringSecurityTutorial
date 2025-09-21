@@ -81,6 +81,8 @@ export const CallHandlerPopUp = forwardRef<
       { userName: string; practice: string }[]
     >([]);
 
+    const [checkingMatch, setCheckingMatch] = useState(false);
+
     const handleJoinCall = (otherCallerUserName: string | null | undefined) => {
       console.log(`Joining call`);
       webRtcManagerRef.current?.joinCall(practice, otherCallerUserName);
@@ -100,7 +102,6 @@ export const CallHandlerPopUp = forwardRef<
     ) => {
       console.log("handleDeclineCall called");
       webRtcManagerRef.current?.declineMatch(practice, otherCallerUserName);
-
       //setShowPopup(false);
     };
     const handleStartCall = () => {
@@ -110,7 +111,9 @@ export const CallHandlerPopUp = forwardRef<
       //setShowPopup(false);
     };
     const handleFindMatch = () => {
-      console.log("handleStartCall called, setting showPopup to false");
+      console.log("handleFindMatch called, setting showPopup to false");
+      console.log(availableMatches);
+      setCheckingMatch(true);
       webRtcManagerRef.current?.findMatch(practice);
 
       //setShowPopup(false);
@@ -171,6 +174,9 @@ export const CallHandlerPopUp = forwardRef<
                   </li>
                 ))}
             </ul>
+            {Array.isArray(availableMatches) &&
+              availableMatches.length === 0 &&
+              checkingMatch && <div>Checking for match... </div>}
             {/* <button onClick={handleStartCall}>Start New Call</button>  */}
             <button onClick={handleFindMatch}>Check Match</button>
             <button onClick={() => setShowPopup(false)}>Close</button>
