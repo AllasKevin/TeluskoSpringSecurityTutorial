@@ -16,6 +16,11 @@ const clientSocketForMatchmakingListeners = (socket,matchMutuallyAccepted, setMa
         socket.disconnect();
     })
 
+    socket.on('matchDeclined', nothing=>{
+        console.log("matchDeclined called from server and setting availableMatches to []");
+        setAvailableMatches([]);
+    })
+
     console.log("clientSocketForMatchmakingListeners initialized");
 }
 

@@ -28,6 +28,10 @@ export interface WebRtcManagerNewHandle {
     chosenPractice: string,
     otherCallerUserName: string | null | undefined
   ) => void;
+  declineMatch: (
+    chosenPractice: string,
+    otherCallerUserName: string | null | undefined
+  ) => void;
   startNewCall: (chosenPractice: string) => Promise<void>;
   joinCall: (
     chosenPractice: string,
@@ -206,7 +210,30 @@ export const WebRtcManager = forwardRef<
       console.log("Emitting acceptMatch to the server without ack...");
       await socketConnectionMatchmaking(username, chosenPractice).emit(
         "acceptMatch",
-        {}
+        true
+      );
+    };
+
+    const declineMatch = async (
+      chosenPractice: string,
+      otherCallerUserName: string | null | undefined
+    ) => {
+      console.log("declineMatch CALLED with chosenPractice:", chosenPractice);
+
+      console.log(
+        "CHANGED. Step 0.1: declineMatch() practice: " +
+          chosenPractice +
+          " otherCallerUserName: " +
+          otherCallerUserName
+      );
+      if (otherCallerUserName) {
+        sessionStorage.setItem("otherCallerUserName", otherCallerUserName);
+      }
+
+      console.log("Emitting declineMatch to the server without ack...");
+      await socketConnectionMatchmaking(username, chosenPractice).emit(
+        "acceptMatch",
+        false
       );
     };
 
@@ -493,6 +520,7 @@ export const WebRtcManager = forwardRef<
       initCall,
       findMatch,
       acceptMatch,
+      declineMatch,
       startNewCall,
       joinCall,
     }));
