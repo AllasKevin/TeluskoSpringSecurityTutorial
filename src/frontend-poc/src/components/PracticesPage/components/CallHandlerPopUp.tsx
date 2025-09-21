@@ -95,6 +95,14 @@ export const CallHandlerPopUp = forwardRef<
 
       //setShowPopup(false);
     };
+    const handleDeclineCall = (
+      otherCallerUserName: string | null | undefined
+    ) => {
+      console.log("handleDeclineCall called");
+      webRtcManagerRef.current?.declineMatch(practice, otherCallerUserName);
+
+      //setShowPopup(false);
+    };
     const handleStartCall = () => {
       console.log("handleStartCall called, setting showPopup to false");
       webRtcManagerRef.current?.startNewCall(practice);
@@ -156,6 +164,9 @@ export const CallHandlerPopUp = forwardRef<
                     </button>  */}
                     <button onClick={() => handleAcceptCall(match.userName)}>
                       Accept
+                    </button>
+                    <button onClick={() => handleDeclineCall(match.userName)}>
+                      Decline
                     </button>
                   </li>
                 ))}
