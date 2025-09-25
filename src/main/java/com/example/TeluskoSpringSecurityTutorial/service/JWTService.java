@@ -21,7 +21,7 @@ import java.util.function.Function;
 @Service
 public class JWTService {
 
-    private String secretKey;    // TODO: An option is to create a key everytime this service is used and not just when it is created like below. Right now, the key is hardcoded in the application.properties file. This is not a good practice for production code. But the commented out way of dynamically generating a key is also not good because it will generate a new key every time the application is started. This means that the tokens generated before the application was restarted will not be valid anymore. So, we need to find a way to generate a key that is not hardcoded but also not generated every time the service is created. One option is to use a key management service like AWS KMS or Azure Key Vault. Another option is to use a library like Jasypt or Spring Cloud Config to encrypt the key and store it in a secure location.
+    private static String secretKey;    // TODO: An option is to create a key everytime this service is used and not just when it is created like below. Right now, the key is hardcoded in the application.properties file. This is not a good practice for production code. But the commented out way of dynamically generating a key is also not good because it will generate a new key every time the application is started. This means that the tokens generated before the application was restarted will not be valid anymore. So, we need to find a way to generate a key that is not hardcoded but also not generated every time the service is created. One option is to use a key management service like AWS KMS or Azure Key Vault. Another option is to use a library like Jasypt or Spring Cloud Config to encrypt the key and store it in a secure location.
 
     public JWTService(@Value("${jwt.secret}") String secretKey) {
         this.secretKey = secretKey;
@@ -50,21 +50,21 @@ public class JWTService {
                 .compact();
     }
 
-    private SecretKey getKey() {
+    private static SecretKey getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String extractUsername(String token) {
+    public static String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+    private static <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private static Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()
