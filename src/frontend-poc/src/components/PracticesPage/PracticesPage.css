@@ -185,27 +185,67 @@
   transition: max-height 0.4s ease;
 }
 
-/* Container for video + actions side-by-side */
-.expanded-row {
+/* Container for centered video + button */
+.centered-video-container {
   display: flex;
-  flex-direction: row; /* default: stack vertically on small screens */
-  align-items: flex-start;
-  gap: 0.4rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   margin-top: 0.5rem;
   margin-bottom: 1rem;
 }
 
 .video-section {
-  flex: 0 1 auto; /* do NOT grow or shrink */
-  max-width: 400px;
-  min-width: 30px;
+  max-width: 500px;
+  width: 80%;
+  display: flex;
+  justify-content: center;
 }
 
 .video-section video {
-  width: 100%; /* << THIS makes the video fill .video-section */
+  width: 80%; /* << THIS makes the video fill .video-section */
   height: auto; /* keep aspect ratio */
   display: block; /* removes any inline spacing */
   border-radius: 12px;
+}
+
+/* Call Action Button */
+.call-action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b0f6e, #6515c6);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Abril Fatface", serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(59, 15, 110, 0.3);
+  min-width: 200px;
+  justify-content: center;
+}
+
+.call-action-button:hover {
+  background: linear-gradient(135deg, #46157e, #7a1dd1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 15, 110, 0.4);
+}
+
+.call-action-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(59, 15, 110, 0.3);
+}
+
+.button-icon {
+  font-size: 18px;
+}
+
+.button-text {
+  font-size: 14px;
 }
 
 /* Action buttons styling */
@@ -357,6 +397,104 @@
     animation: pulse 5s ease-in-out infinite;
 }
 
+/* Call Modal Styles */
+.call-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.call-modal-content {
+  background: linear-gradient(135deg, #3b0f6e, #6515c6);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.call-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.call-modal-title {
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: "Abril Fatface", serif;
+  margin: 0;
+}
+
+.call-modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.call-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.call-modal-body {
+  padding: 30px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Override call-section styles for modal */
+.call-modal-body .call-section {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 0;
+  opacity: 1;
+  font-size: 18px;
+  min-width: auto;
+}
+
+.call-modal-body .scheduler-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  margin: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.call-modal-body .join-call-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  margin: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -379,6 +517,73 @@
 
 .popup-text {
   color: white;
+}
+
+/* Mobile responsive styles for modal */
+@media (max-width: 768px) {
+  .call-modal-overlay {
+    padding: 10px;
+  }
+
+  .call-modal-content {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 15px;
+  }
+
+  .call-modal-header {
+    padding: 15px 20px;
+  }
+
+  .call-modal-title {
+    font-size: 20px;
+  }
+
+  .call-modal-body {
+    padding: 20px;
+  }
+
+  .call-action-button {
+    min-width: 180px;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .button-text {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .call-modal-overlay {
+    padding: 5px;
+  }
+
+  .call-modal-content {
+    border-radius: 10px;
+  }
+
+  .call-modal-header {
+    padding: 12px 15px;
+  }
+
+  .call-modal-title {
+    font-size: 18px;
+  }
+
+  .call-modal-body {
+    padding: 15px;
+  }
+
+  .call-action-button {
+    min-width: 160px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .button-text {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 991px) {

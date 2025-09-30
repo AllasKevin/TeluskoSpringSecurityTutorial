@@ -13,6 +13,7 @@ import swan from "../../assets/teal-swan.webp";
 import { ListGroup } from "react-bootstrap";
 import { CallStatus } from "../../App";
 import { CallHandlerPopUp } from "./components/CallHandlerPopUp";
+import { CallModal } from "./components/CallModal";
 import { CallData } from "../Dashboard";
 
 interface PracticesPageProps {
@@ -108,6 +109,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     null
   );
   const [showPopup, setShowPopup] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
   const [chosenPractice, setChosenPractice] = useState<string>("");
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
 
@@ -166,6 +168,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setShowPopup={setShowPopup}
+                setShowCallModal={setShowCallModal}
                 setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
                 setAvailableCalls={setAvailableCalls}
               />
@@ -196,6 +199,30 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
             practice={chosenPractice} // Pass the chosen practice to the popup
           />
         )}
+        <CallModal
+          isOpen={showCallModal}
+          onClose={() => setShowCallModal(false)}
+          practice={chosenPractice}
+          callStatus={callStatus}
+          updateCallStatus={updateCallStatus}
+          localStream={localStream}
+          setLocalStream={setLocalStream}
+          remoteStream={remoteStream}
+          setRemoteStream={setRemoteStream}
+          peerConnection={peerConnection}
+          setPeerConnection={setPeerConnection}
+          offerData={offerData}
+          setOfferData={setOfferData}
+          remoteFeedEl={remoteFeedEl}
+          localFeedEl={localFeedEl}
+          gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
+          setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
+          remoteDescAddedForOfferer={remoteDescAddedForOfferer}
+          setShowPopup={setShowPopup}
+          setShowCallModal={setShowCallModal}
+          setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+          setAvailableCalls={setAvailableCalls}
+        />
       </div>
       <NavigationBar />
     </>
