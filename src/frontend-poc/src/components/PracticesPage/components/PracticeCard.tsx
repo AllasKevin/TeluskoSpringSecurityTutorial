@@ -45,6 +45,7 @@ interface PracticeCardProps {
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowCallModal: React.Dispatch<React.SetStateAction<boolean>>;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
 }
@@ -74,6 +75,7 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
       setIceCandidatesReadyTrigger,
       remoteDescAddedForOfferer,
       setShowPopup,
+      setShowCallModal,
       setRemoteDescAddedForOfferer,
       setAvailableCalls,
     },
@@ -120,7 +122,7 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
 
         {isExpanded && (
           <div className="expanded-content">
-            <div className="expanded-row">
+            <div className="centered-video-container">
               <div
                 className="video-section"
                 onClick={(e) => e.stopPropagation()}
@@ -130,27 +132,16 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
                   Your browser does not support the video tag.
                 </video>
               </div>
-              <ScheduleCallSection
-                practice={title}
-                callStatus={callStatus}
-                updateCallStatus={updateCallStatus}
-                localStream={localStream}
-                setLocalStream={setLocalStream}
-                remoteStream={remoteStream}
-                setRemoteStream={setRemoteStream}
-                peerConnection={peerConnection}
-                setPeerConnection={setPeerConnection}
-                offerData={offerData}
-                setOfferData={setOfferData}
-                remoteFeedEl={remoteFeedEl}
-                localFeedEl={localFeedEl}
-                gatheredAnswerIceCandidatesRef={gatheredAnswerIceCandidatesRef}
-                setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
-                remoteDescAddedForOfferer={remoteDescAddedForOfferer}
-                setShowPopup={setShowPopup}
-                setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
-                setAvailableCalls={setAvailableCalls}
-              />
+              <button
+                className="call-action-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowCallModal(true);
+                }}
+              >
+                <span className="button-icon">📞</span>
+                <span className="button-text">Join or Schedule Call</span>
+              </button>
             </div>
           </div>
         )}
