@@ -7,12 +7,13 @@ import {
   hasUserResponded,
   getUserRoleText,
   getUserRoleColor,
+  isBookingReady,
+  getTimeUntilBooking,
 } from "../../../utils/bookingUtils";
 
 const BookingCard: React.FC<BookingCardProps> = ({
   booking,
   currentUsername,
-  tabType,
   onBookingAction,
   onRespondToBooking,
   onAcceptBookingResponse,
@@ -25,833 +26,398 @@ const BookingCard: React.FC<BookingCardProps> = ({
   const hasResponded = hasUserResponded(booking, currentUsername);
 
   const renderActionButtons = () => {
-    if (tabType === "schedule") {
-      // Schedule Call tab - show respond button only for other users' bookings
-      if (booking.status === "PENDING" && !isUser) {
-        return (
-          <div className="action-buttons">
-            {hasResponded ? (
-              <div className="response-confirmation">
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#28a745",
-                    fontWeight: "bold",
-                    marginBottom: "4px",
-                  }}
-                >
-                  ✓ Your response sent
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#6c757d",
-                  }}
-                >
-                  Waiting for {booking.userName} to accept your response
-                </div>
-                <button
-                  onClick={() => {
-                    console.log("=== WITHDRAW RESPONSE BUTTON CLICKED ===");
-                    console.log("Booking ID:", booking.id);
-                    console.log("Booking object:", booking);
-                    console.log(
-                      "onWithdrawBookingResponse function:",
-                      onWithdrawBookingResponse
-                    );
-                    onWithdrawBookingResponse?.(booking.id);
-                  }}
-                  className="action-button withdraw"
-                  style={{
-                    fontSize: "0.8rem",
-                    padding: "4px 8px",
-                    backgroundColor: "#6c757d",
-                    color: "white",
-                    marginTop: "8px",
-                  }}
-                >
-                  Withdraw Response
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => onRespondToBooking?.(booking.id)}
-                className="action-button respond"
-              >
-                Respond to Booking
-              </button>
-            )}
-          </div>
-        );
-      } else if (isUser) {
-        // User's own bookings - show waiting for responses and delete button
-        const hasResponses =
-          booking.responses &&
-          booking.responses.filter(
-            (response) => response.responseStatus !== "DECLINED"
-          ).length > 0;
-        return (
-          <div className="responses-section">
-            {hasResponses && booking.status !== "CONFIRMED" ? (
-              <>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    fontWeight: "bold",
-                    marginBottom: "8px",
-                  }}
-                >
-                  {booking.responses?.filter(
-                    (response) => response.responseStatus !== "DECLINED"
-                  ).length || 0}{" "}
-                  response
-                  {(booking.responses?.filter(
-                    (response) => response.responseStatus !== "DECLINED"
-                  ).length || 0) > 1
-                    ? "s"
-                    : ""}{" "}
-                  received
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  }}
-                >
-                  {booking.responses
-                    ?.filter(
-                      (response) => response.responseStatus !== "DECLINED"
-                    )
-                    .map((response, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "8px",
-                          backgroundColor: "#f8f9fa",
-                          borderRadius: "4px",
-                          border: "1px solid #dee2e6",
-                        }}
-                      >
-                        <span style={{ fontWeight: "500" }}>
-                          {response.responder.username}
-                        </span>
-                        {booking.status === "PENDING" && (
-                          <div style={{ display: "flex", gap: "4px" }}>
-                            <button
-                              onClick={() => {
-                                onAcceptBookingResponse?.(
-                                  booking.id,
-                                  response.responder.username
-                                );
-                              }}
-                              className="action-button accept"
-                              style={{
-                                fontSize: "0.7rem",
-                                padding: "4px 8px",
-                                backgroundColor: "#28a745",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "3px",
-                              }}
-                            >
-                              Accept
-                            </button>
-                            <button
-                              onClick={() => {
-                                onDeclineBookingResponse?.(
-                                  booking.id,
-                                  response.responder.username
-                                );
-                              }}
-                              className="action-button decline"
-                              style={{
-                                fontSize: "0.7rem",
-                                padding: "4px 8px",
-                                backgroundColor: "#dc3545",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "3px",
-                              }}
-                            >
-                              Decline
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </>
-            ) : booking.status !== "CONFIRMED" ? (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-              >
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#ffc107",
-                    fontWeight: "bold",
-                  }}
-                >
-                  ⏳ Waiting for responses
-                </div>
-                <button
-                  onClick={() => onDeleteBooking?.(booking.id)}
-                  className="action-button delete"
-                  style={{
-                    fontSize: "0.8rem",
-                    padding: "6px 12px",
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    width: "100%",
-                  }}
-                >
-                  Delete Booking
-                </button>
-              </div>
-            ) : null}
-            {booking.status === "CONFIRMED" && (
-              <>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#28a745",
-                    fontWeight: "bold",
-                    marginTop: "8px",
-                    padding: "8px",
-                    backgroundColor: "#d4edda",
-                    border: "1px solid #c3e6cb",
-                    borderRadius: "4px",
-                  }}
-                >
-                  ✅ Call confirmed! Your session with{" "}
-                  {booking.responses?.[0]?.responder.username ||
-                    "the other participant"}{" "}
-                  will take place at {formatDateTime(booking.dateTime)}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    marginTop: "8px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "8px",
-                      backgroundColor: "#f8f9fa",
-                      borderRadius: "4px",
-                      border: "1px solid #dee2e6",
-                    }}
-                  >
-                    <span style={{ fontWeight: "500" }}>
-                      {booking.responses?.[0]?.responder.username ||
-                        "Unknown User"}
-                    </span>
-                    <button
-                      onClick={() => {
-                        console.log(
-                          "=== WITHDRAW ACCEPTANCE BUTTON CLICKED ==="
-                        );
-                        console.log("Booking ID:", booking.id);
-                        console.log("Booking object:", booking);
-                        console.log(
-                          "onWithdrawAcceptance function:",
-                          onWithdrawAcceptance
-                        );
-                        onWithdrawAcceptance?.(booking.id);
-                      }}
-                      className="action-button withdraw"
-                      style={{
-                        fontSize: "0.7rem",
-                        padding: "4px 8px",
-                        backgroundColor: "#ffc107",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "3px",
-                        width: "auto",
-                        minWidth: "80px",
-                        maxWidth: "120px",
-                      }}
-                    >
-                      Withdraw
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => onDeleteBooking?.(booking.id)}
-                    className="action-button delete"
-                    style={{
-                      fontSize: "0.8rem",
-                      padding: "6px 12px",
-                      backgroundColor: "#dc3545",
-                      color: "white",
-                      width: "100%",
-                    }}
-                  >
-                    Delete Booking
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        );
-      }
-      return null;
-    }
-
-    if (tabType === "available") {
-      // Available Bookings tab - show respond button or confirmation
-      if (booking.status === "PENDING" && !isUser) {
-        return (
-          <div className="action-buttons">
-            {hasResponded ? (
-              <div className="response-confirmation">
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#28a745",
-                    fontWeight: "bold",
-                    marginBottom: "4px",
-                  }}
-                >
-                  ✓ Your response sent
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#6c757d",
-                  }}
-                >
-                  Waiting for {booking.userName} to accept your response
-                </div>
-                <button
-                  onClick={() => {
-                    console.log("=== WITHDRAW RESPONSE BUTTON CLICKED ===");
-                    console.log("Booking ID:", booking.id);
-                    console.log("Booking object:", booking);
-                    console.log(
-                      "onWithdrawBookingResponse function:",
-                      onWithdrawBookingResponse
-                    );
-                    onWithdrawBookingResponse?.(booking.id);
-                  }}
-                  className="action-button withdraw"
-                  style={{
-                    fontSize: "0.8rem",
-                    padding: "4px 8px",
-                    backgroundColor: "#6c757d",
-                    color: "white",
-                    marginTop: "8px",
-                  }}
-                >
-                  Withdraw Response
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => onRespondToBooking?.(booking.id)}
-                className="action-button respond"
-              >
-                Respond to Booking
-              </button>
-            )}
-          </div>
-        );
-      } else if (isUser) {
-        // User's own bookings - show waiting for responses and delete button
-        const hasResponses =
-          booking.responses &&
-          booking.responses.filter(
-            (response) => response.responseStatus !== "DECLINED"
-          ).length > 0;
-        return (
-          <div className="responses-section">
-            {hasResponses && booking.status !== "CONFIRMED" ? (
-              <>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    fontWeight: "bold",
-                    marginBottom: "8px",
-                  }}
-                >
-                  {booking.responses?.filter(
-                    (response) => response.responseStatus !== "DECLINED"
-                  ).length || 0}{" "}
-                  response
-                  {(booking.responses?.filter(
-                    (response) => response.responseStatus !== "DECLINED"
-                  ).length || 0) > 1
-                    ? "s"
-                    : ""}{" "}
-                  received
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  }}
-                >
-                  {booking.responses
-                    ?.filter(
-                      (response) => response.responseStatus !== "DECLINED"
-                    )
-                    .map((response, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "8px",
-                          backgroundColor: "#f8f9fa",
-                          borderRadius: "4px",
-                          border: "1px solid #dee2e6",
-                        }}
-                      >
-                        <span style={{ fontWeight: "500" }}>
-                          {response.responder.username}
-                        </span>
-                        {booking.status === "PENDING" && (
-                          <div style={{ display: "flex", gap: "4px" }}>
-                            <button
-                              onClick={() => {
-                                onAcceptBookingResponse?.(
-                                  booking.id,
-                                  response.responder.username
-                                );
-                              }}
-                              className="action-button accept"
-                              style={{
-                                fontSize: "0.7rem",
-                                padding: "4px 8px",
-                                backgroundColor: "#28a745",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "3px",
-                              }}
-                            >
-                              Accept
-                            </button>
-                            <button
-                              onClick={() => {
-                                onDeclineBookingResponse?.(
-                                  booking.id,
-                                  response.responder.username
-                                );
-                              }}
-                              className="action-button decline"
-                              style={{
-                                fontSize: "0.7rem",
-                                padding: "4px 8px",
-                                backgroundColor: "#dc3545",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "3px",
-                              }}
-                            >
-                              Decline
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </>
-            ) : booking.status !== "CONFIRMED" ? (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-              >
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#ffc107",
-                    fontWeight: "bold",
-                  }}
-                >
-                  ⏳ Waiting for responses
-                </div>
-                <button
-                  onClick={() => onDeleteBooking?.(booking.id)}
-                  className="action-button delete"
-                  style={{
-                    fontSize: "0.8rem",
-                    padding: "6px 12px",
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    width: "100%",
-                  }}
-                >
-                  Delete Booking
-                </button>
-              </div>
-            ) : null}
-            {booking.status === "CONFIRMED" && (
-              <>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#28a745",
-                    fontWeight: "bold",
-                    marginTop: "8px",
-                    padding: "8px",
-                    backgroundColor: "#d4edda",
-                    border: "1px solid #c3e6cb",
-                    borderRadius: "4px",
-                  }}
-                >
-                  ✅ Call confirmed! Your session with{" "}
-                  {booking.responses?.[0]?.responder.username ||
-                    "the other participant"}{" "}
-                  will take place at {formatDateTime(booking.dateTime)}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    marginTop: "8px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "8px",
-                      backgroundColor: "#f8f9fa",
-                      borderRadius: "4px",
-                      border: "1px solid #dee2e6",
-                    }}
-                  >
-                    <span style={{ fontWeight: "500" }}>
-                      {booking.responses?.[0]?.responder.username ||
-                        "Unknown User"}
-                    </span>
-                    <button
-                      onClick={() => {
-                        console.log(
-                          "=== WITHDRAW ACCEPTANCE BUTTON CLICKED ==="
-                        );
-                        console.log("Booking ID:", booking.id);
-                        console.log("Booking object:", booking);
-                        console.log(
-                          "onWithdrawAcceptance function:",
-                          onWithdrawAcceptance
-                        );
-                        onWithdrawAcceptance?.(booking.id);
-                      }}
-                      className="action-button withdraw"
-                      style={{
-                        fontSize: "0.7rem",
-                        padding: "4px 8px",
-                        backgroundColor: "#ffc107",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "3px",
-                        width: "auto",
-                        minWidth: "80px",
-                        maxWidth: "120px",
-                      }}
-                    >
-                      Withdraw
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => onDeleteBooking?.(booking.id)}
-                    className="action-button delete"
-                    style={{
-                      fontSize: "0.8rem",
-                      padding: "6px 12px",
-                      backgroundColor: "#dc3545",
-                      color: "white",
-                      width: "100%",
-                    }}
-                  >
-                    Delete Booking
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        );
-      }
-      return null;
-    }
-
-    if (tabType === "mybookings") {
-      // My Bookings tab - show different content based on user role
+    // Handle confirmed bookings first
+    if (booking.status === "CONFIRMED") {
       if (isUser) {
-        // User's own bookings
-        const hasResponses =
-          booking.responses &&
-          booking.responses.filter(
-            (response) => response.responseStatus !== "DECLINED"
-          ).length > 0;
-
+        // User's own confirmed booking
         return (
-          <div className="responses-section">
-            {hasResponses && booking.status !== "CONFIRMED" ? (
-              <>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    fontWeight: "bold",
-                    marginBottom: "8px",
-                  }}
-                >
-                  {booking.responses?.filter(
-                    (response) => response.responseStatus !== "DECLINED"
-                  ).length || 0}{" "}
-                  response
-                  {(booking.responses?.filter(
-                    (response) => response.responseStatus !== "DECLINED"
-                  ).length || 0) > 1
-                    ? "s"
-                    : ""}{" "}
-                  received
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  }}
-                >
-                  {booking.responses
-                    ?.filter(
-                      (response) => response.responseStatus !== "DECLINED"
-                    )
-                    .map((response, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "8px",
-                          backgroundColor: "#f8f9fa",
-                          borderRadius: "4px",
-                          border: "1px solid #dee2e6",
-                        }}
-                      >
-                        <span style={{ fontWeight: "500" }}>
-                          {response.responder.username}
-                        </span>
-                        {booking.status === "PENDING" && (
-                          <div style={{ display: "flex", gap: "4px" }}>
-                            <button
-                              onClick={() => {
-                                onAcceptBookingResponse?.(
-                                  booking.id,
-                                  response.responder.username
-                                );
-                              }}
-                              className="action-button accept"
-                              style={{
-                                fontSize: "0.7rem",
-                                padding: "4px 8px",
-                                backgroundColor: "#28a745",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "3px",
-                              }}
-                            >
-                              Accept
-                            </button>
-                            <button
-                              onClick={() => {
-                                onDeclineBookingResponse?.(
-                                  booking.id,
-                                  response.responder.username
-                                );
-                              }}
-                              className="action-button decline"
-                              style={{
-                                fontSize: "0.7rem",
-                                padding: "4px 8px",
-                                backgroundColor: "#dc3545",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "3px",
-                              }}
-                            >
-                              Decline
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </>
-            ) : booking.status !== "CONFIRMED" ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              marginTop: "8px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "0.9rem",
+                color: "#28a745",
+                fontWeight: "bold",
+                marginTop: "8px",
+                padding: "8px",
+                backgroundColor: "#d4edda",
+                border: "1px solid #c3e6cb",
+                borderRadius: "4px",
+              }}
+            >
+              ✅ Call confirmed! Your session with{" "}
+              {booking.responses?.[0]?.responder.username ||
+                "the other participant"}{" "}
+              will take place at {formatDateTime(booking.dateTime)}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                marginTop: "8px",
+              }}
+            >
               <div
-                style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "8px",
+                  backgroundColor: "#f8f9fa",
+                  borderRadius: "4px",
+                  border: "1px solid #dee2e6",
+                }}
               >
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#ffc107",
-                    fontWeight: "bold",
-                  }}
-                >
-                  ⏳ Waiting for responses
-                </div>
-                <button
-                  onClick={() => onDeleteBooking?.(booking.id)}
-                  className="action-button delete"
-                  style={{
-                    fontSize: "0.8rem",
-                    padding: "6px 12px",
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    width: "100%",
-                  }}
-                >
-                  Delete Booking
-                </button>
-              </div>
-            ) : null}
-            {booking.status === "CONFIRMED" && (
-              <>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#28a745",
-                    fontWeight: "bold",
-                    marginTop: "8px",
-                    padding: "8px",
-                    backgroundColor: "#d4edda",
-                    border: "1px solid #c3e6cb",
-                    borderRadius: "4px",
-                  }}
-                >
-                  ✅ Call confirmed! Your session with{" "}
-                  {booking.responses?.[0]?.responder.username ||
-                    "the other participant"}{" "}
-                  will take place at {formatDateTime(booking.dateTime)}
-                </div>
+                <span style={{ fontWeight: "500" }}>
+                  {booking.responses?.[0]?.responder.username || "Unknown User"}
+                </span>
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
                     gap: "8px",
-                    marginTop: "8px",
+                    alignItems: "center",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "8px",
-                      backgroundColor: "#f8f9fa",
-                      borderRadius: "4px",
-                      border: "1px solid #dee2e6",
-                    }}
-                  >
-                    <span style={{ fontWeight: "500" }}>
-                      {booking.responses?.[0]?.responder.username ||
-                        "Unknown User"}
-                    </span>
+                  {isBookingReady(booking.dateTime) ? (
                     <button
                       onClick={() => {
+                        // TODO: Implement ready functionality
                         console.log(
-                          "=== WITHDRAW ACCEPTANCE BUTTON CLICKED ==="
+                          "Ready button clicked for booking:",
+                          booking.id
                         );
-                        console.log("Booking ID:", booking.id);
-                        console.log("Booking object:", booking);
-                        console.log(
-                          "onWithdrawAcceptance function:",
-                          onWithdrawAcceptance
-                        );
-                        onWithdrawAcceptance?.(booking.id);
                       }}
-                      className="action-button withdraw"
+                      className="action-button ready"
                       style={{
                         fontSize: "0.7rem",
                         padding: "4px 8px",
-                        backgroundColor: "#ffc107",
+                        backgroundColor: "#28a745",
                         color: "white",
                         border: "none",
                         borderRadius: "3px",
                         width: "auto",
-                        minWidth: "80px",
-                        maxWidth: "120px",
+                        minWidth: "60px",
                       }}
                     >
-                      Withdraw
+                      Ready
                     </button>
-                  </div>
+                  ) : (
+                    <span
+                      style={{
+                        fontSize: "0.7rem",
+                        color: "#6c757d",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      {getTimeUntilBooking(booking.dateTime)}
+                    </span>
+                  )}
                   <button
-                    onClick={() => onDeleteBooking?.(booking.id)}
-                    className="action-button delete"
+                    onClick={() => {
+                      console.log("=== WITHDRAW ACCEPTANCE BUTTON CLICKED ===");
+                      console.log("Booking ID:", booking.id);
+                      console.log("Booking object:", booking);
+                      console.log(
+                        "onWithdrawAcceptance function:",
+                        onWithdrawAcceptance
+                      );
+                      onWithdrawAcceptance?.(booking.id);
+                    }}
+                    className="action-button withdraw"
                     style={{
-                      fontSize: "0.8rem",
-                      padding: "6px 12px",
-                      backgroundColor: "#dc3545",
+                      fontSize: "0.7rem",
+                      padding: "4px 8px",
+                      backgroundColor: "#ffc107",
                       color: "white",
-                      width: "100%",
+                      border: "none",
+                      borderRadius: "3px",
+                      width: "auto",
+                      minWidth: "80px",
+                      maxWidth: "120px",
                     }}
                   >
-                    Delete Booking
+                    Withdraw
                   </button>
                 </div>
-              </>
-            )}
+              </div>
+              <button
+                onClick={() => onDeleteBooking?.(booking.id)}
+                className="action-button delete"
+                style={{
+                  fontSize: "0.8rem",
+                  padding: "6px 12px",
+                  backgroundColor: "#dc3545",
+                  color: "white",
+                  width: "100%",
+                }}
+              >
+                Delete Booking
+              </button>
+            </div>
           </div>
         );
       } else if (hasResponded) {
-        // User responded to this booking
+        // User responded to someone else's confirmed booking
         return (
-          <div className="response-confirmation">
-            {booking.status !== "CONFIRMED" && (
-              <>
-                <div
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              marginTop: "8px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "0.9rem",
+                color: "#28a745",
+                fontWeight: "bold",
+                marginTop: "8px",
+                padding: "8px",
+                backgroundColor: "#d4edda",
+                border: "1px solid #c3e6cb",
+                borderRadius: "4px",
+              }}
+            >
+              ✅ Call confirmed! Your session with {booking.userName} will take
+              place at {formatDateTime(booking.dateTime)}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                gap: "8px",
+                alignItems: "center",
+                marginTop: "8px",
+              }}
+            >
+              {isBookingReady(booking.dateTime) ? (
+                <button
+                  onClick={() => {
+                    // TODO: Implement ready functionality
+                    console.log(
+                      "Ready button clicked for booking:",
+                      booking.id
+                    );
+                  }}
+                  className="action-button ready"
                   style={{
-                    fontSize: "0.9rem",
-                    color: "#28a745",
-                    fontWeight: "bold",
-                    marginBottom: "4px",
+                    fontSize: "0.8rem",
+                    padding: "4px 8px",
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "3px",
+                    width: "auto",
+                    minWidth: "60px",
                   }}
                 >
-                  ✓ Your response sent
-                </div>
-                <div
+                  Ready
+                </button>
+              ) : (
+                <span
                   style={{
                     fontSize: "0.8rem",
                     color: "#6c757d",
+                    fontStyle: "italic",
                   }}
                 >
-                  Waiting for {booking.userName} to accept your response
-                </div>
-              </>
-            )}
-            {booking.status === "CONFIRMED" && (
+                  {getTimeUntilBooking(booking.dateTime)}
+                </span>
+              )}
+              <button
+                onClick={() => onWithdrawBookingResponse?.(booking.id)}
+                className="action-button withdraw"
+                style={{
+                  fontSize: "0.8rem",
+                  padding: "4px 8px",
+                  backgroundColor: "#6c757d",
+                  color: "white",
+                }}
+              >
+                Withdraw Response
+              </button>
+            </div>
+          </div>
+        );
+      }
+    }
+
+    // Handle pending bookings
+    if (booking.status === "PENDING") {
+      if (isUser) {
+        // User's own pending booking
+        const hasNonDeclinedResponses = booking.responses?.some(
+          (response) => response.responseStatus !== "DECLINED"
+        );
+
+        if (hasNonDeclinedResponses) {
+          // Show list of responders with accept/decline buttons
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                marginTop: "8px",
+              }}
+            >
               <div
                 style={{
                   fontSize: "0.9rem",
-                  color: "#28a745",
+                  color: "#ffc107",
                   fontWeight: "bold",
-                  marginTop: "8px",
-                  padding: "8px",
-                  backgroundColor: "#d4edda",
-                  border: "1px solid #c3e6cb",
-                  borderRadius: "4px",
                 }}
               >
-                ✅ Call confirmed! Your session with {booking.userName} will
-                take place at {formatDateTime(booking.dateTime)}
+                ⏳ Waiting for responses
               </div>
-            )}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                }}
+              >
+                {booking.responses
+                  ?.filter((response) => response.responseStatus !== "DECLINED")
+                  .map((response, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "8px",
+                        backgroundColor: "#f8f9fa",
+                        borderRadius: "4px",
+                        border: "1px solid #dee2e6",
+                      }}
+                    >
+                      <span style={{ fontWeight: "500" }}>
+                        {response.responder.username}
+                      </span>
+                      <div style={{ display: "flex", gap: "4px" }}>
+                        <button
+                          onClick={() => {
+                            onAcceptBookingResponse?.(
+                              booking.id,
+                              response.responder.username
+                            );
+                          }}
+                          className="action-button accept"
+                          style={{
+                            fontSize: "0.7rem",
+                            padding: "4px 8px",
+                            backgroundColor: "#28a745",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "3px",
+                          }}
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => {
+                            onDeclineBookingResponse?.(
+                              booking.id,
+                              response.responder.username
+                            );
+                          }}
+                          className="action-button decline"
+                          style={{
+                            fontSize: "0.7rem",
+                            padding: "4px 8px",
+                            backgroundColor: "#dc3545",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "3px",
+                          }}
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+              <button
+                onClick={() => onDeleteBooking?.(booking.id)}
+                className="action-button delete"
+                style={{
+                  fontSize: "0.8rem",
+                  padding: "6px 12px",
+                  backgroundColor: "#dc3545",
+                  color: "white",
+                  width: "100%",
+                }}
+              >
+                Delete Booking
+              </button>
+            </div>
+          );
+        } else {
+          // No responses yet
+          return (
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
+              <div
+                style={{
+                  fontSize: "0.9rem",
+                  color: "#ffc107",
+                  fontWeight: "bold",
+                }}
+              >
+                ⏳ Waiting for responses
+              </div>
+              <button
+                onClick={() => onDeleteBooking?.(booking.id)}
+                className="action-button delete"
+                style={{
+                  fontSize: "0.8rem",
+                  padding: "6px 12px",
+                  backgroundColor: "#dc3545",
+                  color: "white",
+                  width: "100%",
+                }}
+              >
+                Delete Booking
+              </button>
+            </div>
+          );
+        }
+      } else if (hasResponded) {
+        // User responded to someone else's pending booking
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div
+              style={{
+                fontSize: "0.9rem",
+                color: "#28a745",
+                fontWeight: "bold",
+                marginTop: "8px",
+                padding: "8px",
+                backgroundColor: "#d4edda",
+                border: "1px solid #c3e6cb",
+                borderRadius: "4px",
+              }}
+            >
+              ✓ Your response sent
+            </div>
+            <div
+              style={{
+                fontSize: "0.8rem",
+                color: "#6c757d",
+                fontStyle: "italic",
+              }}
+            >
+              Waiting for {booking.userName} to accept your response
+            </div>
             <button
               onClick={() => onWithdrawBookingResponse?.(booking.id)}
               className="action-button withdraw"
@@ -867,6 +433,25 @@ const BookingCard: React.FC<BookingCardProps> = ({
             </button>
           </div>
         );
+      } else {
+        // User can respond to someone else's pending booking
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <button
+              onClick={() => onRespondToBooking?.(booking.id)}
+              className="action-button respond"
+              style={{
+                fontSize: "0.8rem",
+                padding: "6px 12px",
+                backgroundColor: "#007bff",
+                color: "white",
+                width: "100%",
+              }}
+            >
+              Respond to Booking
+            </button>
+          </div>
+        );
       }
     }
 
@@ -879,66 +464,63 @@ const BookingCard: React.FC<BookingCardProps> = ({
 
     return (
       <div
-        className="user-booking-info"
-        style={{ marginTop: "8px", marginBottom: "8px" }}
+        style={{
+          fontSize: "0.8rem",
+          color: roleColor,
+          fontWeight: "500",
+          marginBottom: "4px",
+        }}
       >
-        <span
-          style={{
-            fontSize: "0.9rem",
-            color: roleColor,
-            fontWeight: "bold",
-            fontStyle: "italic",
-          }}
-        >
-          {roleText}
-        </span>
+        {roleText}
       </div>
     );
   };
 
   return (
-    <div className="booking-card">
+    <div
+      className="booking-card"
+      style={{
+        border: "2px solid #6f42c1",
+        borderRadius: "8px",
+        padding: "16px",
+        marginBottom: "16px",
+        backgroundColor: "white",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+      }}
+    >
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "10px",
-          flexWrap: "wrap",
-          gap: "8px",
+          alignItems: "flex-start",
+          marginBottom: "8px",
         }}
       >
         <div>
-          <strong style={{ fontSize: "1.1rem" }}>{booking.userName}</strong>
-          <div
-            style={{
-              fontSize: "0.9rem",
-              color: "#6c757d",
-            }}
-          >
+          <h3 style={{ margin: "0 0 4px 0", fontSize: "1.1rem" }}>
+            {booking.userName}
+          </h3>
+          <p style={{ margin: "0 0 4px 0", color: "#666", fontSize: "0.9rem" }}>
             {booking.practice}
-          </div>
-          <div
-            style={{
-              fontSize: "0.8rem",
-              color: "#6c757d",
-              marginTop: "4px",
-            }}
-          >
+          </p>
+          <p style={{ margin: "0 0 8px 0", color: "#666", fontSize: "0.9rem" }}>
             {formatDateTime(booking.dateTime)}
-          </div>
+          </p>
+          {renderUserInfo()}
         </div>
-        <span
-          className="status-badge"
+        <div
           style={{
             backgroundColor: getStatusColor(booking.status),
+            color: "white",
+            padding: "4px 8px",
+            borderRadius: "4px",
+            fontSize: "0.8rem",
+            fontWeight: "bold",
           }}
         >
           {booking.status}
-        </span>
+        </div>
       </div>
-
-      {renderUserInfo()}
       {renderActionButtons()}
     </div>
   );

@@ -24,7 +24,6 @@ export interface BookingActionProps {
 // Props for BookingCard component
 export interface BookingCardProps extends BaseBookingProps, BookingActionProps {
   booking: Booking;
-  tabType: TabType;
 }
 
 // Props for tab components

@@ -155,7 +155,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   }, []);
 
   useEffect(() => {
-      if (startDate) {
+    if (startDate) {
       loadBookingsForDate(startDate);
     }
   }, [startDate, loadBookingsForDate]);
@@ -314,8 +314,8 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           startDate,
           practice || "General Practice",
           (newBooking) => {
-        // Add to local state
-        setSelectedBookings((prev) => [...prev, newBooking]);
+            // Add to local state
+            setSelectedBookings((prev) => [...prev, newBooking]);
           }
         );
 
