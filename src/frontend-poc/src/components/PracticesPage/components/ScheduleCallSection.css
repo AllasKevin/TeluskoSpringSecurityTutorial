@@ -400,6 +400,36 @@
   flex-wrap: wrap !important;
 }
 
+/* User booking info styling */
+.user-booking-info {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 10px !important;
+  padding: 8px !important;
+  background-color: #f8f9fa !important;
+  border-radius: 6px !important;
+  border: 1px solid #e9ecef !important;
+}
+
+/* Responses section styling */
+.responses-section {
+  margin-top: 10px !important;
+  padding: 8px !important;
+  background-color: #f8f9fa !important;
+  border-radius: 6px !important;
+  border: 1px solid #e9ecef !important;
+}
+
+/* Response confirmation styling */
+.response-confirmation {
+  margin-top: 10px !important;
+  padding: 8px !important;
+  background-color: #d4edda !important;
+  border-radius: 6px !important;
+  border: 1px solid #c3e6cb !important;
+  text-align: center !important;
+}
+
 .action-button {
   padding: 8px 16px !important;
   border: none !important;
@@ -426,8 +456,20 @@
   color: white !important;
 }
 
+.action-button.respond {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
 /* Mobile responsive container */
 .scheduler-section {
+  padding: 20px !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Bookings section styling */
+.bookings-section {
   padding: 20px !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -436,6 +478,10 @@
 /* Mobile-specific media queries */
 @media (max-width: 768px) {
   .scheduler-section {
+    padding: 15px !important;
+  }
+  
+  .bookings-section {
     padding: 15px !important;
   }
   
@@ -464,6 +510,10 @@
 
 @media (max-width: 480px) {
   .scheduler-section {
+    padding: 10px !important;
+  }
+  
+  .bookings-section {
     padding: 10px !important;
   }
   
