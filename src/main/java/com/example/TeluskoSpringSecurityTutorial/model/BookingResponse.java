@@ -2,11 +2,11 @@ package com.example.TeluskoSpringSecurityTutorial.model;
 
 public class BookingResponse {
     private Users responder;
-    private boolean accepted;
+    private ResponseStatus responseStatus = ResponseStatus.NOT_ANSWERED;
 
-    public BookingResponse(Users responder, boolean accepted) {
+    public BookingResponse(Users responder, ResponseStatus responseStatus) {
         this.responder = responder;
-        this.accepted = accepted;
+        this.responseStatus = responseStatus;
     }
 
     public BookingResponse() {}
@@ -19,13 +19,21 @@ public class BookingResponse {
         this.responder = responder;
     }
 
-    public boolean isAccepted() {
-        return accepted;
+    public ResponseStatus getResponseStatus() {
+        return responseStatus;
     }
 
-    public void setAccepted(boolean accepted) {
-        this.accepted = accepted;
+    public void setResponseStatus(ResponseStatus responseStatus) {
+        this.responseStatus = responseStatus;
     }
 
-
+    @Override
+    public String toString() {
+        return "BookingResponse{" +
+                "responder=" + responder +
+                ", responseStatus=" + responseStatus +
+                '}';
+    }
 }
+
+

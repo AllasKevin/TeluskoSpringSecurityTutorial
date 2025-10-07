@@ -39,11 +39,15 @@ public class BookingController {
         Booking booking = new Booking();
         booking.setInitialBookerUser(user);
         booking.setBookedTime(bookedtime);
-        booking.setPractice("bestpractice");
+        booking.setPractice(practice);
         booking.setStatus(BookingStatus.PENDING);
         return service.save(booking);
     }
 
+    /** Endpoint to get all bookings for the user identified by the JWT token in the cookie.
+     * @param jwt The JWT token from the cookie.
+     * @return A list of bookings for the user.
+     */
     @GetMapping("/bookings")
     public List<Booking> getBookings(@CookieValue("jwt") String jwt) {
         String userFromToken = JWTService.extractUsername(jwt);
@@ -52,13 +56,21 @@ public class BookingController {
     }
 
     @GetMapping("/freebookingsbetween")
-    public List<Booking> getFreeBookingsBetween(@RequestParam Instant starttime, @RequestParam Instant endtime) {
+    public List<Booking> getFreebookingsbetween(@RequestParam Instant starttime, @RequestParam Instant endtime) {
         return service.getBookingsBetween(starttime, endtime);
+    }
+
+    @GetMapping("/allfreebookings")
+    public List<Booking> getAllFreeBookings(@CookieValue("jwt") String jwt) {
+        String userFromToken = JWTService.extractUsername(jwt);
+        return service.getAllFreeBookings(userFromToken);
     }
 
     @PostMapping("/respondtobooking")
     public Booking respondToBooking(@CookieValue("jwt") String jwt, @RequestBody Booking booking) {
         String userFromToken = JWTService.extractUsername(jwt);
+        System.out.println("Responding to booking called. Booking: ");
+        System.out.println(booking);
         return service.respondToBooking(booking, userFromToken);
     }
 
@@ -71,16 +83,38 @@ public class BookingController {
         return ResponseEntity.ok(service.acceptBookingResponse(booking, userFromToken, acceptedresponderusername));
     }
 
+    @PostMapping("/declinebookingresponse")
+    public ResponseEntity<Booking> declineBookingResponse(@CookieValue("jwt") String jwt, @RequestBody Booking booking, @RequestParam String declinedresponderusername) {
+        String userFromToken = JWTService.extractUsername(jwt);
+        if(userFromToken.equals(declinedresponderusername)){
+            return ResponseEntity.badRequest().body(null);
+        }
+        return ResponseEntity.ok(service.declineBookingResponse(booking, userFromToken, declinedresponderusername));
+    }
+
+    /*** Endpoint to withdraw a response or the acceptance to a response.
+     * @param jwt The JWT token from the cookie.
+     * @param booking The booking to withdraw acceptance from.
+     * @return The updated booking after withdrawing acceptance, or a bad request response if the operation is invalid.
+     */
     @PostMapping("/withdrawacceptbooking")
-    public ResponseEntity<Booking> withdrawAcceptBooking(@CookieValue("jwt") String jwt, @RequestBody Booking booking, @RequestParam String otherusername) {
+    public ResponseEntity<Booking> withdrawAcceptBooking(@CookieValue("jwt") String jwt, @RequestBody Booking booking, @RequestParam String responderusername) {
         System.out.println("withdrawAcceptBooking called with booking: ");
         System.out.println(booking);
         String userFromToken = JWTService.extractUsername(jwt);
-        if(userFromToken.equals(otherusername)){
-            return ResponseEntity.badRequest().body(null);
-        }
-        return ResponseEntity.ok(service.withdrawAcceptBooking(booking, userFromToken, otherusername));
+
+        return ResponseEntity.ok(service.withdrawAcceptBooking(booking, userFromToken, responderusername));
     }
+
+    @PostMapping("/withdrawbookingresponse")
+    public ResponseEntity<Booking> withdrawBookingResponse(@CookieValue("jwt") String jwt, @RequestBody Booking booking) {
+        System.out.println("withdrawBookingResponse called with booking: ");
+        System.out.println(booking);
+        String userFromToken = JWTService.extractUsername(jwt);
+
+        return ResponseEntity.ok(service.withdrawBookingResponse(booking, userFromToken));
+    }
+
 
     @DeleteMapping("/deletebooking")
     public ResponseEntity<Booking> deleteBooking(@CookieValue("jwt") String jwt, @RequestBody Booking booking) {
