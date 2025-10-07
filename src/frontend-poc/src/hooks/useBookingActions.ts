@@ -14,7 +14,7 @@ export const useBookingActions = () => {
     try {
       const updatedBooking = await BookingService.updateBookingStatus(
         bookingId,
-        "PENDING",
+        "pending",
         bookingData
       );
       onSuccess?.(updatedBooking);

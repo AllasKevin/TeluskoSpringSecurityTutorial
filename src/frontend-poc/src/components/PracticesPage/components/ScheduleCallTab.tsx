@@ -154,7 +154,6 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
                   key={booking.id}
                   booking={booking}
                   currentUsername={currentUsername}
-                  tabType="schedule"
                   onRespondToBooking={onRespondToBooking}
                   onAcceptBookingResponse={onAcceptBookingResponse}
                   onDeclineBookingResponse={onDeclineBookingResponse}

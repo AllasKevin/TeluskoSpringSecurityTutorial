@@ -64,7 +64,6 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
                 key={booking.id}
                 booking={booking}
                 currentUsername={currentUsername}
-                tabType="available"
                 onRespondToBooking={onRespondToBooking}
                 onAcceptBookingResponse={onAcceptBookingResponse}
                 onDeclineBookingResponse={onDeclineBookingResponse}

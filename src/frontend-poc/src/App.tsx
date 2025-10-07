@@ -10,6 +10,7 @@ import { LoginPage } from "./components/LoginPage";
 import LandingPage from "./components/LandingPage/LandingPage";
 import { RegisterPage } from "./components/RegisterPage";
 import { PracticesPage } from "./components/PracticesPage";
+import BookingReminder from "./components/BookingReminder";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -50,8 +51,14 @@ function App() {
     offerData,
   });
 
+  // Get current username for booking reminders
+  const currentUsername = sessionStorage.getItem("username");
+
   return (
     <div>
+      {/* Global booking reminder popup */}
+      <BookingReminder currentUsername={currentUsername} />
+
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/loginpage" element={<LoginPage />} />
