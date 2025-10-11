@@ -11,6 +11,7 @@ import {
   getTimeUntilBooking,
 } from "../../../utils/bookingUtils";
 import "./BookingCard.css";
+import { set } from "date-fns";
 
 const BookingCard: React.FC<BookingCardProps> = ({
   booking,
@@ -22,6 +23,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
   onWithdrawAcceptance,
   onDeleteBooking,
   onWithdrawBookingResponse,
+  setShowPopup,
 }) => {
   const isUser = isUserBooking(booking, currentUsername);
   const hasResponded = hasUserResponded(booking, currentUsername);
@@ -30,6 +32,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
     // TODO: Implement join call functionality
     console.log("Ready for call clicked for booking:");
     console.log(booking);
+    setShowPopup(true);
   };
 
   const renderActionButtons = () => {

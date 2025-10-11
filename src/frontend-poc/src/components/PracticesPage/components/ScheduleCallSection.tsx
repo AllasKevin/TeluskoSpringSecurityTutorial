@@ -574,6 +574,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           isMobile={isMobile}
           onSearchBookings={() => loadBookingsForDate(startDate)}
           onCreateBooking={handleCreateBooking}
+          setShowPopup={setShowPopup}
         />
       )}
 
@@ -593,6 +594,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           hasUserResponded={(booking) =>
             hasUserResponded(booking, currentUsername)
           }
+          setShowPopup={setShowPopup}
         />
       )}
 
@@ -611,6 +613,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           hasUserResponded={(booking) =>
             hasUserResponded(booking, currentUsername)
           }
+          setShowPopup={setShowPopup}
         />
       )}
     </div>

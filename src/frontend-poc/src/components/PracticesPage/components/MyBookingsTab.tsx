@@ -15,6 +15,7 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
   getStatusColor,
   isUserBooking: isUserBookingProp,
   hasUserResponded: hasUserRespondedProp,
+  setShowPopup,
 }) => {
   // Filter out bookings where user withdrew their response
   // Only show bookings where user is the creator OR has an active response
@@ -97,6 +98,7 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
                 getStatusColor={getStatusColor}
                 isUserBooking={isUserBookingProp}
                 hasUserResponded={hasUserRespondedProp}
+                setShowPopup={setShowPopup}
               />
             ))}
           </div>
