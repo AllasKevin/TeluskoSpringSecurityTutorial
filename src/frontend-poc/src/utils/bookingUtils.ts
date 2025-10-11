@@ -101,13 +101,13 @@ export const getUserRoleColor = (isUser: boolean, hasResponded: boolean): string
 };
 
 /**
- * Checks if a booking is within 5 minutes of its scheduled time
+ * Checks if a booking is within the ready window (15 minutes before to 5 minutes after)
  */
 export const isBookingReady = (bookingDateTime: Date): boolean => {
   const now = new Date();
   const timeDiff = bookingDateTime.getTime() - now.getTime();
   const minutesDiff = timeDiff / (1000 * 60);
-  return minutesDiff <= 5 && minutesDiff >= 0;
+  return minutesDiff <= 5 && minutesDiff >= -15;
 };
 
 /**

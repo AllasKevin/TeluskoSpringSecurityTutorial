@@ -18,15 +18,28 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
 }) => {
   // Filter out bookings where user withdrew their response
   // Only show bookings where user is the creator OR has an active response
-  const activeBookings = myBookings.filter((booking) => {
-    // Always show bookings the user created
-    if (isUserBooking(booking, currentUsername)) {
-      return true;
-    }
+  const activeBookings = myBookings
+    .filter((booking) => {
+      // Always show bookings the user created
+      if (isUserBooking(booking, currentUsername)) {
+        console.log("✅ Showing booking - user is creator");
+        return true;
+      }
 
-    // Only show bookings where user has an active response (not withdrawn)
-    return hasUserResponded(booking, currentUsername);
-  });
+      // Only show bookings where user has an active response (not withdrawn)
+      const hasResponded = hasUserResponded(booking, currentUsername);
+      console.log("Has user responded:", hasResponded);
+      if (hasResponded) {
+        console.log("✅ Showing booking - user has responded");
+      } else {
+        console.log("❌ Hiding booking - user has not responded");
+      }
+      return hasResponded;
+    })
+    .sort((a, b) => {
+      // Sort by booking time (earliest first)
+      return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
+    });
   return (
     <div className="bookings-section">
       <h3

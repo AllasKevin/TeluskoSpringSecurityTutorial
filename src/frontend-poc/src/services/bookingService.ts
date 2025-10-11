@@ -56,10 +56,14 @@ export class BookingService {
   // Get bookings for a specific date/time
   static async getBookingsForDateTime(dateTime: Date): Promise<Booking[]> {
     try {
+      // Use a 10-minute window around the selected time to get bookings for that specific time slot
+      const startTime = new Date(dateTime.getTime() - 5 * 60 * 1000); // 5 minutes before
+      const endTime = new Date(dateTime.getTime() + 5 * 60 * 1000);   // 5 minutes after
+      
       const response = await apiClient.get('/freebookingsbetween', {
         params: {
-          starttime: dateTime.toISOString(),
-          endtime: new Date(dateTime.getTime() + 24 * 60 * 60 * 1000).toISOString()
+          starttime: startTime.toISOString(),
+          endtime: endTime.toISOString()
         }
       });
       

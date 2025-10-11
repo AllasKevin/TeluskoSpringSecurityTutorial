@@ -72,6 +72,7 @@ interface WebRtcManagerNewProps {
     >
   >;
   practice: string; // Optional prop to pass the practice name
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const WebRtcManager = forwardRef<
@@ -99,6 +100,7 @@ export const WebRtcManager = forwardRef<
       setAvailableCalls,
       setAvailableMatches,
       practice,
+      setShowPopup,
     },
     ref
   ) => {
@@ -503,9 +505,11 @@ export const WebRtcManager = forwardRef<
           console.log("navigating as offerer to videocall page...");
           setStep4CreateOfferExecuted(false);
 
+          setShowPopup(false);
           navigate("/offer", { replace: false });
         } else if (typeOfCall === "answer") {
           console.log("navigating as answerer to videocall page...");
+          setShowPopup(false);
           navigate("/answer", { replace: false });
         }
       }

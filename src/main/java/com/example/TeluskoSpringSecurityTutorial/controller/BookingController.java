@@ -116,7 +116,7 @@ public class BookingController {
     }
 
 
-    @DeleteMapping("/deletebooking")
+    @PostMapping("/deletebooking")
     public ResponseEntity<Booking> deleteBooking(@CookieValue("jwt") String jwt, @RequestBody Booking booking) {
         System.out.println("deletebooking called");
 

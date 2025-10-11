@@ -5,42 +5,91 @@ import { BookingService } from "../services/bookingService";
 
 interface BookingReminderProps {
   currentUsername: string | null;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setChosenPractice: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const BookingReminder: React.FC<BookingReminderProps> = ({
   currentUsername,
+  setShowPopup,
+  setChosenPractice,
 }) => {
+  console.log("🚀 BookingReminder component mounted/rendered");
+  console.log("Current username prop:", currentUsername);
+
   const [upcomingBooking, setUpcomingBooking] = useState<Booking | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!currentUsername) return;
+    console.log("🔄 BookingReminder useEffect triggered");
+    console.log("Current username in useEffect:", currentUsername);
+
+    if (!currentUsername) {
+      console.log("❌ No currentUsername, returning early");
+      return;
+    }
 
     let intervalId: number;
 
     const checkForUpcomingBookings = async () => {
       try {
-        // Get all user's bookings
+        console.log("🔍 BookingReminder: Checking for upcoming bookings...");
+        console.log("Current username:", currentUsername);
+
+        // Get all user's bookings (both as initial booker and responder)
         const bookings = await BookingService.getAllBookings();
+        console.log("User's bookings:", bookings);
 
         // Find confirmed bookings within 15 minutes
         const now = new Date();
         const upcoming = bookings.find((booking: Booking) => {
-          if (booking.status !== "CONFIRMED") return false;
+          console.log("Checking booking:", booking);
+          console.log("Booking status:", booking.status);
+
+          if (booking.status !== "CONFIRMED") {
+            console.log("❌ Not CONFIRMED");
+            return false;
+          }
+
+          // Check if current user is involved in this booking
+          const isUserInvolved =
+            booking.userName === currentUsername || // User is the initial booker
+            booking.responses?.some(
+              (response) =>
+                response.responder.username === currentUsername &&
+                response.responseStatus === "ACCEPTED"
+            ); // User is an accepted responder
+
+          console.log("Is user involved:", isUserInvolved);
+          if (!isUserInvolved) {
+            console.log("❌ User not involved");
+            return false;
+          }
 
           const bookingTime = new Date(booking.dateTime);
           const timeDiff = bookingTime.getTime() - now.getTime();
           const minutesDiff = timeDiff / (1000 * 60);
 
+          console.log("Booking time:", bookingTime);
+          console.log("Current time:", now);
+          console.log("Minutes difference:", minutesDiff);
+
           // Within 15 minutes and not past the booking time
-          return minutesDiff <= 15 && minutesDiff >= 0;
+          const isUpcoming = minutesDiff <= 15 && minutesDiff >= 0;
+          console.log("Is upcoming:", isUpcoming);
+
+          return isUpcoming;
         });
 
+        console.log("Found upcoming booking:", upcoming);
         if (upcoming) {
+          console.log("✅ Setting upcoming booking and showing reminder");
           setUpcomingBooking(upcoming);
           setIsVisible(true);
           // Stop polling once we found an upcoming booking
           clearInterval(intervalId);
+        } else {
+          console.log("❌ No upcoming bookings found");
         }
       } catch (error) {
         console.error("Error checking for upcoming bookings:", error);
@@ -51,7 +100,7 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
     checkForUpcomingBookings();
 
     // Poll every 30 seconds for responsive detection
-    intervalId = setInterval(checkForUpcomingBookings, 30000);
+    intervalId = setInterval(checkForUpcomingBookings, 10000);
 
     // Cleanup function
     return () => {
@@ -67,7 +116,9 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
   const handleJoinCall = () => {
     // TODO: Implement join call functionality
     console.log("Join call for booking:", upcomingBooking?.id);
+    setChosenPractice(upcomingBooking?.practice || "");
     handleClose();
+    setShowPopup(true);
   };
 
   if (!isVisible || !upcomingBooking) return null;

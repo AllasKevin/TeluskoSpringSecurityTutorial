@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 //import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -36,6 +36,9 @@ function App() {
   const [iceCandidatesReadyTrigger, setIceCandidatesReadyTrigger] = useState(0);
   const [remoteDescAddedForOfferer, setRemoteDescAddedForOfferer] =
     useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [chosenPractice, setChosenPractice] = useState<string>("");
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
 
   const { hangupCall } = useCallManager({
     peerConnection,
@@ -52,12 +55,19 @@ function App() {
   });
 
   // Get current username for booking reminders
-  const currentUsername = sessionStorage.getItem("username");
+  useEffect(() => {
+    const username = sessionStorage.getItem("username");
+    setCurrentUsername(username);
+  }, []);
 
   return (
     <div>
       {/* Global booking reminder popup */}
-      <BookingReminder currentUsername={currentUsername} />
+      <BookingReminder
+        currentUsername={currentUsername}
+        setShowPopup={setShowPopup}
+        setChosenPractice={setChosenPractice}
+      />
 
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -84,6 +94,10 @@ function App() {
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+                setShowPopup={setShowPopup}
+                showPopup={showPopup}
+                setChosenPractice={setChosenPractice}
+                chosenPractice={chosenPractice}
               />
             </ProtectedRoute>
           }
@@ -109,6 +123,10 @@ function App() {
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+                setShowPopup={setShowPopup}
+                showPopup={showPopup}
+                setChosenPractice={setChosenPractice}
+                chosenPractice={chosenPractice}
               />
             </ProtectedRoute>
           }
