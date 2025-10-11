@@ -25,6 +25,12 @@ const BookingCard: React.FC<BookingCardProps> = ({
   const isUser = isUserBooking(booking, currentUsername);
   const hasResponded = hasUserResponded(booking, currentUsername);
 
+  const handleReadyForCall = () => {
+    // TODO: Implement join call functionality
+    console.log("Ready for call clicked for booking:");
+    console.log(booking);
+  };
+
   const renderActionButtons = () => {
     // Handle confirmed bookings first
     if (booking.status === "CONFIRMED") {
@@ -88,11 +94,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                   {isBookingReady(booking.dateTime) ? (
                     <button
                       onClick={() => {
-                        // TODO: Implement ready functionality
-                        console.log(
-                          "Ready button clicked for booking:",
-                          booking.id
-                        );
+                        handleReadyForCall;
                       }}
                       className="action-button ready"
                       style={{
@@ -200,11 +202,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
               {isBookingReady(booking.dateTime) ? (
                 <button
                   onClick={() => {
-                    // TODO: Implement ready functionality
-                    console.log(
-                      "Ready button clicked for booking:",
-                      booking.id
-                    );
+                    handleReadyForCall();
                   }}
                   className="action-button ready"
                   style={{

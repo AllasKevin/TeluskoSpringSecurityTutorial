@@ -151,6 +151,10 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   // Get current username from sessionStorage
   useEffect(() => {
     const username = sessionStorage.getItem("username");
+    console.log(
+      "ScheduleCallSection. Current username from sessionStorage:",
+      username
+    );
     setCurrentUsername(username);
   }, []);
 
@@ -228,9 +232,17 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         setSelectedBookings((prev) =>
           prev.map((b) => (b.id === bookingId ? updatedBooking : b))
         );
-        setMyBookings((prev) =>
-          prev.map((b) => (b.id === bookingId ? updatedBooking : b))
-        );
+        setMyBookings((prev) => {
+          // Check if booking already exists in myBookings
+          const existingIndex = prev.findIndex((b) => b.id === bookingId);
+          if (existingIndex >= 0) {
+            // Update existing booking
+            return prev.map((b) => (b.id === bookingId ? updatedBooking : b));
+          } else {
+            // Add new booking to myBookings since user is now involved
+            return [...prev, updatedBooking];
+          }
+        });
       });
 
       console.log(`Responded to booking ${bookingId} successfully`);

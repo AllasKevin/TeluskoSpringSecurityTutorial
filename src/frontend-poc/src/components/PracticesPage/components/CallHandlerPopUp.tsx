@@ -152,6 +152,7 @@ export const CallHandlerPopUp = forwardRef<
           setAvailableCalls={setAvailableCalls}
           setAvailableMatches={setAvailableMatches}
           practice={practice}
+          setShowPopup={setShowPopup}
         />
         <div className="popup-content" onClick={(e) => e.stopPropagation()}>
           <div className="popup-text">

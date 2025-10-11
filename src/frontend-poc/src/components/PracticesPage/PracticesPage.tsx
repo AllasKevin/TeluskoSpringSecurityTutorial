@@ -39,6 +39,10 @@ interface PracticesPageProps {
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  showPopup: boolean;
+  setChosenPractice: React.Dispatch<React.SetStateAction<string>>;
+  chosenPractice: string;
 }
 
 export const PracticesPage: React.FC<PracticesPageProps> = ({
@@ -58,6 +62,10 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   setIceCandidatesReadyTrigger,
   remoteDescAddedForOfferer,
   setRemoteDescAddedForOfferer,
+  setShowPopup,
+  showPopup,
+  setChosenPractice,
+  chosenPractice,
 }) => {
   console.log(callStatus);
   console.log(updateCallStatus);
@@ -108,9 +116,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
     null
   );
-  const [showPopup, setShowPopup] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
-  const [chosenPractice, setChosenPractice] = useState<string>("");
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
 
   const handleCardClick = (index: number, practice: string) => {
