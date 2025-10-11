@@ -81,7 +81,7 @@ export const getUserRoleText = (isUser: boolean, hasResponded: boolean): string 
   if (isUser) {
     return "✓ Your booking";
   } else if (hasResponded) {
-    return "📝 You responded to this booking";
+    return ""; // Remove the "You responded to this booking" text
   } else {
     return "Other user's booking";
   }

@@ -10,6 +10,7 @@ import {
   isBookingReady,
   getTimeUntilBooking,
 } from "../../../utils/bookingUtils";
+import "./BookingCard.css";
 
 const BookingCard: React.FC<BookingCardProps> = ({
   booking,
@@ -37,87 +38,28 @@ const BookingCard: React.FC<BookingCardProps> = ({
       if (isUser) {
         // User's own confirmed booking
         return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              marginTop: "8px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "0.9rem",
-                color: "#28a745",
-                fontWeight: "bold",
-                marginTop: "8px",
-                padding: "8px",
-                backgroundColor: "#d4edda",
-                border: "1px solid #c3e6cb",
-                borderRadius: "4px",
-              }}
-            >
+          <div className="booking-actions">
+            <div className="confirmed-message">
               ✅ Call confirmed! Your session with{" "}
               {booking.responses?.[0]?.responder.username ||
                 "the other participant"}{" "}
               will take place at {formatDateTime(booking.dateTime)}
             </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-                marginTop: "8px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "8px",
-                  backgroundColor: "#f8f9fa",
-                  borderRadius: "4px",
-                  border: "1px solid #dee2e6",
-                }}
-              >
-                <span style={{ fontWeight: "500" }}>
+            <div className="booking-actions">
+              <div className="responder-item">
+                <span className="responder-name">
                   {booking.responses?.[0]?.responder.username || "Unknown User"}
                 </span>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "8px",
-                    alignItems: "center",
-                  }}
-                >
+                <div className="responder-actions">
                   {isBookingReady(booking.dateTime) ? (
                     <button
-                      onClick={() => {
-                        handleReadyForCall;
-                      }}
+                      onClick={handleReadyForCall}
                       className="action-button ready"
-                      style={{
-                        fontSize: "0.7rem",
-                        padding: "4px 8px",
-                        backgroundColor: "#28a745",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "3px",
-                        width: "auto",
-                        minWidth: "60px",
-                      }}
                     >
                       Ready
                     </button>
                   ) : (
-                    <span
-                      style={{
-                        fontSize: "0.7rem",
-                        color: "#6c757d",
-                        fontStyle: "italic",
-                      }}
-                    >
+                    <span className="time-info">
                       {getTimeUntilBooking(booking.dateTime)}
                     </span>
                   )}
@@ -125,25 +67,9 @@ const BookingCard: React.FC<BookingCardProps> = ({
                     onClick={() => {
                       console.log("=== WITHDRAW ACCEPTANCE BUTTON CLICKED ===");
                       console.log("Booking ID:", booking.id);
-                      console.log("Booking object:", booking);
-                      console.log(
-                        "onWithdrawAcceptance function:",
-                        onWithdrawAcceptance
-                      );
                       onWithdrawAcceptance?.(booking.id);
                     }}
                     className="action-button withdraw"
-                    style={{
-                      fontSize: "0.7rem",
-                      padding: "4px 8px",
-                      backgroundColor: "#ffc107",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "3px",
-                      width: "auto",
-                      minWidth: "80px",
-                      maxWidth: "120px",
-                    }}
                   >
                     Withdraw
                   </button>
@@ -151,14 +77,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
               </div>
               <button
                 onClick={() => onDeleteBooking?.(booking.id)}
-                className="action-button delete"
-                style={{
-                  fontSize: "0.8rem",
-                  padding: "6px 12px",
-                  backgroundColor: "#dc3545",
-                  color: "white",
-                  width: "100%",
-                }}
+                className="action-button delete-large"
               >
                 Delete Booking
               </button>
@@ -168,76 +87,27 @@ const BookingCard: React.FC<BookingCardProps> = ({
       } else if (hasResponded) {
         // User responded to someone else's confirmed booking
         return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              marginTop: "8px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "0.9rem",
-                color: "#28a745",
-                fontWeight: "bold",
-                marginTop: "8px",
-                padding: "8px",
-                backgroundColor: "#d4edda",
-                border: "1px solid #c3e6cb",
-                borderRadius: "4px",
-              }}
-            >
+          <div className="booking-actions">
+            <div className="confirmed-message">
               ✅ Call confirmed! Your session with {booking.userName} will take
               place at {formatDateTime(booking.dateTime)}
             </div>
-            <div
-              style={{
-                display: "flex",
-                gap: "8px",
-                alignItems: "center",
-                marginTop: "8px",
-              }}
-            >
+            <div className="booking-actions-horizontal">
               {isBookingReady(booking.dateTime) ? (
                 <button
-                  onClick={() => {
-                    handleReadyForCall();
-                  }}
-                  className="action-button ready"
-                  style={{
-                    fontSize: "0.8rem",
-                    padding: "4px 8px",
-                    backgroundColor: "#28a745",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "3px",
-                    width: "auto",
-                    minWidth: "60px",
-                  }}
+                  onClick={handleReadyForCall}
+                  className="action-button ready-large"
                 >
                   Ready
                 </button>
               ) : (
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#6c757d",
-                    fontStyle: "italic",
-                  }}
-                >
+                <span className="time-info">
                   {getTimeUntilBooking(booking.dateTime)}
                 </span>
               )}
               <button
                 onClick={() => onWithdrawBookingResponse?.(booking.id)}
-                className="action-button withdraw"
-                style={{
-                  fontSize: "0.8rem",
-                  padding: "4px 8px",
-                  backgroundColor: "#6c757d",
-                  color: "white",
-                }}
+                className="action-button secondary"
               >
                 Withdraw Response
               </button>
@@ -258,49 +128,19 @@ const BookingCard: React.FC<BookingCardProps> = ({
         if (hasNonDeclinedResponses) {
           // Show list of responders with accept/decline buttons
           return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-                marginTop: "8px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "0.9rem",
-                  color: "#ffc107",
-                  fontWeight: "bold",
-                }}
-              >
-                ⏳ Waiting for responses
+            <div className="booking-actions">
+              <div className="status-message warning">
+                📋 Responses received - Choose who to accept
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "8px",
-                }}
-              >
+              <div className="responder-list">
                 {booking.responses
                   ?.filter((response) => response.responseStatus !== "DECLINED")
                   .map((response, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: "8px",
-                        backgroundColor: "#f8f9fa",
-                        borderRadius: "4px",
-                        border: "1px solid #dee2e6",
-                      }}
-                    >
-                      <span style={{ fontWeight: "500" }}>
+                    <div key={index} className="responder-item">
+                      <span className="responder-name">
                         {response.responder.username}
                       </span>
-                      <div style={{ display: "flex", gap: "4px" }}>
+                      <div className="responder-actions">
                         <button
                           onClick={() => {
                             onAcceptBookingResponse?.(
@@ -309,14 +149,6 @@ const BookingCard: React.FC<BookingCardProps> = ({
                             );
                           }}
                           className="action-button accept"
-                          style={{
-                            fontSize: "0.7rem",
-                            padding: "4px 8px",
-                            backgroundColor: "#28a745",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "3px",
-                          }}
                         >
                           Accept
                         </button>
@@ -328,14 +160,6 @@ const BookingCard: React.FC<BookingCardProps> = ({
                             );
                           }}
                           className="action-button decline"
-                          style={{
-                            fontSize: "0.7rem",
-                            padding: "4px 8px",
-                            backgroundColor: "#dc3545",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "3px",
-                          }}
                         >
                           Decline
                         </button>
@@ -345,14 +169,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
               </div>
               <button
                 onClick={() => onDeleteBooking?.(booking.id)}
-                className="action-button delete"
-                style={{
-                  fontSize: "0.8rem",
-                  padding: "6px 12px",
-                  backgroundColor: "#dc3545",
-                  color: "white",
-                  width: "100%",
-                }}
+                className="action-button delete-large"
               >
                 Delete Booking
               </button>
@@ -361,28 +178,13 @@ const BookingCard: React.FC<BookingCardProps> = ({
         } else {
           // No responses yet
           return (
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-            >
-              <div
-                style={{
-                  fontSize: "0.9rem",
-                  color: "#ffc107",
-                  fontWeight: "bold",
-                }}
-              >
+            <div className="booking-actions">
+              <div className="status-message warning">
                 ⏳ Waiting for responses
               </div>
               <button
                 onClick={() => onDeleteBooking?.(booking.id)}
-                className="action-button delete"
-                style={{
-                  fontSize: "0.8rem",
-                  padding: "6px 12px",
-                  backgroundColor: "#dc3545",
-                  color: "white",
-                  width: "100%",
-                }}
+                className="action-button delete-large"
               >
                 Delete Booking
               </button>
@@ -392,40 +194,14 @@ const BookingCard: React.FC<BookingCardProps> = ({
       } else if (hasResponded) {
         // User responded to someone else's pending booking
         return (
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <div
-              style={{
-                fontSize: "0.9rem",
-                color: "#28a745",
-                fontWeight: "bold",
-                marginTop: "8px",
-                padding: "8px",
-                backgroundColor: "#d4edda",
-                border: "1px solid #c3e6cb",
-                borderRadius: "4px",
-              }}
-            >
-              ✓ Your response sent
-            </div>
-            <div
-              style={{
-                fontSize: "0.8rem",
-                color: "#6c757d",
-                fontStyle: "italic",
-              }}
-            >
+          <div className="booking-actions">
+            <div className="status-message success">✓ Your response sent</div>
+            <div className="status-message info italic">
               Waiting for {booking.userName} to accept your response
             </div>
             <button
               onClick={() => onWithdrawBookingResponse?.(booking.id)}
-              className="action-button withdraw"
-              style={{
-                fontSize: "0.8rem",
-                padding: "4px 8px",
-                backgroundColor: "#6c757d",
-                color: "white",
-                marginTop: "8px",
-              }}
+              className="action-button secondary"
             >
               Withdraw Response
             </button>
@@ -434,17 +210,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
       } else {
         // User can respond to someone else's pending booking
         return (
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div className="booking-actions">
             <button
               onClick={() => onRespondToBooking?.(booking.id)}
-              className="action-button respond"
-              style={{
-                fontSize: "0.8rem",
-                padding: "6px 12px",
-                backgroundColor: "#007bff",
-                color: "white",
-                width: "100%",
-              }}
+              className="action-button primary"
             >
               Respond to Booking
             </button>
@@ -460,14 +229,15 @@ const BookingCard: React.FC<BookingCardProps> = ({
     const roleText = getUserRoleText(isUser, hasResponded);
     const roleColor = getUserRoleColor(isUser, hasResponded);
 
+    // Don't render if roleText is empty
+    if (!roleText) {
+      return null;
+    }
+
     return (
       <div
-        style={{
-          fontSize: "0.8rem",
-          color: roleColor,
-          fontWeight: "500",
-          marginBottom: "4px",
-        }}
+        className={`user-role ${isUser ? "creator" : "responder"}`}
+        style={{ color: roleColor }}
       >
         {roleText}
       </div>
@@ -475,46 +245,25 @@ const BookingCard: React.FC<BookingCardProps> = ({
   };
 
   return (
-    <div
-      className="booking-card"
-      style={{
-        border: "2px solid #6f42c1",
-        borderRadius: "8px",
-        padding: "16px",
-        marginBottom: "16px",
-        backgroundColor: "white",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: "8px",
-        }}
-      >
+    <div className="booking-card">
+      <div className="booking-header">
         <div>
-          <h3 style={{ margin: "0 0 4px 0", fontSize: "1.1rem" }}>
-            {booking.userName}
-          </h3>
-          <p style={{ margin: "0 0 4px 0", color: "#666", fontSize: "0.9rem" }}>
-            {booking.practice}
+          <h3 className="booking-title">{booking.userName}</h3>
+          <p className="booking-details">
+            <span className="booking-detail-label">Practice:</span>
+            <span className="booking-detail-value">{booking.practice}</span>
           </p>
-          <p style={{ margin: "0 0 8px 0", color: "#666", fontSize: "0.9rem" }}>
-            {formatDateTime(booking.dateTime)}
+          <p className="booking-details">
+            <span className="booking-detail-label">Time:</span>
+            <span className="booking-detail-value">
+              {formatDateTime(booking.dateTime)}
+            </span>
           </p>
           {renderUserInfo()}
         </div>
         <div
-          style={{
-            backgroundColor: getStatusColor(booking.status),
-            color: "white",
-            padding: "4px 8px",
-            borderRadius: "4px",
-            fontSize: "0.8rem",
-            fontWeight: "bold",
-          }}
+          className="booking-status"
+          style={{ backgroundColor: getStatusColor(booking.status) }}
         >
           {booking.status}
         </div>
