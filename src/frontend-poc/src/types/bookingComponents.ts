@@ -24,6 +24,7 @@ export interface BookingActionProps {
 // Props for BookingCard component
 export interface BookingCardProps extends BaseBookingProps, BookingActionProps {
   booking: Booking;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Props for tab components
@@ -40,15 +41,19 @@ export interface ScheduleCallTabProps extends TabProps, BookingActionProps {
   isMobile: boolean;
   onSearchBookings: () => void;
   onCreateBooking: () => void;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Props for AvailableBookingsTab
 export interface AvailableBookingsTabProps extends TabProps, BookingActionProps {
   allBookings: Booking[];
+    setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+
 }
 
 // Props for MyBookingsTab
 export interface MyBookingsTabProps extends TabProps, BookingActionProps {
   myBookings: Booking[];
   onAcceptBookingResponse: (bookingId: string, responderUsername: string) => void;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
