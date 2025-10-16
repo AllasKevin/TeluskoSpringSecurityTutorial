@@ -14,18 +14,11 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
   setShowPopup,
   setChosenPractice,
 }) => {
-  console.log("🚀 BookingReminder component mounted/rendered");
-  console.log("Current username prop:", currentUsername);
-
   const [upcomingBooking, setUpcomingBooking] = useState<Booking | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    console.log("🔄 BookingReminder useEffect triggered");
-    console.log("Current username in useEffect:", currentUsername);
-
     if (!currentUsername) {
-      console.log("❌ No currentUsername, returning early");
       return;
     }
 
@@ -33,21 +26,13 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
 
     const checkForUpcomingBookings = async () => {
       try {
-        console.log("🔍 BookingReminder: Checking for upcoming bookings...");
-        console.log("Current username:", currentUsername);
-
         // Get all user's bookings (both as initial booker and responder)
         const bookings = await BookingService.getAllBookings();
-        console.log("User's bookings:", bookings);
 
         // Find confirmed bookings within 15 minutes
         const now = new Date();
         const upcoming = bookings.find((booking: Booking) => {
-          console.log("Checking booking:", booking);
-          console.log("Booking status:", booking.status);
-
           if (booking.status !== "CONFIRMED") {
-            console.log("❌ Not CONFIRMED");
             return false;
           }
 
@@ -60,9 +45,7 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
                 response.responseStatus === "ACCEPTED"
             ); // User is an accepted responder
 
-          console.log("Is user involved:", isUserInvolved);
           if (!isUserInvolved) {
-            console.log("❌ User not involved");
             return false;
           }
 
@@ -70,26 +53,17 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
           const timeDiff = bookingTime.getTime() - now.getTime();
           const minutesDiff = timeDiff / (1000 * 60);
 
-          console.log("Booking time:", bookingTime);
-          console.log("Current time:", now);
-          console.log("Minutes difference:", minutesDiff);
-
           // Within 15 minutes and not past the booking time
           const isUpcoming = minutesDiff <= 15 && minutesDiff >= 0;
-          console.log("Is upcoming:", isUpcoming);
 
           return isUpcoming;
         });
 
-        console.log("Found upcoming booking:", upcoming);
         if (upcoming) {
-          console.log("✅ Setting upcoming booking and showing reminder");
           setUpcomingBooking(upcoming);
           setIsVisible(true);
           // Stop polling once we found an upcoming booking
           clearInterval(intervalId);
-        } else {
-          console.log("❌ No upcoming bookings found");
         }
       } catch (error) {
         console.error("Error checking for upcoming bookings:", error);
@@ -115,7 +89,6 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
 
   const handleJoinCall = () => {
     // TODO: Implement join call functionality
-    console.log("Join call for booking:", upcomingBooking?.id);
     setChosenPractice(upcomingBooking?.practice || "");
     handleClose();
     setShowPopup(true);

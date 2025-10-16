@@ -15,6 +15,7 @@ import { CallStatus } from "../../App";
 import { CallHandlerPopUp } from "./components/CallHandlerPopUp";
 import { CallModal } from "./components/CallModal";
 import { CallData } from "../Dashboard";
+import { Booking } from "../../types/booking";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
@@ -118,6 +119,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   );
   const [showCallModal, setShowCallModal] = useState(false);
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
+  const [currentBooking, setCurrentBooking] = useState<Booking>();
 
   const handleCardClick = (index: number, practice: string) => {
     console.log("Card clicked, index: " + index);
@@ -202,7 +204,9 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
             remoteDescAddedForOfferer={remoteDescAddedForOfferer}
             setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
             setAvailableCalls={setAvailableCalls}
-            practice={chosenPractice} // Pass the chosen practice to the popup
+            practice={chosenPractice}
+            currentBooking={currentBooking}
+            setCurrentBooking={setCurrentBooking}
           />
         )}
         <CallModal
@@ -228,6 +232,8 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
           setShowCallModal={setShowCallModal}
           setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
           setAvailableCalls={setAvailableCalls}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
         />
       </div>
       <NavigationBar />

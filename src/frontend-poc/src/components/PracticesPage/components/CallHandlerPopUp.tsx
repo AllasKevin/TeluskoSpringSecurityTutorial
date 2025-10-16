@@ -14,6 +14,7 @@ import {
   WebRtcManagerNewHandle,
 } from "../../WebRtcManager/WebRtcManager";
 import { CallData } from "../../Dashboard";
+import { Booking } from "../../../types/booking";
 
 export interface CallHandlerPopUpHandle {
   minimizeCard: () => void;
@@ -45,7 +46,9 @@ interface CallHandlerPopUpProps {
   remoteDescAddedForOfferer: boolean;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
-  practice: string; // Optional prop to pass the practice name
+  practice: string;
+  currentBooking: Booking | undefined; // Optional prop to pass the booking
+  setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>; // Optional setter for the booking
 }
 
 export const CallHandlerPopUp = forwardRef<
@@ -74,9 +77,12 @@ export const CallHandlerPopUp = forwardRef<
       setRemoteDescAddedForOfferer,
       setAvailableCalls,
       practice,
+      currentBooking,
+      setCurrentBooking,
     },
     ref
   ) => {
+    const webRtcManagerRef = useRef<WebRtcManagerNewHandle>(null);
     const [availableMatches, setAvailableMatches] = useState<
       { userName: string; practice: string }[]
     >([]);
@@ -119,12 +125,61 @@ export const CallHandlerPopUp = forwardRef<
       //setShowPopup(false);
     };
 
-    useEffect(() => {
-      console.log("availableMatches updated: " + availableMatches);
-      console.log(availableMatches);
-    }, [availableMatches]);
+    //handleFindMatch();
 
-    const webRtcManagerRef = useRef<WebRtcManagerNewHandle>(null);
+    // Use useEffect to ensure webRtcManagerRef is available before calling findMatch
+    useEffect(() => {
+      if (currentBooking && webRtcManagerRef.current) {
+        console.log("Current booking in CallHandlerPopUp:", currentBooking);
+        console.log("webRtcManagerRef is available, calling findMatch");
+
+        // Add a delay to ensure WebRTC manager socket listeners are fully initialized
+        // The WebRtcManager initializes socket listeners in a useEffect that runs on mount
+        const timeoutId = setTimeout(() => {
+          console.log(
+            "Delayed findMatch call - WebRTC manager should be ready now"
+          );
+          webRtcManagerRef.current?.findMatch(practice);
+          console.log("Called findMatch with practice:", practice);
+        }, 2000); // 2 seconds to ensure socket listeners are set up
+
+        // Cleanup timeout if component unmounts or dependencies change
+        return () => clearTimeout(timeoutId);
+      } else if (currentBooking && !webRtcManagerRef.current) {
+        console.log(
+          "Current booking exists but webRtcManagerRef is not available yet"
+        );
+      }
+    }, [currentBooking, practice]);
+
+    useEffect(() => {
+      console.log(
+        "availableMatches updated in callhandlepopu.useEffect:",
+        availableMatches
+      ); // ✅ Log here
+
+      if (availableMatches.length > 0 && currentBooking) {
+        const otherCallerUserName =
+          currentBooking.userName === sessionStorage.getItem("username")
+            ? currentBooking.responses?.find(
+                (response) => response.responseStatus === "ACCEPTED"
+              )?.responder.username
+            : currentBooking.userName;
+
+        console.log("Matches found, currentBooking:", currentBooking);
+        availableMatches.forEach((match) => {
+          console.log("Match:", match);
+          console.log("otherCallerUserName:", otherCallerUserName);
+          if (
+            //match.practice === currentBooking.practice && TODO: VÄLDIGT VIKTIGT ATT KOLLA
+            otherCallerUserName === match.userName
+          ) {
+            console.log("Auto-accepting match for user:", match.userName);
+            webRtcManagerRef.current?.acceptMatch(practice, match.userName);
+          }
+        });
+      }
+    }, [availableMatches]);
 
     console.log("availableMatches:", availableMatches); // ✅ Log here
     console.log(availableMatches);

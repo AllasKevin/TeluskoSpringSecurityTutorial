@@ -230,7 +230,8 @@ io.of("/matching").on("connection", socket => {
     const senderSocketId = socket.id;
     const namespaceSocketServer = io.of("/matching");
 
-    if(password !== "x"){
+    if(password !== "x")
+    {
         socket.disconnect(true);
         return;
     }
@@ -273,7 +274,7 @@ io.of("/matching").on("connection", socket => {
             const socketIdOfMatch = connectedSockets.find(s=>s.userName === matchSuggestion.userName).matchingSocketId;
             console.log(connectedSockets);
 
-            console.log("Emitting foundMatch to " + matchSuggestion.userName + " with socketId: " + socketIdOfMatch + " and sening it: " + userName);
+            console.log("Emitting foundMatch to " + matchSuggestion.userName + " with socketId: " + socketIdOfMatch + " and sending it: " + userName);
             namespaceSocketServer.to(socketIdOfMatch).emit('foundMatch', userName);
 
             console.log("Returning matchSuggestion: " + matchSuggestion.userName);
@@ -284,6 +285,7 @@ io.of("/matching").on("connection", socket => {
     })
 
     socket.on('acceptMatch', (answerResponse, ackFunction) => {
+        console.log("acceptMatch called by: " + userName + " with answerResponse: " + answerResponse);
         if(!userIsPairedInMatch(userName))
         {
             console.log("User " + userName + " is not matched with anyone, cannot accept or decline match.");
@@ -323,6 +325,10 @@ io.of("/matching").on("connection", socket => {
 
 
               console.log("disconnected both sockets after match accepted");*/
+              }
+              else
+              {
+                console.log("both users have not yet accepted the match, only one has: " + userName);
               }
         }
         else

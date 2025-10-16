@@ -59,6 +59,8 @@ interface ScheduleCallSectionProps {
   setShowCallModal: React.Dispatch<React.SetStateAction<boolean>>;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
+  currentBooking: Booking | undefined; // Optional prop to pass the booking
+  setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>; // Optional setter for the booking
 }
 
 export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
@@ -82,6 +84,8 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   setShowCallModal,
   setRemoteDescAddedForOfferer,
   setAvailableCalls,
+  currentBooking,
+  setCurrentBooking,
 }) => {
   const [activeTab, setActiveTab] = useState<
     "join" | "schedule" | "bookings" | "mybookings"
@@ -575,6 +579,8 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           onSearchBookings={() => loadBookingsForDate(startDate)}
           onCreateBooking={handleCreateBooking}
           setShowPopup={setShowPopup}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
         />
       )}
 
@@ -595,6 +601,8 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
             hasUserResponded(booking, currentUsername)
           }
           setShowPopup={setShowPopup}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
         />
       )}
 
@@ -614,6 +622,8 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
             hasUserResponded(booking, currentUsername)
           }
           setShowPopup={setShowPopup}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
         />
       )}
     </div>

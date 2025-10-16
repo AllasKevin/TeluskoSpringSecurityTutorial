@@ -24,6 +24,8 @@ const BookingCard: React.FC<BookingCardProps> = ({
   onDeleteBooking,
   onWithdrawBookingResponse,
   setShowPopup,
+  currentBooking,
+  setCurrentBooking,
 }) => {
   const isUser = isUserBooking(booking, currentUsername);
   const hasResponded = hasUserResponded(booking, currentUsername);
@@ -32,10 +34,12 @@ const BookingCard: React.FC<BookingCardProps> = ({
     // TODO: Implement join call functionality
     console.log("Ready for call clicked for booking:");
     console.log(booking);
+    setCurrentBooking(booking);
     setShowPopup(true);
   };
 
   const renderActionButtons = () => {
+
     // Handle confirmed bookings first
     if (booking.status === "CONFIRMED") {
       if (isUser) {

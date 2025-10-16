@@ -8,6 +8,8 @@ export interface BaseBookingProps {
   getStatusColor: (status: string) => string;
   isUserBooking: (booking: Booking) => boolean;
   hasUserResponded: (booking: Booking) => boolean;
+  currentBooking: Booking | undefined;
+  setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
 }
 
 // Props for components that handle booking actions
