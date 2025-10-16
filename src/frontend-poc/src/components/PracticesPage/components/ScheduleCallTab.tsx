@@ -23,6 +23,8 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
   onSearchBookings,
   onCreateBooking,
   setShowPopup,
+  currentBooking,
+  setCurrentBooking,
 }) => {
   return (
     <div className="scheduler-section">
@@ -166,6 +168,8 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
                   isUserBooking={isUserBooking}
                   hasUserResponded={hasUserResponded}
                   setShowPopup={setShowPopup}
+                  currentBooking={currentBooking}
+                  setCurrentBooking={setCurrentBooking}
                 />
               ))}
             </div>

@@ -105,9 +105,14 @@ export const getUserRoleColor = (isUser: boolean, hasResponded: boolean): string
  */
 export const isBookingReady = (bookingDateTime: Date): boolean => {
   const now = new Date();
-  const timeDiff = bookingDateTime.getTime() - now.getTime();
+  
+  // Ensure bookingDateTime is a Date object
+  const bookingDate = bookingDateTime instanceof Date ? bookingDateTime : new Date(bookingDateTime);
+  
+  const timeDiff = bookingDate.getTime() - now.getTime();
   const minutesDiff = timeDiff / (1000 * 60);
-  return minutesDiff <= 5 && minutesDiff >= -15;
+  
+  return minutesDiff <= 15 && minutesDiff >= -5;
 };
 
 /**

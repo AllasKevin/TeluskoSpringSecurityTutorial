@@ -7,7 +7,7 @@ const socketConnectionForMatchmaking = (userName, chosenPractice) =>{
         //if so, then just return it so whoever needs it, can use it
         return socket;
     }else{
-        console.log("trying to send: " + chosenPractice + " from user: " + userName);
+        console.log("socketConnectionForMatchmaking. trying to send: " + chosenPractice + " from user: " + userName);
         //its not connected... connect!
          //socket = io.connect('http://localhost:8181',{
          socket = io.connect('https://192.168.0.110:8181/matching',{

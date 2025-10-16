@@ -71,7 +71,7 @@ interface WebRtcManagerNewProps {
       }[]
     >
   >;
-  practice: string; // Optional prop to pass the practice name
+  practice: string;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -270,7 +270,7 @@ export const WebRtcManager = forwardRef<
 
     // Step 0: Listen for available matches
     useEffect(() => {
-      initListeningForMatches(username, "Hej");
+      initListeningForMatches(username, practice);
       initListeningForCalls(username, setAvailableCallsFromServer, practice);
     }, []);
 

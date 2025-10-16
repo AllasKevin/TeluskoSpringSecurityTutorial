@@ -16,6 +16,8 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
   isUserBooking,
   hasUserResponded,
   setShowPopup,
+  currentBooking,
+  setCurrentBooking,
 }) => {
   // Filter out bookings where the current user is the initial booker
   const availableBookings = allBookings.filter(
@@ -81,6 +83,8 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
                 isUserBooking={isUserBooking}
                 hasUserResponded={hasUserResponded}
                 setShowPopup={setShowPopup}
+                currentBooking={currentBooking}
+                setCurrentBooking={setCurrentBooking}
               />
             ))}
           </div>
