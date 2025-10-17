@@ -6,13 +6,17 @@ import { BookingService } from "../services/bookingService";
 interface BookingReminderProps {
   currentUsername: string | null;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
-  setChosenPractice: React.Dispatch<React.SetStateAction<string>>;
+  setChosenPractice: React.Dispatch<React.SetStateAction<string>>; // TODO denna används nig aldrig och kan tas bort
+  setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
+  currentBooking: Booking | undefined;
 }
 
 const BookingReminder: React.FC<BookingReminderProps> = ({
   currentUsername,
   setShowPopup,
   setChosenPractice,
+  setCurrentBooking,
+  currentBooking,
 }) => {
   const [upcomingBooking, setUpcomingBooking] = useState<Booking | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -90,6 +94,7 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
   const handleJoinCall = () => {
     // TODO: Implement join call functionality
     setChosenPractice(upcomingBooking?.practice || "");
+    setCurrentBooking(upcomingBooking || undefined);
     handleClose();
     setShowPopup(true);
   };

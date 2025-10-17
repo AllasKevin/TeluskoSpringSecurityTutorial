@@ -44,6 +44,8 @@ interface PracticesPageProps {
   showPopup: boolean;
   setChosenPractice: React.Dispatch<React.SetStateAction<string>>;
   chosenPractice: string;
+  setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
+  currentBooking: Booking | undefined;
 }
 
 export const PracticesPage: React.FC<PracticesPageProps> = ({
@@ -67,6 +69,8 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   showPopup,
   setChosenPractice,
   chosenPractice,
+  setCurrentBooking,
+  currentBooking,
 }) => {
   console.log(callStatus);
   console.log(updateCallStatus);
@@ -119,7 +123,6 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   );
   const [showCallModal, setShowCallModal] = useState(false);
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
-  const [currentBooking, setCurrentBooking] = useState<Booking>();
 
   const handleCardClick = (index: number, practice: string) => {
     console.log("Card clicked, index: " + index);
