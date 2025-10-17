@@ -11,6 +11,7 @@ import LandingPage from "./components/LandingPage/LandingPage";
 import { RegisterPage } from "./components/RegisterPage";
 import { PracticesPage } from "./components/PracticesPage";
 import BookingReminder from "./components/BookingReminder";
+import { Booking } from "./types/booking";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -39,6 +40,7 @@ function App() {
   const [showPopup, setShowPopup] = useState(false);
   const [chosenPractice, setChosenPractice] = useState<string>("");
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const [currentBooking, setCurrentBooking] = useState<Booking>();
 
   const { hangupCall } = useCallManager({
     peerConnection,
@@ -67,6 +69,8 @@ function App() {
         currentUsername={currentUsername}
         setShowPopup={setShowPopup}
         setChosenPractice={setChosenPractice}
+        setCurrentBooking={setCurrentBooking}
+        currentBooking={currentBooking}
       />
 
       <Routes>
@@ -98,6 +102,8 @@ function App() {
                 showPopup={showPopup}
                 setChosenPractice={setChosenPractice}
                 chosenPractice={chosenPractice}
+                setCurrentBooking={setCurrentBooking}
+                currentBooking={currentBooking}
               />
             </ProtectedRoute>
           }
@@ -127,6 +133,8 @@ function App() {
                 showPopup={showPopup}
                 setChosenPractice={setChosenPractice}
                 chosenPractice={chosenPractice}
+                setCurrentBooking={setCurrentBooking}
+                currentBooking={currentBooking}
               />
             </ProtectedRoute>
           }
