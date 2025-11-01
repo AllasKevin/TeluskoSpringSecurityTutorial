@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+const signalingServerURL = import.meta.env.VITE_SIGNALING_SERVER_URL;
 
 let socket;
 const socketConnection = (userName, chosenPractice) =>{
@@ -7,10 +8,10 @@ const socketConnection = (userName, chosenPractice) =>{
         //if so, then just return it so whoever needs it, can use it
         return socket;
     }else{
-        console.log("socketConnection. trying to send: " + chosenPractice + " from user: " + userName);
+        console.log("socketConnection. trying to send: " + chosenPractice + " from user: " + userName + " to URL: " + signalingServerURL);
         //its not connected... connect!
          //socket = io.connect('http://localhost:8181',{
-         socket = io.connect('https://192.168.0.110:8181',{
+         socket = io.connect(signalingServerURL,{
             //'https://4.177.9.39',{ chatgpt mentioned this but with wss:// instead of https://
             //transports: ['websocket'],
             //secure: true,

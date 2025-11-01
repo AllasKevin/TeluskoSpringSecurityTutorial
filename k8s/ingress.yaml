@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/enable-websocket: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  tls:
+    - hosts:
+        - lb-0a98c983d7c44f16b391ae58965e9ece-1.upcloudlb.com
+      secretName: growhub-tls
+  ingressClassName: nginx
+  rules:
+    - host: lb-0a98c983d7c44f16b391ae58965e9ece-1.upcloudlb.com
+      http:
+        paths:
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: signaling-server-service
+                port:
+                  number: 8181
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: growhub-service
+                port:
+                  number: 8080

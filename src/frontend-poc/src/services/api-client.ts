@@ -1,7 +1,8 @@
 import axios, {CanceledError} from "axios";
+const baseURL = import.meta.env.VITE_BASE_URL;
 
 export default axios.create({
-    baseURL: "https://192.168.0.110",
+    baseURL: baseURL,
     withCredentials: true,
 })
 

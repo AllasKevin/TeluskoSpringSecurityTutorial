@@ -181,8 +181,6 @@ export const CallHandlerPopUp = forwardRef<
       }
     }, [availableMatches]);
 
-    console.log("availableMatches:", availableMatches); // ✅ Log here
-    console.log(availableMatches);
 
     return (
       <div className="popup-overlay" onClick={() => setShowPopup(false)}>

@@ -72,10 +72,6 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   setCurrentBooking,
   currentBooking,
 }) => {
-  console.log(callStatus);
-  console.log(updateCallStatus);
-  console.log(setLocalStream);
-
   const practices = [
     {
       title: "Noticing Game",
