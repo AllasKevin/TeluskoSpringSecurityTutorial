@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 //import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -10,6 +10,8 @@ import { LoginPage } from "./components/LoginPage";
 import LandingPage from "./components/LandingPage/LandingPage";
 import { RegisterPage } from "./components/RegisterPage";
 import { PracticesPage } from "./components/PracticesPage";
+import BookingReminder from "./components/BookingReminder";
+import { Booking } from "./types/booking";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -35,6 +37,10 @@ function App() {
   const [iceCandidatesReadyTrigger, setIceCandidatesReadyTrigger] = useState(0);
   const [remoteDescAddedForOfferer, setRemoteDescAddedForOfferer] =
     useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [chosenPractice, setChosenPractice] = useState<string>("");
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const [currentBooking, setCurrentBooking] = useState<Booking>();
 
   const { hangupCall } = useCallManager({
     peerConnection,
@@ -50,8 +56,23 @@ function App() {
     offerData,
   });
 
+  // Get current username for booking reminders
+  useEffect(() => {
+    const username = sessionStorage.getItem("username");
+    setCurrentUsername(username);
+  }, []);
+
   return (
     <div>
+      {/* Global booking reminder popup */}
+      <BookingReminder
+        currentUsername={currentUsername}
+        setShowPopup={setShowPopup}
+        setChosenPractice={setChosenPractice}
+        setCurrentBooking={setCurrentBooking}
+        currentBooking={currentBooking}
+      />
+
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/loginpage" element={<LoginPage />} />
@@ -77,6 +98,12 @@ function App() {
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+                setShowPopup={setShowPopup}
+                showPopup={showPopup}
+                setChosenPractice={setChosenPractice}
+                chosenPractice={chosenPractice}
+                setCurrentBooking={setCurrentBooking}
+                currentBooking={currentBooking}
               />
             </ProtectedRoute>
           }
@@ -102,6 +129,12 @@ function App() {
                 setIceCandidatesReadyTrigger={setIceCandidatesReadyTrigger}
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
+                setShowPopup={setShowPopup}
+                showPopup={showPopup}
+                setChosenPractice={setChosenPractice}
+                chosenPractice={chosenPractice}
+                setCurrentBooking={setCurrentBooking}
+                currentBooking={currentBooking}
               />
             </ProtectedRoute>
           }

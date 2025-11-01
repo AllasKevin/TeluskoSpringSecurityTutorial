@@ -15,6 +15,7 @@ import { CallStatus } from "../../App";
 import { CallHandlerPopUp } from "./components/CallHandlerPopUp";
 import { CallModal } from "./components/CallModal";
 import { CallData } from "../Dashboard";
+import { Booking } from "../../types/booking";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
@@ -39,6 +40,12 @@ interface PracticesPageProps {
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  showPopup: boolean;
+  setChosenPractice: React.Dispatch<React.SetStateAction<string>>;
+  chosenPractice: string;
+  setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
+  currentBooking: Booking | undefined;
 }
 
 export const PracticesPage: React.FC<PracticesPageProps> = ({
@@ -58,11 +65,13 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   setIceCandidatesReadyTrigger,
   remoteDescAddedForOfferer,
   setRemoteDescAddedForOfferer,
+  setShowPopup,
+  showPopup,
+  setChosenPractice,
+  chosenPractice,
+  setCurrentBooking,
+  currentBooking,
 }) => {
-  console.log(callStatus);
-  console.log(updateCallStatus);
-  console.log(setLocalStream);
-
   const practices = [
     {
       title: "Noticing Game",
@@ -108,9 +117,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
     null
   );
-  const [showPopup, setShowPopup] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
-  const [chosenPractice, setChosenPractice] = useState<string>("");
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
 
   const handleCardClick = (index: number, practice: string) => {
@@ -196,7 +203,9 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
             remoteDescAddedForOfferer={remoteDescAddedForOfferer}
             setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
             setAvailableCalls={setAvailableCalls}
-            practice={chosenPractice} // Pass the chosen practice to the popup
+            practice={chosenPractice}
+            currentBooking={currentBooking}
+            setCurrentBooking={setCurrentBooking}
           />
         )}
         <CallModal
@@ -222,6 +231,8 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
           setShowCallModal={setShowCallModal}
           setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
           setAvailableCalls={setAvailableCalls}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
         />
       </div>
       <NavigationBar />

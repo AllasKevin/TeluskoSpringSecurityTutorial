@@ -1,13 +1,13 @@
-# Use OpenJDK as base image
+# Stage 1: Build
+FROM maven:3.9.8-eclipse-temurin-21 AS builder
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Run
 FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
 
-# Set environment variable
-ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
-    JAVA_OPTS=""
-
-# Add JAR file
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-
-# Run the app
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

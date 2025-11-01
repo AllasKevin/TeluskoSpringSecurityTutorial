@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+
+
 const Queue = require('./utils/Queue');
 console.log("Server is starting...");
 
@@ -18,32 +21,40 @@ app.use(express.static(__dirname))
 const key = fs.readFileSync('./certs/192.168.0.110-key.pem');
 const cert = fs.readFileSync('./certs/192.168.0.110.pem');
 
+
+const envFile =
+  process.env.NODE_ENV === 'production'
+    ? '.env.production'
+    : process.env.NODE_ENV === 'local'
+    ? '.env.local'
+    : '.env';
+
+dotenv.config({ path: envFile });
+console.log(`Loaded environment file: ${envFile}`);
+
+
 //we changed our express setup so we can use https
 //pass the key and cert to createServer on https
- const expressServer = https.createServer({key, cert}, app);
+const expressServer =
+  process.env.NODE_ENV === 'local'
+    ? https.createServer({ key, cert }, app)
+    : http.createServer(app);
 
-//const expressServer = http.createServer(app);
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
+  : [];
+
+console.log('Allowed origins:', allowedOrigins);
 //create our socket.io server... it will listen to our express port
 const io = socketio(expressServer,{
     cors: {
-        origin: [
-            "https://localhost:3000",
-            "https://localhost:3001",
-            "https://192.168.0.110:3000",            
-            "https://192.168.0.110:5173",            
-            "https://192.168.0.110",            
-            "http://localhost:3000",
-            "http://localhost:3001",
-            "http://192.168.0.110:3000",
-            //"https://4.177.9.28", this is the old public IP of the server unning on AKS
-            // 'https://LOCAL-DEV-IP-HERE' //if using a phone or another computer
-        ],
+        origin: allowedOrigins,
         methods: ["GET", "POST"]
     }
 });
 
 
-expressServer.listen(8181);
+expressServer.listen(process.env.PORT);
 
 //offers will contain {}
 const offers = [
@@ -90,7 +101,7 @@ io.on('connection', (socket) => {
     socket.on('notify',({ receiver, message })=>{
         if(connectedSockets.find(s=>s.userName === receiver))
         {
-        console.log("socket.on() notify called by: " + " username" + " with message: " + message + ". Sending it both to: " + receiver + " and : " + userName);
+        console.log("socket.on() notify called by: " +  username + " with message: " + message + ". Sending it both to: " + receiver + " and : " + userName);
         const socketToAnswer = connectedSockets.find(s=>s.userName === receiver)
         
         // Send to receiver
@@ -230,7 +241,8 @@ io.of("/matching").on("connection", socket => {
     const senderSocketId = socket.id;
     const namespaceSocketServer = io.of("/matching");
 
-    if(password !== "x"){
+    if(password !== "x")
+    {
         socket.disconnect(true);
         return;
     }
@@ -273,7 +285,7 @@ io.of("/matching").on("connection", socket => {
             const socketIdOfMatch = connectedSockets.find(s=>s.userName === matchSuggestion.userName).matchingSocketId;
             console.log(connectedSockets);
 
-            console.log("Emitting foundMatch to " + matchSuggestion.userName + " with socketId: " + socketIdOfMatch + " and sening it: " + userName);
+            console.log("Emitting foundMatch to " + matchSuggestion.userName + " with socketId: " + socketIdOfMatch + " and sending it: " + userName);
             namespaceSocketServer.to(socketIdOfMatch).emit('foundMatch', userName);
 
             console.log("Returning matchSuggestion: " + matchSuggestion.userName);
@@ -284,6 +296,7 @@ io.of("/matching").on("connection", socket => {
     })
 
     socket.on('acceptMatch', (answerResponse, ackFunction) => {
+        console.log("acceptMatch called by: " + userName + " with answerResponse: " + answerResponse);
         if(!userIsPairedInMatch(userName))
         {
             console.log("User " + userName + " is not matched with anyone, cannot accept or decline match.");
@@ -323,6 +336,10 @@ io.of("/matching").on("connection", socket => {
 
 
               console.log("disconnected both sockets after match accepted");*/
+              }
+              else
+              {
+                console.log("both users have not yet accepted the match, only one has: " + userName);
               }
         }
         else

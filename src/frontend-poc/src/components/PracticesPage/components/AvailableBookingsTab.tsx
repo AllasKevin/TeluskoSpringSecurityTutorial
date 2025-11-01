@@ -15,7 +15,15 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
   getStatusColor,
   isUserBooking,
   hasUserResponded,
+  setShowPopup,
+  currentBooking,
+  setCurrentBooking,
 }) => {
+  // Filter out bookings where the current user is the initial booker
+  const availableBookings = allBookings.filter(
+    (booking) => !isUserBooking(booking)
+  );
+
   return (
     <div className="bookings-section">
       <h3
@@ -40,7 +48,7 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
           Pending bookings from other users:
         </h4>
 
-        {allBookings.length === 0 ? (
+        {availableBookings.length === 0 ? (
           <div
             style={{
               textAlign: "center",
@@ -59,12 +67,11 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
               gap: "12px",
             }}
           >
-            {allBookings.map((booking) => (
+            {availableBookings.map((booking) => (
               <BookingCard
                 key={booking.id}
                 booking={booking}
                 currentUsername={currentUsername}
-                tabType="available"
                 onRespondToBooking={onRespondToBooking}
                 onAcceptBookingResponse={onAcceptBookingResponse}
                 onDeclineBookingResponse={onDeclineBookingResponse}
@@ -75,6 +82,9 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
                 getStatusColor={getStatusColor}
                 isUserBooking={isUserBooking}
                 hasUserResponded={hasUserResponded}
+                setShowPopup={setShowPopup}
+                currentBooking={currentBooking}
+                setCurrentBooking={setCurrentBooking}
               />
             ))}
           </div>

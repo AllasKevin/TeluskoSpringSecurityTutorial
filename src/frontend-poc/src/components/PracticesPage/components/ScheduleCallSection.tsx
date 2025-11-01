@@ -59,6 +59,8 @@ interface ScheduleCallSectionProps {
   setShowCallModal: React.Dispatch<React.SetStateAction<boolean>>;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
+  currentBooking: Booking | undefined; // Optional prop to pass the booking
+  setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>; // Optional setter for the booking
 }
 
 export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
@@ -82,6 +84,8 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   setShowCallModal,
   setRemoteDescAddedForOfferer,
   setAvailableCalls,
+  currentBooking,
+  setCurrentBooking,
 }) => {
   const [activeTab, setActiveTab] = useState<
     "join" | "schedule" | "bookings" | "mybookings"
@@ -151,11 +155,15 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   // Get current username from sessionStorage
   useEffect(() => {
     const username = sessionStorage.getItem("username");
+    console.log(
+      "ScheduleCallSection. Current username from sessionStorage:",
+      username
+    );
     setCurrentUsername(username);
   }, []);
 
   useEffect(() => {
-      if (startDate) {
+    if (startDate) {
       loadBookingsForDate(startDate);
     }
   }, [startDate, loadBookingsForDate]);
@@ -228,9 +236,17 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         setSelectedBookings((prev) =>
           prev.map((b) => (b.id === bookingId ? updatedBooking : b))
         );
-        setMyBookings((prev) =>
-          prev.map((b) => (b.id === bookingId ? updatedBooking : b))
-        );
+        setMyBookings((prev) => {
+          // Check if booking already exists in myBookings
+          const existingIndex = prev.findIndex((b) => b.id === bookingId);
+          if (existingIndex >= 0) {
+            // Update existing booking
+            return prev.map((b) => (b.id === bookingId ? updatedBooking : b));
+          } else {
+            // Add new booking to myBookings since user is now involved
+            return [...prev, updatedBooking];
+          }
+        });
       });
 
       console.log(`Responded to booking ${bookingId} successfully`);
@@ -314,8 +330,8 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           startDate,
           practice || "General Practice",
           (newBooking) => {
-        // Add to local state
-        setSelectedBookings((prev) => [...prev, newBooking]);
+            // Add to local state
+            setSelectedBookings((prev) => [...prev, newBooking]);
           }
         );
 
@@ -562,6 +578,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           isMobile={isMobile}
           onSearchBookings={() => loadBookingsForDate(startDate)}
           onCreateBooking={handleCreateBooking}
+          setShowPopup={setShowPopup}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
         />
       )}
 
@@ -581,6 +600,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           hasUserResponded={(booking) =>
             hasUserResponded(booking, currentUsername)
           }
+          setShowPopup={setShowPopup}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
         />
       )}
 
@@ -599,6 +621,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           hasUserResponded={(booking) =>
             hasUserResponded(booking, currentUsername)
           }
+          setShowPopup={setShowPopup}
+          currentBooking={currentBooking}
+          setCurrentBooking={setCurrentBooking}
         />
       )}
     </div>
