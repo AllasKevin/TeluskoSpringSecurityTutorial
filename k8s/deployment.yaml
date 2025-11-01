@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: growhub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: growhub
+  template:
+    metadata:
+      labels:
+        app: growhub
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: growhub
+          image: ghcr.io/allaskevin/growhub-upcloud:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-uri-secret
+                  key: MONGODB_URI

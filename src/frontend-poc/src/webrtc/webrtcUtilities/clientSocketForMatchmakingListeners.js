@@ -10,8 +10,7 @@ const clientSocketForMatchmakingListeners = (socket,matchMutuallyAccepted, setMa
         ]);    })
 
     socket.on('matchMutuallyAccepted', role=>{
-        console.log("🔌 matchMutuallyAccepted handler on socket id:", socket.id);
-        console.log("matchMutuallyAccepted: " + role)
+        console.log("🔌 matchMutuallyAccepted handler on socket id: " + socket.id + " and given role: " + role);
         setMatchMutuallyAccepted(role);
         socket.disconnect();
     })

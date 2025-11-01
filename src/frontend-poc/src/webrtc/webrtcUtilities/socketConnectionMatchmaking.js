@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+const signalingServerMatchingURL = import.meta.env.VITE_SIGNALING_SERVER_MATCHING_URL;
 
 let socket;
 const socketConnectionForMatchmaking = (userName, chosenPractice) =>{
@@ -10,7 +11,7 @@ const socketConnectionForMatchmaking = (userName, chosenPractice) =>{
         console.log("socketConnectionForMatchmaking. trying to send: " + chosenPractice + " from user: " + userName);
         //its not connected... connect!
          //socket = io.connect('http://localhost:8181',{
-         socket = io.connect('https://192.168.0.110:8181/matching',{
+         socket = io.connect(signalingServerMatchingURL,{
             //'https://4.177.9.39',{ chatgpt mentioned this but with wss:// instead of https://
             //transports: ['websocket'],
             //secure: true,
