@@ -8,7 +8,9 @@ TAG="latest"
 FULL_IMAGE_NAME="$REGISTRY/$IMAGE_NAME:$TAG"
 NAMESPACE="default"
 DEPLOYMENT_NAME="growhub"
+NODE_ENV="production"
 
+echo "NODE_ENV before build: $NODE_ENV"
 echo "🔧 Building React app static files..."
 npm --prefix src/frontend-poc run build
 
