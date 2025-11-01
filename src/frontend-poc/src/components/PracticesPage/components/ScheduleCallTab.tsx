@@ -22,6 +22,9 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
   isMobile,
   onSearchBookings,
   onCreateBooking,
+  setShowPopup,
+  currentBooking,
+  setCurrentBooking,
 }) => {
   return (
     <div className="scheduler-section">
@@ -154,7 +157,6 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
                   key={booking.id}
                   booking={booking}
                   currentUsername={currentUsername}
-                  tabType="schedule"
                   onRespondToBooking={onRespondToBooking}
                   onAcceptBookingResponse={onAcceptBookingResponse}
                   onDeclineBookingResponse={onDeclineBookingResponse}
@@ -165,6 +167,9 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
                   getStatusColor={getStatusColor}
                   isUserBooking={isUserBooking}
                   hasUserResponded={hasUserResponded}
+                  setShowPopup={setShowPopup}
+                  currentBooking={currentBooking}
+                  setCurrentBooking={setCurrentBooking}
                 />
               ))}
             </div>

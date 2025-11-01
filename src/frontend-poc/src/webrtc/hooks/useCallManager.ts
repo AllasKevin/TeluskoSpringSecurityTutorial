@@ -84,6 +84,8 @@ const hangupCall = useCallback(() => {
       }
       else if(socket.connected)
       {
+        console.log("new changes are in place.");
+
         console.log("Socket is connected. Emitting hangUp notification to: " + otherCallerUserName);
         socket.emit("notify", {
                   receiver: otherCallerUserName,

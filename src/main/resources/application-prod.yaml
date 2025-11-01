@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: TeluskoSpringSecurityTutorial
+  data:
+    mongodb:
+      database: Spring-React-Poc-DB
+      uri: ${MONGODB_URI}
+      auto-index-creation: true
+
+jwt:
+  secret: ${JWT_SECRET}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+server:
+  port: 8080
+  address: 0.0.0.0
+  ssl:
+    enabled: false

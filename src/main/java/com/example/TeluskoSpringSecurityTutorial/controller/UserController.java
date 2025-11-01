@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -47,12 +48,17 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Users user, HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("Trying to Log in User: " + user);
-        String jwt = userService.verify(user);
-
+        System.out.println("Trying to Log in User: " + user.getUsername());
+        String jwt;
+        try {
+             jwt = userService.verify(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
+        }
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
                 .httpOnly(true)
-                .secure(false) // TODO: Set to true in production
+                .secure(true) // TODO: Set to true in production
                 .path("/")
                 .maxAge(Duration.ofHours(1))
                 .sameSite("Strict")

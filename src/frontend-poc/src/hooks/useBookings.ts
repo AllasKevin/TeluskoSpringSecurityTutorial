@@ -18,8 +18,11 @@ export const useBookings = () => {
     setLoading(true);
     setError(null);
     try {
+      // Get bookings for the specific selected time (not a 24-hour range)
       const bookings = await BookingService.getBookingsForDateTime(startDate);
-      setSelectedBookings(bookings);
+      // Filter out CONFIRMED bookings - only show PENDING and CANCELLED bookings
+      const filteredBookings = bookings.filter(booking => booking.status !== "CONFIRMED");
+      setSelectedBookings(filteredBookings);
     } catch (err) {
       console.error("Error loading bookings:", err);
       setError("Failed to load bookings");

@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: growhub-tls
+  namespace: default
+spec:
+  secretName: growhub-tls
+  dnsNames:
+    - lb-0a98c983d7c44f16b391ae58965e9ece-1.upcloudlb.com
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer

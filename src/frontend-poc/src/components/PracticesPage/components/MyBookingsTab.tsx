@@ -1,6 +1,7 @@
 import React from "react";
 import { MyBookingsTabProps } from "../../../types/bookingComponents";
 import BookingCard from "./BookingCard";
+import { isUserBooking, hasUserResponded } from "../../../utils/bookingUtils";
 
 const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
   myBookings,
@@ -12,9 +13,30 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
   onWithdrawBookingResponse,
   formatDateTime,
   getStatusColor,
-  isUserBooking,
-  hasUserResponded,
+  isUserBooking: isUserBookingProp,
+  hasUserResponded: hasUserRespondedProp,
+  setShowPopup,
+  currentBooking,
+  setCurrentBooking,
 }) => {
+  // Filter out bookings where user withdrew their response
+  // Only show bookings where user is the creator OR has an active response
+  const activeBookings = myBookings
+    .filter((booking) => {
+      // Always show bookings the user created
+      if (isUserBooking(booking, currentUsername)) {
+        return true;
+      }
+
+      // Only show bookings where user has an active response (not withdrawn)
+      const hasResponded = hasUserResponded(booking, currentUsername);
+
+      return hasResponded;
+    })
+    .sort((a, b) => {
+      // Sort by booking time (earliest first)
+      return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
+    });
   return (
     <div className="bookings-section">
       <h3
@@ -39,7 +61,7 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
           Your bookings:
         </h4>
 
-        {myBookings.length === 0 ? (
+        {activeBookings.length === 0 ? (
           <div
             style={{
               textAlign: "center",
@@ -48,7 +70,7 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
               fontStyle: "italic",
             }}
           >
-            No bookings found
+            No active bookings found
           </div>
         ) : (
           <div
@@ -58,12 +80,11 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
               gap: "12px",
             }}
           >
-            {myBookings.map((booking) => (
+            {activeBookings.map((booking) => (
               <BookingCard
                 key={booking.id}
                 booking={booking}
                 currentUsername={currentUsername}
-                tabType="mybookings"
                 onAcceptBookingResponse={onAcceptBookingResponse}
                 onDeclineBookingResponse={onDeclineBookingResponse}
                 onWithdrawAcceptance={onWithdrawAcceptance}
@@ -71,8 +92,11 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
                 onWithdrawBookingResponse={onWithdrawBookingResponse}
                 formatDateTime={formatDateTime}
                 getStatusColor={getStatusColor}
-                isUserBooking={isUserBooking}
-                hasUserResponded={hasUserResponded}
+                isUserBooking={isUserBookingProp}
+                hasUserResponded={hasUserRespondedProp}
+                setShowPopup={setShowPopup}
+                currentBooking={currentBooking}
+                setCurrentBooking={setCurrentBooking}
               />
             ))}
           </div>

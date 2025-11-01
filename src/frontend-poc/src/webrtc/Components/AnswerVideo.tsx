@@ -50,7 +50,7 @@ const AnswerVideo = ({
     "Please enable video to start!"
   );
   const [answerCreated] = useState(false); // TODO: This is never changed and therefore it should be possible to remove it
-
+/*
   console.log("AnswerVideo component mounted offerData:", offerData);
   // Clean on route/component change
   useEffect(() => {
@@ -68,7 +68,7 @@ const AnswerVideo = ({
     window.addEventListener("beforeunload", handleUnload);
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);
-
+*/
   /*
   // end the call
   useEffect(() => {

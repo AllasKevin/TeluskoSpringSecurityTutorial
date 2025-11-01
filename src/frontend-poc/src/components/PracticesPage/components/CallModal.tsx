@@ -6,6 +6,7 @@ import {
 } from "../../WebRtcManager/WebRtcManager";
 import { CallData } from "../../Dashboard";
 import { ScheduleCallSection } from "./ScheduleCallSection";
+import { Booking } from "../../../types/booking";
 
 interface CallModalProps {
   isOpen: boolean;
@@ -36,6 +37,8 @@ interface CallModalProps {
   setShowCallModal: React.Dispatch<React.SetStateAction<boolean>>;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
+  currentBooking: Booking | undefined;
+  setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
 }
 
 export const CallModal: React.FC<CallModalProps> = ({
@@ -61,6 +64,8 @@ export const CallModal: React.FC<CallModalProps> = ({
   setShowCallModal,
   setRemoteDescAddedForOfferer,
   setAvailableCalls,
+  currentBooking,
+  setCurrentBooking,
 }) => {
   if (!isOpen) return null;
 
@@ -101,6 +106,8 @@ export const CallModal: React.FC<CallModalProps> = ({
             setShowCallModal={setShowCallModal}
             setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
             setAvailableCalls={setAvailableCalls}
+            currentBooking={currentBooking}
+            setCurrentBooking={setCurrentBooking}
           />
         </div>
       </div>

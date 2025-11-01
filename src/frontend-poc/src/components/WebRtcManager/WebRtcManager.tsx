@@ -71,7 +71,8 @@ interface WebRtcManagerNewProps {
       }[]
     >
   >;
-  practice: string; // Optional prop to pass the practice name
+  practice: string;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const WebRtcManager = forwardRef<
@@ -99,6 +100,7 @@ export const WebRtcManager = forwardRef<
       setAvailableCalls,
       setAvailableMatches,
       practice,
+      setShowPopup,
     },
     ref
   ) => {
@@ -116,7 +118,6 @@ export const WebRtcManager = forwardRef<
       step0InitListeningForCallsExecuted,
       setStep0InitListeningForCallsExecuted,
     ] = useState(false);
-    console.log(callStatus);
 
     const [step1InitCallExecuted, setStep1InitCallExecuted] = useState(false);
 
@@ -135,11 +136,8 @@ export const WebRtcManager = forwardRef<
 
     const [step5AnswerReceivedExecuted, setStep5AnswerReceivedExecuted] =
       useState(false);
-    console.log(callStatus);
 
     const findMatch = async (chosenPractice: string) => {
-      console.log("findMatch CALLED with chosenPractice:", chosenPractice);
-
       console.log(
         "CHANGED. Step 0.1: Check if there is a match in the queue for the specific practice " +
           chosenPractice
@@ -195,8 +193,6 @@ export const WebRtcManager = forwardRef<
       chosenPractice: string,
       otherCallerUserName: string | null | undefined
     ) => {
-      console.log("acceptMatch CALLED with chosenPractice:", chosenPractice);
-
       console.log(
         "CHANGED. Step 0.1: acceptMatch() practice: " +
           chosenPractice +
@@ -268,7 +264,7 @@ export const WebRtcManager = forwardRef<
 
     // Step 0: Listen for available matches
     useEffect(() => {
-      initListeningForMatches(username, "Hej");
+      initListeningForMatches(username, practice);
       initListeningForCalls(username, setAvailableCallsFromServer, practice);
     }, []);
 
@@ -313,24 +309,15 @@ export const WebRtcManager = forwardRef<
 
     // Step 1: initialize call after both have accepted the match
     useEffect(() => {
-      console.log(
-        "availableCallsFromServer or matchMutuallyAccepted has changed",
-        matchMutuallyAccepted
-      );
+      if (step1InitCallExecuted) return;
       if (matchMutuallyAccepted === "Offerer") {
-        console.log("Offerer role given by matchMutuallyAccepted");
         initCall("offer");
       } else if (
         matchMutuallyAccepted === "Answerer" &&
         availableCallsFromServer.length > 0
       ) {
-        console.log("Answerer role given by matchMutuallyAccepted");
         availableCallsFromServer.map((callData: CallData) => {
           if (callData && callData.offererUserName) {
-            console.log(
-              "Calling initCall with answer for: ",
-              callData.offererUserName
-            );
             initCall("answer", callData?.offererUserName);
             setOfferData(callData);
           }
@@ -339,7 +326,8 @@ export const WebRtcManager = forwardRef<
     }, [availableCallsFromServer, matchMutuallyAccepted]);
 
     const initCall = async (typeOfCall: string, foundMatch?: string) => {
-      console.log("Step 1: Initialize call and get GUM access");
+      console.log("Step 1: Initialize call and get GUM access..");
+
       await prepForCall({
         callStatus,
         updateCallStatus,
@@ -353,7 +341,7 @@ export const WebRtcManager = forwardRef<
     // Step 2: GUM access granted, now we can set up the peer connection
     //We have media via GUM. setup the peerConnection w/listeners
     useEffect(() => {
-      console.log("Step 2 (bEFORE): GUM access granted");
+      //console.log("Step 2 (bEFORE): GUM access granted");
       if (step1InitCallExecuted && username) {
         // prepForCall has finished running and updated callStatus
         setupPeerConnection(
@@ -443,7 +431,7 @@ export const WebRtcManager = forwardRef<
     // Step 4: Create an offer
     //once the user has started this component, start WebRTC'ing :)
     useEffect(() => {
-      console.log("Step 4 (Before): Creating offer typeOfCall:", typeOfCall);
+      //console.log("Step 4 (Before): Creating offer typeOfCall:", typeOfCall);
 
       if (typeOfCall === "offer" && step3InitSocketListenersExecuted) {
         createOffer(
@@ -464,9 +452,7 @@ export const WebRtcManager = forwardRef<
 
     // Step 5: Set the remote description (answer)
     useEffect(() => {
-      console.log("Step 5 (Before): Setting remote description (answer)");
-      console.log(callStatus);
-      console.log(offerCreated);
+      //console.log("Step 5 (Before): Setting remote description (answer)");
       if (callStatus?.answer && offerCreated && step5AnswerReceivedExecuted) {
         console.log("Step 5: Setting remote description (answer)");
         addAnswer(
@@ -487,13 +473,6 @@ export const WebRtcManager = forwardRef<
 
     //once remoteStream AND pc are ready, navigate
     useEffect(() => {
-      console.log(
-        "Before navigating to video page, remoteStream and peerConnection are:",
-        remoteStream,
-        peerConnection,
-        "remoteDescAddedForOfferer:",
-        remoteDescAddedForOfferer
-      );
       if (remoteStream && peerConnection) {
         if (
           typeOfCall === "offer" &&
@@ -503,9 +482,11 @@ export const WebRtcManager = forwardRef<
           console.log("navigating as offerer to videocall page...");
           setStep4CreateOfferExecuted(false);
 
+          setShowPopup(false);
           navigate("/offer", { replace: false });
         } else if (typeOfCall === "answer") {
           console.log("navigating as answerer to videocall page...");
+          setShowPopup(false);
           navigate("/answer", { replace: false });
         }
       }
@@ -724,7 +705,6 @@ const setCallStatusForAnswerer = (
   callStatus: CallStatus,
   updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>
 ) => {
-  console.log("setCallStatusForAnswerer!");
   const copyCallStatus = { ...callStatus };
   copyCallStatus.videoEnabled = true;
   copyCallStatus.callInitiated = true;
