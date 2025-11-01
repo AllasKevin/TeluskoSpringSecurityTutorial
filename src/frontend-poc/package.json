@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:dev": "vite build --mode dev",
+    "build": "cross-env NODE_ENV=production tsc -b && vite build",
+    "build:dev": "cross-env NODE_ENV=production tsc -b && vite build --mode dev",
     "lint": "eslint .",
     "preview": "vite preview"
   },
