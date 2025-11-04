@@ -184,6 +184,7 @@ function App() {
                 remoteDescAddedForOfferer={remoteDescAddedForOfferer}
                 setRemoteDescAddedForOfferer={setRemoteDescAddedForOfferer}
                 hangupCall={hangupCall}
+                chosenPractice={chosenPractice}
               />
             </ProtectedRoute>
           }
@@ -205,6 +206,7 @@ function App() {
                 remoteFeedEl={remoteFeedEl}
                 localFeedEl={localFeedEl}
                 hangupCall={hangupCall}
+                chosenPractice={chosenPractice}
               />
             </ProtectedRoute>
           }
