@@ -10,6 +10,9 @@ import {
   setStreamsLocally,
 } from "../../components/WebRtcManager/WebRtcManager";
 import { ca } from "date-fns/locale";
+import { usePracticeManager } from "../../hooks/usePracticeManager";
+import { useNavigate } from "react-router-dom";
+import { practiceConfigs } from "../../practices/practiceConfigs";
 
 interface AnswerVideoProps {
   callStatus: CallStatus | undefined;
@@ -30,6 +33,7 @@ interface AnswerVideoProps {
   remoteFeedEl: RefObject<HTMLVideoElement | null>;
   offerData: CallData | undefined;
   hangupCall: (callStatus: CallStatus | undefined) => void;
+  chosenPractice: string;
 }
 const AnswerVideo = ({
   remoteStream,
@@ -44,13 +48,22 @@ const AnswerVideo = ({
   remoteFeedEl,
   localFeedEl,
   hangupCall,
+  chosenPractice,
 }: AnswerVideoProps) => {
+  type PracticeType = keyof typeof practiceConfigs;
   //const navigate = useNavigate();
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
   );
   const [answerCreated] = useState(false); // TODO: This is never changed and therefore it should be possible to remove it
-/*
+
+  const navigate = useNavigate();
+  const practiceType = chosenPractice as keyof typeof practiceConfigs;
+
+  usePracticeManager(practiceConfigs[practiceType], () => {
+    navigate("/app");
+  });
+  /*
   console.log("AnswerVideo component mounted offerData:", offerData);
   // Clean on route/component change
   useEffect(() => {

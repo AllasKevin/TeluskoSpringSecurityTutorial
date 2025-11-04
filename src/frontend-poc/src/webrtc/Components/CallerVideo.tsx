@@ -13,6 +13,9 @@ import {
   WebRtcManager,
 } from "../../components/WebRtcManager/WebRtcManager";
 import { ca } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
+import { usePracticeManager } from "../../hooks/usePracticeManager";
+import { practiceConfigs } from "../../practices/practiceConfigs";
 
 interface CallerVideoProps {
   callStatus: CallStatus | undefined;
@@ -37,6 +40,7 @@ interface CallerVideoProps {
   remoteDescAddedForOfferer: boolean;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
   hangupCall: (callStatus: CallStatus | undefined) => void;
+  chosenPractice: string;
 }
 
 const CallerVideo = ({
@@ -55,12 +59,22 @@ const CallerVideo = ({
   remoteDescAddedForOfferer,
   setRemoteDescAddedForOfferer,
   hangupCall,
+  chosenPractice,
 }: CallerVideoProps) => {
+  type PracticeType = keyof typeof practiceConfigs;
+
   //const navigate = useNavigate();
   const [videoMessage, setVideoMessage] = useState(
     "Please enable video to start!"
   );
   const username = sessionStorage.getItem("username");
+
+  const navigate = useNavigate();
+  const practiceType = chosenPractice as keyof typeof practiceConfigs;
+
+  usePracticeManager(practiceConfigs[practiceType], () => {
+    navigate("/app");
+  });
 
   console.log("CallerVideo component mounted, peerConnection:", peerConnection);
   console.log(peerConnection?.ontrack);
