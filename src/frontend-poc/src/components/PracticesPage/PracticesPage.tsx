@@ -8,6 +8,7 @@ import dileva from "../../assets/dileva.jpg";
 import gabor from "../../assets/gabor-mate.jpg";
 import tony from "../../assets/tony-robbins.webp";
 import nadine from "../../assets/nadine.jpg";
+import lore from "../../assets/lore.jpg";
 import swan from "../../assets/teal-swan.webp";
 
 import { ListGroup } from "react-bootstrap";
@@ -74,13 +75,22 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
 }) => {
   const practices = [
     {
+      title: "Asking Practice",
+      name: "askingpractice",
+      description:
+        "Practice what it feels like to play around with asking for what ever comes to mind, or go beyond and connect with and express your deepest wishes.",
+      imageUrl: lore,
+    },
+    {
       title: "Noticing Game",
+      name: "noticinggame",
       description:
         "Explore what experiences are revealed inside yourself in the present moment and relate those authentically to your co-explorer.",
       imageUrl: nadine,
     },
     {
       title: "Assert & Protect",
+      name: "assertandprotect",
       description:
         "Practice how to assert and protect your boundaries in a safe space.",
       imageUrl: gabor,
@@ -89,24 +99,28 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     },
     {
       title: "Gratitude Practice",
+      name: "gratitudepractice",
       description:
         "Increase your awareness of the positive aspects of your life and cultivate a sense of gratitude.",
       imageUrl: tony,
     },
     {
       title: "Kirtan",
+      name: "kirtan",
       description:
         "Engage in guided call-and-response chanting of sacred names to harmonize breath, voice, and intention.",
       imageUrl: dileva,
     },
     {
       title: "Non-Contact Improv",
+      name: "noncontactimprov",
       description:
         "Reflect each other’s bodily directional impulses by mirroring small initiating movements and amplifying dynamic flow.",
       imageUrl: Profilbild,
     },
     {
       title: "Echo of True Self",
+      name: "echooftrueself",
       description:
         "Speak your truth and experience the power of being heard and affirmed by another.",
       imageUrl: swan,
@@ -155,7 +169,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
               <PracticeCard
                 key={index}
                 isExpanded={expandedCardIndex === index}
-                onClick={() => handleCardClick(index, practice.title)}
+                onClick={() => handleCardClick(index, practice.name)}
                 title={practice.title}
                 description={practice.description}
                 imageUrl={practice.imageUrl}
