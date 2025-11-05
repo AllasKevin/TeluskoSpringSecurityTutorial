@@ -174,21 +174,8 @@ const CallerVideo = ({
   return (
     <div>
       <div className="videos">
-        <VideoMessageBox message={videoMessage} />
-        <video
-          id="local-feed"
-          ref={localFeedEl}
-          autoPlay
-          controls
-          playsInline
-        ></video>
-        <video
-          id="remote-feed"
-          ref={remoteFeedEl}
-          autoPlay
-          controls
-          playsInline
-        ></video>
+        <video id="local-feed" ref={localFeedEl} autoPlay playsInline></video>
+        <video id="remote-feed" ref={remoteFeedEl} autoPlay playsInline></video>
       </div>
       <ActionButtons
         localFeedEl={localFeedEl}
