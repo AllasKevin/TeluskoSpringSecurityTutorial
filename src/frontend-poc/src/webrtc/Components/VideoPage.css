@@ -12,11 +12,7 @@
 }
 
 #local-feed{
-    position: absolute;
-    z-index: 2;
-    right: 5%;
-    bottom: 10%;
-    width: 10%;
+    display: none;
 }
 
 .call-info{
@@ -37,7 +33,6 @@
 #menu-buttons{
     height: 80px;
     width: 100%;
-    background-color: #333;
     position: absolute;
     bottom: -6px;
     left: 11px;
@@ -92,7 +87,7 @@
 }
 
 .hang-up{
-    position: relative;
+    position: absolute;
     right: 10px;
     top: 20px;
 }
