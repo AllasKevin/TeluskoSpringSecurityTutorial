@@ -101,7 +101,7 @@ io.on('connection', (socket) => {
     socket.on('notify',({ receiver, message })=>{
         if(connectedSockets.find(s=>s.userName === receiver))
         {
-        console.log("socket.on() notify called by: " +  username + " with message: " + message + ". Sending it both to: " + receiver + " and : " + userName);
+        console.log("socket.on() notify called by: " +  userName + " with message: " + message + ". Sending it both to: " + receiver + " and : " + userName);
         const socketToAnswer = connectedSockets.find(s=>s.userName === receiver)
         
         // Send to receiver
