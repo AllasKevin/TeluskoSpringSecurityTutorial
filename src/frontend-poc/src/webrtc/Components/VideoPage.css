@@ -91,3 +91,34 @@
     right: 10px;
     top: 20px;
 }
+
+.countdown-timer {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 12px 20px;
+    border-radius: 25px;
+    z-index: 10;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.countdown-icon {
+    font-size: 28px;
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.countdown-text {
+    font-family: 'Arial', sans-serif;
+    min-width: 40px;
+    text-align: center;
+}
