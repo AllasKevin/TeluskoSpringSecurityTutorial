@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useEffect, useState, useCallback, useMemo } from "react";
 import "./VideoPage.css";
 //import { useNavigate } from "react-router-dom";
 import ActionButtons from "./ActionButtons/ActionButtons";
@@ -13,6 +13,7 @@ import { ca } from "date-fns/locale";
 import { usePracticeManager } from "../../hooks/usePracticeManager";
 import { useNavigate } from "react-router-dom";
 import { practiceConfigs } from "../../practices/practiceConfigs";
+import CountdownTimer from "./CountdownTimer";
 
 interface AnswerVideoProps {
   callStatus: CallStatus | undefined;
@@ -60,9 +61,14 @@ const AnswerVideo = ({
   const navigate = useNavigate();
   const practiceType = chosenPractice as keyof typeof practiceConfigs;
 
-  usePracticeManager(practiceConfigs[practiceType], () => {
+  const onEnd = useCallback(() => {
+    console.log("AnswerVideo: Practice ended, navigating to /app");
     navigate("/app");
-  });
+  }, [navigate]);
+
+  const config = useMemo(() => practiceConfigs[practiceType], [practiceType]);
+
+  const countdown = usePracticeManager(config, onEnd);
   /*
   console.log("AnswerVideo component mounted offerData:", offerData);
   // Clean on route/component change
@@ -98,7 +104,9 @@ const AnswerVideo = ({
 
   // Step 3: Set the local stream to the local video element
   //send back to home if no localStream
-  setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
+  useEffect(() => {
+    setStreamsLocally(localStream, localFeedEl, remoteFeedEl, remoteStream);
+  }, [localStream, remoteStream, localFeedEl, remoteFeedEl]);
 
   //set video tags
   // useEffect(()=>{
@@ -134,6 +142,7 @@ const AnswerVideo = ({
 
   return (
     <div>
+      <CountdownTimer countdown={countdown} />
       <div className="videos">
         <video id="local-feed" ref={localFeedEl} autoPlay playsInline></video>
         <video id="remote-feed" ref={remoteFeedEl} autoPlay playsInline></video>
