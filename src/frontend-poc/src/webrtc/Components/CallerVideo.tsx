@@ -1,4 +1,4 @@
-import React, { RefObject, useEffect, useState } from "react";
+import React, { RefObject, useEffect, useState, useCallback, useMemo } from "react";
 import "./VideoPage.css";
 //import { useNavigate } from "react-router-dom";
 import { CallStatus } from "../../App";
@@ -16,6 +16,7 @@ import { ca } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import { usePracticeManager } from "../../hooks/usePracticeManager";
 import { practiceConfigs } from "../../practices/practiceConfigs";
+import CountdownTimer from "./CountdownTimer";
 
 interface CallerVideoProps {
   callStatus: CallStatus | undefined;
@@ -72,9 +73,14 @@ const CallerVideo = ({
   const navigate = useNavigate();
   const practiceType = chosenPractice as keyof typeof practiceConfigs;
 
-  usePracticeManager(practiceConfigs[practiceType], () => {
+  const onEnd = useCallback(() => {
+    console.log("CallerVideo: Practice ended, navigating to /app");
     navigate("/app");
-  });
+  }, [navigate]);
+
+  const config = useMemo(() => practiceConfigs[practiceType], [practiceType]);
+
+  const countdown = usePracticeManager(config, onEnd);
 
   console.log("CallerVideo component mounted, peerConnection:", peerConnection);
   console.log(peerConnection?.ontrack);
@@ -173,6 +179,7 @@ const CallerVideo = ({
 
   return (
     <div>
+      <CountdownTimer countdown={countdown} />
       <div className="videos">
         <video id="local-feed" ref={localFeedEl} autoPlay playsInline></video>
         <video id="remote-feed" ref={remoteFeedEl} autoPlay playsInline></video>
