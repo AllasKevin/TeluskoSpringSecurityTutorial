@@ -3,6 +3,7 @@ import {
   RefObject,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 import { CallStatus } from "../../App";
@@ -13,7 +14,7 @@ import {
   disconnectSocket,
 } from "../../webrtc/webrtcUtilities/socketConnection";
 import { CallData } from "../Dashboard";
-import { ca } from "date-fns/locale";
+import { ca, el } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import clientSocketListeners from "../../webrtc/webrtcUtilities/clientSocketListeners";
 import peerConfiguration from "../../webrtc/webrtcUtilities/stunServers";
@@ -33,10 +34,6 @@ export interface WebRtcManagerNewHandle {
     otherCallerUserName: string | null | undefined
   ) => void;
   startNewCall: (chosenPractice: string) => Promise<void>;
-  joinCall: (
-    chosenPractice: string,
-    otherCallerUserName: string | null | undefined
-  ) => void;
 }
 
 interface WebRtcManagerNewProps {
@@ -137,6 +134,8 @@ export const WebRtcManager = forwardRef<
     const [step5AnswerReceivedExecuted, setStep5AnswerReceivedExecuted] =
       useState(false);
 
+    const isNavigatingToVideoPageKeepSocketConnectionOpenRef = useRef(false);
+
     const findMatch = async (chosenPractice: string) => {
       console.log(
         "CHANGED. Step 0.1: Check if there is a match in the queue for the specific practice " +
@@ -233,28 +232,6 @@ export const WebRtcManager = forwardRef<
       );
     };
 
-    const joinCall = async (
-      chosenPractice: string,
-      otherCallerUserName: string | null | undefined
-    ) => {
-      console.log("joinCall CALLED with chosenPractice:", chosenPractice);
-
-      if (otherCallerUserName) {
-        console.log(
-          "Making answer. Found a match " +
-            otherCallerUserName +
-            "  in the queue for " +
-            chosenPractice
-        );
-        //setFoundMatch(true);
-        //setCallType("answer");
-        initCall("answer", otherCallerUserName);
-        availableCallsFromServer.map((callData: CallData) => {
-          setOfferData(callData);
-        });
-      }
-    };
-
     const [typeOfCall, setTypeOfCall] = useState("");
     const [availableCallsFromServer, setAvailableCallsFromServer] = useState(
       []
@@ -269,7 +246,14 @@ export const WebRtcManager = forwardRef<
 
       return () => {
         console.log("Component unmounted → disconnecting socket");
-        socketConnection(username, practice).disconnect();
+        if (!isNavigatingToVideoPageKeepSocketConnectionOpenRef.current) {
+          console.log("Not navigating to video page, disconnecting socket");
+          socketConnection(username, practice).disconnect();
+        } else {
+          console.log(
+            "Navigating to video page, keeping socket connection open"
+          );
+        }
         socketConnectionMatchmaking(username, practice).disconnect();
       };
     }, []);
@@ -330,6 +314,13 @@ export const WebRtcManager = forwardRef<
         });
       }
     }, [availableCallsFromServer, matchMutuallyAccepted]);
+
+    useEffect(() => {
+      console.log(
+        "Available calls from server updated:",
+        availableCallsFromServer
+      );
+    }, [availableCallsFromServer]);
 
     const initCall = async (typeOfCall: string, foundMatch?: string) => {
       console.log("Step 1: Initialize call and get GUM access..");
@@ -490,10 +481,20 @@ export const WebRtcManager = forwardRef<
 
           setShowPopup(false);
           navigate("/offer", { replace: false });
+          isNavigatingToVideoPageKeepSocketConnectionOpenRef.current = true;
+          console.log(
+            "isNavigatingToVideoPageKeepSocketConnectionOpenRef set to true. is now:",
+            isNavigatingToVideoPageKeepSocketConnectionOpenRef.current
+          );
         } else if (typeOfCall === "answer") {
           console.log("navigating as answerer to videocall page...");
           setShowPopup(false);
           navigate("/answer", { replace: false });
+          isNavigatingToVideoPageKeepSocketConnectionOpenRef.current = true;
+          console.log(
+            "isNavigatingToVideoPageKeepSocketConnectionOpenRef set to true. is now:",
+            isNavigatingToVideoPageKeepSocketConnectionOpenRef.current
+          );
         }
       }
     }, [
@@ -509,7 +510,6 @@ export const WebRtcManager = forwardRef<
       acceptMatch,
       declineMatch,
       startNewCall,
-      joinCall,
     }));
 
     return null; // This component does not return any JSX, it is a utility manager
