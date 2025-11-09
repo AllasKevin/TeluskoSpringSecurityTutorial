@@ -266,6 +266,12 @@ export const WebRtcManager = forwardRef<
     useEffect(() => {
       initListeningForMatches(username, practice);
       initListeningForCalls(username, setAvailableCallsFromServer, practice);
+
+      return () => {
+        console.log("Component unmounted → disconnecting socket");
+        socketConnection(username, practice).disconnect();
+        socketConnectionMatchmaking(username, practice).disconnect();
+      };
     }, []);
 
     const initListeningForMatches = (

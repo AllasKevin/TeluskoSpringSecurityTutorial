@@ -34,6 +34,25 @@ class Queue {
   removeByUserName(userName) {
     this.items = this.items.filter(item => item.userName !== userName);
   }
+
+    /**
+   * Removes and returns the first item in the queue whose userName
+   * is NOT included in the given array.
+   * @param {string[]} excludedUserNames - Array of usernames to skip
+   * @returns {object|undefined} - The removed item or undefined if none found
+   */
+  dequeueFirstNotIn(excludedUserNames) {
+    const index = this.items.findIndex(
+      item => !excludedUserNames.includes(item.userName)
+    );
+
+    if (index === -1) {
+      return undefined; // all items are excluded
+    }
+
+    const [removed] = this.items.splice(index, 1);
+    return removed;
+  }
 }
 
 module.exports = Queue;
