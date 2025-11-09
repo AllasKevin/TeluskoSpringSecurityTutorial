@@ -89,12 +89,6 @@ export const CallHandlerPopUp = forwardRef<
 
     const [checkingMatch, setCheckingMatch] = useState(false);
 
-    const handleJoinCall = (otherCallerUserName: string | null | undefined) => {
-      console.log(`Joining call`);
-      webRtcManagerRef.current?.joinCall(practice, otherCallerUserName);
-
-      //setShowPopup(false);
-    };
     const handleAcceptCall = (
       otherCallerUserName: string | null | undefined
     ) => {
@@ -124,8 +118,6 @@ export const CallHandlerPopUp = forwardRef<
 
       //setShowPopup(false);
     };
-
-    //handleFindMatch();
 
     // Use useEffect to ensure webRtcManagerRef is available before calling findMatch
     useEffect(() => {
@@ -180,7 +172,6 @@ export const CallHandlerPopUp = forwardRef<
         });
       }
     }, [availableMatches]);
-
 
     return (
       <div className="popup-overlay" onClick={() => setShowPopup(false)}>
