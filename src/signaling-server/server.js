@@ -226,8 +226,9 @@ io.on('connection', (socket) => {
 })
 
 const findMatchMap = {};
-const findMatchQueue = new Queue(); // TODO Jag kommer behöva en queue för varje practice
-
+const askingpracticeFindMatchQueue = new Queue(); // TODO Jag kommer behöva en queue för varje practice
+findMatchMap["askingpractice"] = { practice: "askingpractice", queue: askingpracticeFindMatchQueue };
+var namespaceSocketServer;
 const matchedPairs = []; // This will hold pairs of users who have accepted each other
 
 io.of("/matching").on("connection", socket => {
@@ -239,7 +240,7 @@ io.of("/matching").on("connection", socket => {
     console.log(`${userName} connected with socketId: ${socket.id} matching NS`);
 
     const senderSocketId = socket.id;
-    const namespaceSocketServer = io.of("/matching");
+    namespaceSocketServer = io.of("/matching");
 
     if(password !== "x")
     {
@@ -254,45 +255,7 @@ io.of("/matching").on("connection", socket => {
     console.log(`${userName} joined practice room: ${practice}`);
 
     socket.on('findMatch', (data, ackFunction) => {
-        
-        currentQueue = getQueueForPractice(practice);
-
-        console.log("findMatch called! practice: " + practice + " userName: " + userName);
-
-        if(currentQueue.containsUserName(userName))
-        {
-            console.log("User " + userName + " is already in the queue, not adding again.");
-            ackFunction(false);
-            return;
-        }
-
-        if (currentQueue.size() < 1) 
-        {
-            console.log("User " + userName + " added to queue because queue was empty. currentQueue size: " + currentQueue.size());
-            enqeueForPractice({ userName, socketId: socket.id }, practice);
-
-            console.log("Returning noMatchFound");
-            ackFunction(false);
-        }
-        else
-        {
-            console.log("Match found for user: " + userName + "! currentQueue size: " + currentQueue.size());
-            const matchSuggestion = currentQueue.dequeue();
-
-            // TODO lägg till practice som parameter här
-            addMatchedPair(userName, matchSuggestion.userName);
-
-            const socketIdOfMatch = connectedSockets.find(s=>s.userName === matchSuggestion.userName).matchingSocketId;
-            console.log(connectedSockets);
-
-            console.log("Emitting foundMatch to " + matchSuggestion.userName + " with socketId: " + socketIdOfMatch + " and sending it: " + userName);
-            namespaceSocketServer.to(socketIdOfMatch).emit('foundMatch', userName);
-
-            console.log("Returning matchSuggestion: " + matchSuggestion.userName);
-            ackFunction(matchSuggestion);
-        }
-    
-    //socket.to(practice).emit('newOfferAwaiting',offers.slice(-1))
+        findMatch(userName, socket.id, practice, ackFunction)
     })
 
     socket.on('acceptMatch', (answerResponse, ackFunction) => {
@@ -314,13 +277,12 @@ io.of("/matching").on("connection", socket => {
                 const socketIdOfMatch = connectedSockets.find(s=>s.userName === getPairedUserOf(userName)).matchingSocketId;
                 console.log("Emitting matchMutuallyAccepted to both users: " + userName +  " " + senderSocketId +" who will be offerer and " + getPairedUserOf(userName) + " " + socketIdOfMatch + " who will be answerer.");
 
-
                 namespaceSocketServer.to(senderSocketId).emit('matchMutuallyAccepted', "Offerer");
                 namespaceSocketServer.to(socketIdOfMatch).emit('matchMutuallyAccepted', "Answerer");
 
                 removePairByUsernameInMatchedPairs(userName);
 
-                findMatchQueue.removeByUserName(userName);
+                findMatchMap["askingpractice"].queue.removeByUserName(userName);
   /*
               socket.disconnect(true);
 
@@ -346,11 +308,11 @@ io.of("/matching").on("connection", socket => {
         {
             const socketIdOfMatch = connectedSockets.find(s=>s.userName === getPairedUserOf(userName)).matchingSocketId;
 
-            console.log("Match got declined by: " + userName);
-            declineCall(userName, socket, practice);
-
             namespaceSocketServer.to(senderSocketId).emit('matchDeclined');
             namespaceSocketServer.to(socketIdOfMatch).emit('matchDeclined');
+
+            console.log("Match got declined by: " + userName);
+            declineCallAndFindNewMatch(userName, socket, practice);
         }
         
 
@@ -358,13 +320,69 @@ io.of("/matching").on("connection", socket => {
     })
 
     socket.on('disconnect',()=>{
-        console.log("Client disconnected from matching NS: " + userName + " with socketId: " + socket.id)
+        console.log("Client disconnected from matching NS: " + userName + " with socketId: " + socket.id + " practice: " + practice);
+        removeUserFromFindMatchQueue(userName);
+        if(userIsPairedInMatch(userName)) 
+        {
+          const otherUsername = getPairedUserOf(userName);
+          const socketIdOfMatch = connectedSockets.find(s=>s.userName === otherUsername).matchingSocketId;
+          removePairByUsernameInMatchedPairs(userName);
+          namespaceSocketServer.to(socketIdOfMatch).emit('matchDeclined');
+          findMatch(otherUsername, socketIdOfMatch, practice);
+        }
     })
 });
 
+function findMatch(userName, socketId, practice, ackFunction) {
+  currentQueue = getQueueForPractice(practice);
+
+  console.log("findMatch called! practice: " + practice + " userName: " + userName);
+
+  if(currentQueue.containsUserName(userName))
+  {
+      console.log("User " + userName + " is already in the queue, not adding again.");
+      if(ackFunction) ackFunction(false);
+      return;
+  }
+
+  if (!currentQueue.isEmpty()) 
+  {
+    console.log("Match found for user: " + userName + "! currentQueue size: " + currentQueue.size());
+    const matchSuggestion = currentQueue.dequeueFirstNotIn(connectedSockets.find(s=>s.userName === userName)?.declinedMatches || []);
+
+    if (matchSuggestion) {
+      // TODO lägg till practice som parameter här
+      addMatchedPair(userName, matchSuggestion.userName);
+
+      const socketIdOfMatch = connectedSockets.find(s=>s.userName === matchSuggestion.userName).matchingSocketId;
+
+      console.log("Emitting foundMatch to " + matchSuggestion.userName + " with socketId: " + socketIdOfMatch + " and sending it: " + userName);
+      namespaceSocketServer.to(socketIdOfMatch).emit('foundMatch', userName);
+
+      if(ackFunction) 
+      {
+        console.log("Returning matchSuggestion: " + matchSuggestion.userName);
+        ackFunction(matchSuggestion);
+      }
+      else
+      {
+        console.log("AckFunction was not available so Emitting foundMatch to " + userName + " with socketId: " + socketId + " and sending it: " + matchSuggestion.userName);
+        namespaceSocketServer.to(socketId).emit('foundMatch', matchSuggestion.userName);
+      }
+      return;
+    }
+    console.log("No suitable match found in queue for user: " + userName + " (all had been declined).");
+  }
+
+  console.log("User " + userName + " added to queue because queue was empty or had only users that had been declined. currentQueue size: " + currentQueue.size());
+  enqeueForPractice({ userName, socketId: socketId }, practice);
+
+  if(ackFunction) console.log("Returning noMatchFound");
+  if(ackFunction) ackFunction(false);
+  
+}
 
 function getQueueForPractice(practice) {
-  findMatchMap[practice] = { practice: practice, queue: findMatchQueue };
   return findMatchMap[practice].queue;
 }
 
@@ -396,16 +414,21 @@ function acceptCall(acceptingUser) {
   pair.accepted[acceptingUser] = true;
 }
 
-function declineCall(decliningUser, socket, practice) {
+function declineCallAndFindNewMatch(decliningUser, socket, practice) {
   const otherUsername = getPairedUserOf(decliningUser);
   const socketIdOfMatch = connectedSockets.find(s=>s.userName === otherUsername).matchingSocketId;
 
   removePairByUsernameInMatchedPairs(decliningUser);
-  findMatchQueue.removeByUserName(decliningUser);
-  findMatchQueue.removeByUserName(otherUsername);
+  findMatchMap[practice].queue.removeByUserName(decliningUser);
+  findMatchMap[practice].queue.removeByUserName(otherUsername);
 
-  enqeueForPractice({ userName: otherUsername, socketId: socketIdOfMatch }, practice);
-  enqeueForPractice({ userName: decliningUser, socketId: socket.id }, practice);
+  addDeclinedMatch(decliningUser, otherUsername);
+  addDeclinedMatch(otherUsername, decliningUser);
+
+  console.log("Match declined by: " + decliningUser + " with socketId: " + socket.id + ". Notifying other user: " + otherUsername + " with socketId: " + socketIdOfMatch);
+
+  findMatch(otherUsername, socketIdOfMatch, practice);
+  findMatch(decliningUser, socket.id, practice);
 }
 
 function bothAcceptedCall(userName) {
@@ -457,6 +480,18 @@ function addMatchingSocketId(userName, socketId) {
   }
 }
 
+function addDeclinedMatch(userName, declinedMatch) {
+  const existing = connectedSockets.find(s => s.userName === userName);
+  if (existing) {
+    // If the property doesn't exist yet, initialize it as an empty array
+    if (!existing.declinedMatches) {
+      existing.declinedMatches = [];
+    }
+    // Add the new declined match
+    existing.declinedMatches.push(declinedMatch);  
+  } 
+}
+
 function removePairByUsernameInMatchedPairs(usernameToRemove) {
   for (let i = matchedPairs.length - 1; i >= 0; i--) {
     const pair = matchedPairs[i];
@@ -467,5 +502,39 @@ function removePairByUsernameInMatchedPairs(usernameToRemove) {
 }
 
 function removeUserFromFindMatchQueue(usernameToRemove) {
-  findMatchQueue.items = findMatchQueue.items.filter(item => item.userName !== usernameToRemove);
+  // TODO här kommer jag behöva göra detta för varje practice
+  findMatchMap["askingpractice"].queue.items = findMatchMap["askingpractice"].queue.items.filter(item => item.userName !== usernameToRemove);
 }
+
+
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+
+rl.on('line', (input) => {
+  if (input.trim() === 'sockets') {
+    console.log('connectedSockets:', connectedSockets);
+  } else if (input.trim() === 'matches') {
+    console.log('matchedPairs:', matchedPairs);
+  } else if (input.trim() === 'map') {
+    console.log('findMatchMap:', findMatchMap);
+  } else if (input.trim() === 'queue') {
+    console.log('askingpracticeFindMatchQueue:', askingpracticeFindMatchQueue.getItems());
+  } else if (input.trim() === 'all') {
+    console.log('connectedSockets:', connectedSockets);
+    console.log('matchedPairs:', matchedPairs);
+    console.log('findMatchMap:', findMatchMap);
+    console.log('askingpracticeFindMatchQueue:', askingpracticeFindMatchQueue.getItems());
+  } else if (input.trim() === '') {
+  } else if (input.trim() === 'exit') {
+    console.log('Exiting...');
+    rl.close();
+    process.exit(0);
+  } else {
+    console.log(`Unknown command: ${input}`);
+  }
+});
