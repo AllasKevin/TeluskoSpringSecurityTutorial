@@ -8,6 +8,7 @@ import "../PracticesPage.css";
 import { ScheduleCallSection } from "./ScheduleCallSection";
 import { CallStatus } from "../../../App";
 import { CallData } from "../../Dashboard";
+import { Practice } from "../../../../../shared/practices/practices";
 
 export interface PracticeCardHandle {
   minimizeCard: () => void;
@@ -15,13 +16,9 @@ export interface PracticeCardHandle {
 
 interface PracticeCardProps {
   key: number; // Unique key for each card
-  title: string;
   isExpanded: boolean; // Optional prop to control expansion state
   onClick: (index: number, practice: String) => void;
-  description: string;
-  imageUrl: string;
-  descriptionVideo?: string; // Optional video URL for the practice
-
+  practice: Practice;
   // WebRTC related props
   callStatus: CallStatus | undefined;
   updateCallStatus: React.Dispatch<
@@ -54,11 +51,9 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
   (
     {
       key,
-      title,
       onClick,
       isExpanded,
-      description,
-      imageUrl,
+      practice,
       callStatus,
       updateCallStatus,
       localStream,
@@ -103,19 +98,23 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
         className={`practice-card ${isExpanded ? "expanded" : ""}`}
         onClick={(e) => {
           console.log(
-            "PracticeCard clicked stopping proppegation for: " + title
+            "PracticeCard clicked stopping proppegation for: " + practice.title
           );
           e.stopPropagation(); // Stop the click from reaching the parent
-          onClick(key, title); // Call the onClick handler if provided
+          onClick(key, practice.title); // Call the onClick handler if provided
           //setIsExpanded((prev) => !prev);
         }}
       >
         <div className="card-content">
-          <img src={imageUrl} alt={title} className="practice-image" />
+          <img
+            src={practice.imageUrl}
+            alt={practice.title}
+            className="practice-image"
+          />
           <div className="practice-details">
-            <div className="practice-title">{title}</div>
+            <div className="practice-title">{practice.title}</div>
             <div className="practice-description">
-              <span>{description}</span>
+              <span>{practice.description}</span>
             </div>
           </div>
         </div>
@@ -128,7 +127,7 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
                 onClick={(e) => e.stopPropagation()}
               >
                 <video controls>
-                  <source src="./noticing_game_fixed.mp4" type="video/mp4" />
+                  <source src={practice.videoUrl} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               </div>
