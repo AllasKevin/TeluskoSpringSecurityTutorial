@@ -1,5 +1,4 @@
 const dotenv = require('dotenv');
-const { practices } = require("../shared/practices/practices.js");
 const Queue = require('./utils/Queue');
 const fs = require('fs');
 const https = require('https')
@@ -7,6 +6,7 @@ const http = require('http')
 const express = require('express');
 const app = express();
 const socketio = require('socket.io');
+const path = require("path");
 console.log("Server is starting...");
 app.use(express.static(__dirname))
 
@@ -29,6 +29,13 @@ const envFile =
 
 dotenv.config({ path: envFile });
 console.log(`Loaded environment file: ${envFile}`);
+
+// 🧩 Dynamically choose shared path based on environment
+const sharedPath =
+  process.env.NODE_ENV === "production"
+    ? "./shared/practices/practices.js"
+    : "../shared/practices/practices.js";
+const { practices } = require(path.resolve(__dirname, sharedPath));
 
 
 //we changed our express setup so we can use https
