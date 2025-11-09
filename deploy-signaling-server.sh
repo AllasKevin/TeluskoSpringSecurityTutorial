@@ -9,8 +9,14 @@ FULL_IMAGE_NAME="$REGISTRY/$IMAGE_NAME:$TAG"
 NAMESPACE="default"
 DEPLOYMENT_NAME="signaling-server"
 
+echo "📁 Copying shared folder into signaling-server..."
+cp -r src/shared src/signaling-server/shared
+
 echo "🔧 Building Docker image..."
 docker build -t $IMAGE_NAME ./src/signaling-server
+
+echo "🧹 Cleaning up temporary shared folder..."
+rm -rf src/signaling-server/shared
 
 echo "🏷️ Tagging image..."
 docker tag $IMAGE_NAME $FULL_IMAGE_NAME

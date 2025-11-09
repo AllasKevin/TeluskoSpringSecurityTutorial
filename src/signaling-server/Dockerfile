@@ -12,7 +12,7 @@ RUN npm install
 
 # 5. Copy the rest of your app
 COPY . .
-
+COPY ../shared ./shared
 # 6. Expose the port your app uses
 EXPOSE 8181
 
