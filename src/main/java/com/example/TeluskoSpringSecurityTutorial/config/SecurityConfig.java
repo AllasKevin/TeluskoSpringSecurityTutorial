@@ -1,6 +1,7 @@
 package com.example.TeluskoSpringSecurityTutorial.config;
 
 import com.example.TeluskoSpringSecurityTutorial.service.MyUserDetailsService;
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,8 +45,9 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/", "/index.html", "/static/**", "/vite.svg", "/assets/**").permitAll()
+                        .requestMatchers("/", "/error", "/index.html", "/static/**", "/vite.svg", "/assets/**").permitAll()
                         .requestMatchers("/register", "/login", "/logout", "/loginpage", "/app").permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated())
                 //.httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->

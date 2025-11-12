@@ -2,6 +2,7 @@ package com.example.TeluskoSpringSecurityTutorial.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,8 +14,10 @@ import java.security.cert.X509Certificate;
 
 @Configuration
 public class RestTemplateConfig {
+
     @Bean
-    public RestTemplate restTemplate() throws Exception {
+    @Profile("local")
+    public RestTemplate insecureRestTemplate() throws Exception {
         // Disable SSL certificate validation
         TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
@@ -33,5 +36,11 @@ public class RestTemplateConfig {
 
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         return new RestTemplate(requestFactory);
+    }
+
+    @Bean
+    @Profile("prod")
+    public RestTemplate secureRestTemplate() {
+        return new RestTemplate();
     }
 }

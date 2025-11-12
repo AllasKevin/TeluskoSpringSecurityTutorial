@@ -71,8 +71,8 @@ public class BookingController {
 
     @PostMapping("/respondtobooking")
     public Booking respondToBooking(@CookieValue("jwt") String jwt, @RequestBody Booking booking) {
-        String userFromToken = JWTService.extractUsername(jwt);
         System.out.println("Responding to booking called. Booking: ");
+        String userFromToken = JWTService.extractUsername(jwt);
         System.out.println(booking);
 
         Booking updatedBooking = service.respondToBooking(booking, userFromToken);

@@ -19,3 +19,6 @@ server:
   address: 0.0.0.0
   ssl:
     enabled: false
+
+signalingserver:
+  url: http://signaling-server-service.default.svc.cluster.local:8181
