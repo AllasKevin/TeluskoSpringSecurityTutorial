@@ -10,7 +10,9 @@ import { LoginPage } from "./components/LoginPage";
 import LandingPage from "./components/LandingPage/LandingPage";
 import { RegisterPage } from "./components/RegisterPage";
 import { PracticesPage } from "./components/PracticesPage";
-import BookingReminder from "./components/BookingReminder";
+import BookingReminder, {
+  BookingReminderNewHandle,
+} from "./components/BookingReminder";
 import { Booking } from "./types/booking";
 
 export interface CallStatus {
@@ -55,6 +57,7 @@ function App() {
     setRemoteStream,
     offerData,
   });
+  const BookingReminderRef = useRef<BookingReminderNewHandle>(null);
 
   // Get current username for booking reminders
   useEffect(() => {
@@ -66,6 +69,7 @@ function App() {
     <div>
       {/* Global booking reminder popup */}
       <BookingReminder
+        ref={BookingReminderRef}
         currentUsername={currentUsername}
         setShowPopup={setShowPopup}
         setChosenPractice={setChosenPractice}
@@ -104,6 +108,7 @@ function App() {
                 chosenPractice={chosenPractice}
                 setCurrentBooking={setCurrentBooking}
                 currentBooking={currentBooking}
+                bookingReminderRef={BookingReminderRef}
               />
             </ProtectedRoute>
           }
@@ -135,6 +140,7 @@ function App() {
                 chosenPractice={chosenPractice}
                 setCurrentBooking={setCurrentBooking}
                 currentBooking={currentBooking}
+                bookingReminderRef={BookingReminderRef}
               />
             </ProtectedRoute>
           }

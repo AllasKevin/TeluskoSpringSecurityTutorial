@@ -3,13 +3,6 @@ import { PracticeCard, PracticeCardHandle } from "./components/PracticeCard";
 import { FilterHeader } from "./components/FilterHeader";
 import { NavigationBar } from "./components/NavigationBar";
 import "./PracticesPage.css";
-import Profilbild from "../../assets/Profilbild.jpg";
-import dileva from "../../assets/dileva.jpg";
-import gabor from "../../assets/gabor-mate.jpg";
-import tony from "../../assets/tony-robbins.webp";
-import nadine from "../../assets/nadine.jpg";
-import lore from "../../assets/lore.jpg";
-import swan from "../../assets/teal-swan.webp";
 import { practices } from "../../../../shared/practices/practices";
 
 import { ListGroup } from "react-bootstrap";
@@ -18,6 +11,12 @@ import { CallHandlerPopUp } from "./components/CallHandlerPopUp";
 import { CallModal } from "./components/CallModal";
 import { CallData } from "../Dashboard";
 import { Booking } from "../../types/booking";
+import {
+  socketConnectionServerUpdates,
+  disconnectSocket,
+} from "../../webrtc/webrtcUtilities/socketConnectionServerUpdates";
+import clientSocketForServerUpdatesListeners from "../../webrtc/webrtcUtilities/clientSocketForServerUpdatesListeners";
+import { BookingReminderNewHandle } from "../BookingReminder";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
@@ -48,6 +47,7 @@ interface PracticesPageProps {
   chosenPractice: string;
   setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
   currentBooking: Booking | undefined;
+  bookingReminderRef: RefObject<BookingReminderNewHandle | null>;
 }
 
 export const PracticesPage: React.FC<PracticesPageProps> = ({
@@ -73,6 +73,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   chosenPractice,
   setCurrentBooking,
   currentBooking,
+  bookingReminderRef,
 }) => {
   const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
     null
@@ -92,7 +93,18 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   };
 
   useEffect(() => {
-    console.log("showPopup:", showPopup);
+    const username = sessionStorage.getItem("username");
+
+    const socket = socketConnectionServerUpdates(username);
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      clientSocketForServerUpdatesListeners(socket, bookingReminderRef);
+    });
+
+    return () => {
+      console.log("PracticesPage-Component unmounted → disconnecting socket");
+      disconnectSocket;
+    };
   }, []);
 
   /*  const cardRef = useRef<PracticeCardHandle>(null);

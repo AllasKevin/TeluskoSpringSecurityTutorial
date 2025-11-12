@@ -33,8 +33,8 @@ console.log(`Loaded environment file: ${envFile}`);
 // 🧩 Dynamically choose shared path based on environment
 const sharedPath =
   process.env.NODE_ENV === "production"
-    ? "./shared/practices/practices.js"
-    : "../shared/practices/practices.js";
+    ? "./shared/practices/practices.cjs"
+    : "../shared/practices/practices.cjs";
 const { practices } = require(path.resolve(__dirname, sharedPath));
 
 
@@ -74,7 +74,39 @@ const connectedSockets = [
     //username, socketId
 ]
 
+// --- Add an HTTP endpoint ---
+app.get("/serverUpdatesConnectedSockets", (req, res) => {
+  res.json(serverUpdatesConnectedSockets);
+});
 
+const serverUpdates = io.of("/server-updates");
+// Example POST endpoint (if you need it)
+app.use(express.json());
+app.post("/serverUpdatesConnectedSockets", (req, res) => {
+  console.log("POST /serverUpdatesConnectedSockets called");
+  
+  const updatedBooking = req.body;
+  for (const response of updatedBooking.bookingResponses || []) {
+    const responderUserSocket = serverUpdatesConnectedSockets.find(
+      (s) => s.userName === response.responder.username
+    );
+
+    if (responderUserSocket) {
+      serverUpdates
+        .to(responderUserSocket.socketId)
+        .emit("bookingUpdate", updatedBooking);
+    }
+  }  
+
+  const initialBookerUserSocket = serverUpdatesConnectedSockets.find(s=>s.userName === updatedBooking.initialBookerUser.username);
+  if (initialBookerUserSocket)
+  {
+    serverUpdates.to(initialBookerUserSocket.socketId).emit("bookingUpdate", updatedBooking);
+  }
+
+
+  res.status(201).json({ message: "serverUpdatesConnectedSocket received, emitting it to all connected clients." });
+});
 
 
 
@@ -312,6 +344,46 @@ io.of("/matching").on("connection", socket => {
     })
 });
 
+
+const serverUpdatesConnectedSockets = [
+    //username, socketId
+]
+
+const serverupdatesRoom = "server-updates-room";
+
+io.of("/server-updates").on("connection", socket => {
+
+    const userName = socket.handshake.auth.userName;
+    const password = socket.handshake.auth.password;
+    console.log(`${userName} connected with socketId: ${socket.id} server-updates NS`);
+
+    const senderSocketId = socket.id;
+    //namespaceSocketServer = io.of("/matching");
+
+    if(password !== "x")
+    {
+        socket.disconnect(true);
+        return;
+    }
+
+    addServerUpdatesSocketId(userName, socket.id);
+
+    socket.join(serverupdatesRoom); // 👈 JOIN ROOM HERE
+
+    socket.on('findMatch', (data, ackFunction) => {
+        findMatch(userName, socket.id, practice, ackFunction)
+    })
+
+    socket.on('disconnect',()=>{
+        console.log("Client disconnected from serverupdates NS: " + userName + " with socketId: " + socket.id );
+
+        const socketIndex = serverUpdatesConnectedSockets.findIndex(s => s.userName === userName);
+        if (socketIndex !== -1) {
+          serverUpdatesConnectedSockets.splice(socketIndex, 1);
+        }
+    })
+});
+
 function findMatch(userName, socketId, practice, ackFunction) {
   currentQueue = getQueueForPractice(practice);
 
@@ -455,6 +527,16 @@ function addMatchingSocketId(userName, socketId) {
   }
 }
 
+function addServerUpdatesSocketId(userName, socketId) {
+  const existing = serverUpdatesConnectedSockets.find(s => s.userName === userName);
+  if (existing) {
+    existing.socketId = socketId;
+  } else {
+    serverUpdatesConnectedSockets.push({ userName, socketId: socketId });
+  }
+}
+
+
 function addDeclinedMatch(userName, declinedMatch, findMatchMap) {
   const existing = connectedSockets.find(s => s.userName === userName);
   if (existing) {
@@ -516,6 +598,13 @@ rl.on('line', (input) => {
     console.log('connectedSockets:', connectedSockets);
     console.log('matchedPairs:', matchedPairs);
     console.log('findMatchMap:', findMatchMap);
+    console.log('serverUpdatesConnectedSockets:', serverUpdatesConnectedSockets);
+  }
+  else if (input.trim() === 'server') {
+    console.log('serverUpdatesConnectedSockets:', serverUpdatesConnectedSockets);
+  } else if (input.trim() === 'count') {
+    console.log("Active sockets. io:", io.engine.clientsCount);  
+    console.log("Active sockets. serverUpdates:", serverUpdates.engine.clientsCount);  
   } else if (input.trim() === '') {
   } else if (input.trim() === 'exit') {
     console.log('Exiting...');
