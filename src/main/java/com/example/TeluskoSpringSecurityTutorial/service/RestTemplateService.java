@@ -30,9 +30,7 @@ public class RestTemplateService {
         HttpEntity<Booking> request = new HttpEntity<>(booking, headers);
 
         System.out.println("Before sending request to signaling server: " + signalingServerUrl + path);
-
         ResponseEntity<String> response = restTemplate.postForEntity(signalingServerUrl + path, request, String.class);
-
         System.out.println("Response from signaling server: " + response.getBody());
     }
 }
