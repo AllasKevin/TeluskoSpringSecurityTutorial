@@ -3,6 +3,7 @@ import { ScheduleCallTabProps } from "../../../types/bookingComponents";
 import BookingCard from "./BookingCard";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./ScheduleCallTab.css";
 
 const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
   selectedBookings,
@@ -28,26 +29,11 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
 }) => {
   return (
     <div className="scheduler-section">
-      <h3
-        style={{
-          textAlign: "center",
-          marginBottom: "20px",
-          fontSize: "1.5rem",
-        }}
-      >
-        Schedule Call
-      </h3>
+      <h3>Schedule Call</h3>
 
       {/* Mobile-friendly DatePicker */}
-      <div style={{ marginBottom: "20px" }}>
-        <label
-          style={{
-            display: "block",
-            marginBottom: "8px",
-            fontWeight: "bold",
-            fontSize: "1rem",
-          }}
-        >
+      <div className="scheduler-datepicker-container">
+        <label className="scheduler-datepicker-label">
           Select Date & Time:
         </label>
         <div className="custom-datepicker-wrapper">
@@ -107,51 +93,24 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
 
       {/* Selected Date/Time Display */}
       {startDate && (
-        <div
-          style={{
-            marginBottom: "20px",
-            padding: "12px",
-            backgroundColor: "#f8f9fa",
-            borderRadius: "8px",
-            textAlign: "center",
-          }}
-        >
+        <div className="scheduler-selected-date-display">
           <strong>Selected: {formatDateTime(startDate)}</strong>
         </div>
       )}
 
       {/* Bookings List */}
       {startDate && (
-        <div style={{ marginBottom: "20px" }}>
-          <h4
-            style={{
-              textAlign: "center",
-              marginBottom: "15px",
-              fontSize: "1.2rem",
-            }}
-          >
+        <div className="scheduler-bookings-container">
+          <h4>
             Available bookings for selected time:
           </h4>
 
           {selectedBookings.length === 0 ? (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "20px",
-                color: "#6c757d",
-                fontStyle: "italic",
-              }}
-            >
+            <div className="scheduler-empty-message">
               No bookings found for this time
             </div>
           ) : (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "12px",
-              }}
-            >
+            <div className="scheduler-bookings-list">
               {selectedBookings.map((booking) => (
                 <BookingCard
                   key={booking.id}
@@ -177,16 +136,10 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
 
           {/* Create New Booking Button */}
           {startDate && (
-            <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <div className="scheduler-create-button-container">
               <button
                 onClick={onCreateBooking}
-                className="mobile-button"
-                style={{
-                  backgroundColor: "#007bff",
-                  color: "white",
-                  minHeight: "48px",
-                  minWidth: "200px",
-                }}
+                className="mobile-button scheduler-create-button"
               >
                 Create New Booking
               </button>
@@ -194,17 +147,13 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
           )}
 
           {/* Back Button */}
-          <div style={{ textAlign: "center" }}>
+          <div className="scheduler-back-button-container">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 // This will be handled by the parent component
               }}
-              className="mobile-button"
-              style={{
-                backgroundColor: "#6c757d",
-                color: "white",
-              }}
+              className="mobile-button scheduler-back-button"
             >
               Back to Join Call
             </button>
