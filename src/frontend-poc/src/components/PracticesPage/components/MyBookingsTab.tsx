@@ -20,6 +20,9 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
   currentBooking,
   setCurrentBooking,
 }) => {
+  console.log("myBookings: " + JSON.stringify(myBookings));
+  console.log(myBookings);
+
   // Filter out bookings where user withdrew their response
   // Only show bookings where user is the creator OR has an active response
   const activeBookings = myBookings
@@ -47,9 +50,7 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
         <h4>Your bookings:</h4>
 
         {activeBookings.length === 0 ? (
-          <div className="bookings-empty-message">
-            No active bookings found
-          </div>
+          <div className="bookings-empty-message">No active bookings found</div>
         ) : (
           <div className="bookings-list">
             {activeBookings.map((booking) => (

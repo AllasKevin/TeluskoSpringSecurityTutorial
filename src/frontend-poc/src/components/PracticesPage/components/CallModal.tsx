@@ -39,6 +39,18 @@ interface CallModalProps {
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
   currentBooking: Booking | undefined;
   setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
+  // Bookings props from useBookings hook
+  selectedBookings: Booking[];
+  allBookings: Booking[];
+  myBookings: Booking[];
+  loading: boolean;
+  error: string | null;
+  loadBookingsForDate: (startDate: Date | null) => Promise<void>;
+  loadAllFreeBookings: () => Promise<void>;
+  loadMyBookings: () => Promise<void>;
+  setSelectedBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  setAllBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  setMyBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
 }
 
 export const CallModal: React.FC<CallModalProps> = ({
@@ -66,6 +78,17 @@ export const CallModal: React.FC<CallModalProps> = ({
   setAvailableCalls,
   currentBooking,
   setCurrentBooking,
+  selectedBookings,
+  allBookings,
+  myBookings,
+  loading,
+  error,
+  loadBookingsForDate,
+  loadAllFreeBookings,
+  loadMyBookings,
+  setSelectedBookings,
+  setAllBookings,
+  setMyBookings,
 }) => {
   if (!isOpen) return null;
 
@@ -108,6 +131,17 @@ export const CallModal: React.FC<CallModalProps> = ({
             setAvailableCalls={setAvailableCalls}
             currentBooking={currentBooking}
             setCurrentBooking={setCurrentBooking}
+            selectedBookings={selectedBookings}
+            allBookings={allBookings}
+            myBookings={myBookings}
+            loading={loading}
+            error={error}
+            loadBookingsForDate={loadBookingsForDate}
+            loadAllFreeBookings={loadAllFreeBookings}
+            loadMyBookings={loadMyBookings}
+            setSelectedBookings={setSelectedBookings}
+            setAllBookings={setAllBookings}
+            setMyBookings={setMyBookings}
           />
         </div>
       </div>

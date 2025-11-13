@@ -1,6 +1,6 @@
 import { set } from "react-hook-form";
 
-const clientSocketForServerUpdatesListeners = (socket, bookingReminderRef)=>{
+const clientSocketForServerUpdatesListeners = (socket, bookingReminderRef, myBookings, setMyBookings, allBookings, setAllBookings)=>{
 
     socket.on('bookingUpdate',bookingUpdate=>{
         console.log("bookingReminderRef: " + bookingReminderRef);
@@ -20,6 +20,9 @@ const clientSocketForServerUpdatesListeners = (socket, bookingReminderRef)=>{
 
         console.log(formatted);
         console.log("bookingUpdate called. A change has been made to your booking of practice " + bookingUpdate.practice + " at " + formatted +  " with " + bookingUpdate.initialBookerUser.username +  ". New status: " + bookingUpdate.status);
+        console.log("bookingUpdate object: " + JSON.stringify(bookingUpdate));
+        console.log("myBookings before update: " + JSON.stringify(myBookings));
+        
     })
     console.log("clientSocketForServerUpdatesListeners initialized. socket.connected: " + socket.connected);
 }

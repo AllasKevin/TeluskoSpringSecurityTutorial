@@ -20,7 +20,6 @@ import {
 import { CallData } from "../../Dashboard";
 import { Booking } from "../../../types/booking";
 import { BookingService } from "../../../services/bookingService";
-import { useBookings } from "../../../hooks/useBookings";
 import { useBookingActions } from "../../../hooks/useBookingActions";
 import {
   formatDateTime,
@@ -61,6 +60,18 @@ interface ScheduleCallSectionProps {
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
   currentBooking: Booking | undefined; // Optional prop to pass the booking
   setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>; // Optional setter for the booking
+  // Bookings props from useBookings hook
+  selectedBookings: Booking[];
+  allBookings: Booking[];
+  myBookings: Booking[];
+  loading: boolean;
+  error: string | null;
+  loadBookingsForDate: (startDate: Date | null) => Promise<void>;
+  loadAllFreeBookings: () => Promise<void>;
+  loadMyBookings: () => Promise<void>;
+  setSelectedBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  setAllBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  setMyBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
 }
 
 export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
@@ -86,6 +97,17 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   setAvailableCalls,
   currentBooking,
   setCurrentBooking,
+  selectedBookings,
+  allBookings,
+  myBookings,
+  loading,
+  error,
+  loadBookingsForDate,
+  loadAllFreeBookings,
+  loadMyBookings,
+  setSelectedBookings,
+  setAllBookings,
+  setMyBookings,
 }) => {
   const [activeTab, setActiveTab] = useState<
     "join" | "schedule" | "bookings" | "mybookings"
@@ -117,17 +139,6 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   );
   const [isMobile, setIsMobile] = useState(false);
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
-  const {
-    selectedBookings,
-    allBookings,
-    myBookings,
-    loadBookingsForDate,
-    loadAllFreeBookings,
-    loadMyBookings,
-    setSelectedBookings,
-    setAllBookings,
-    setMyBookings,
-  } = useBookings();
   const {
     respondToBooking,
     acceptBookingResponse,

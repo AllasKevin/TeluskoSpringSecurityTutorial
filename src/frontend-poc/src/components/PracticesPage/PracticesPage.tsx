@@ -17,6 +17,7 @@ import {
 } from "../../webrtc/webrtcUtilities/socketConnectionServerUpdates";
 import clientSocketForServerUpdatesListeners from "../../webrtc/webrtcUtilities/clientSocketForServerUpdatesListeners";
 import { BookingReminderNewHandle } from "../BookingReminder";
+import { useBookings } from "../../hooks/useBookings";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
@@ -81,6 +82,21 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   const [showCallModal, setShowCallModal] = useState(false);
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
 
+  // Use bookings hook at the top level
+  const {
+    selectedBookings,
+    allBookings,
+    myBookings,
+    loading,
+    error,
+    loadBookingsForDate,
+    loadAllFreeBookings,
+    loadMyBookings,
+    setSelectedBookings,
+    setAllBookings,
+    setMyBookings,
+  } = useBookings();
+
   const handleCardClick = (index: number, practice: string) => {
     console.log("Card clicked, index: " + index);
     setExpandedCardIndex((prev) => (prev === index ? null : index));
@@ -98,8 +114,17 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     const socket = socketConnectionServerUpdates(username);
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
-      clientSocketForServerUpdatesListeners(socket, bookingReminderRef);
+      clientSocketForServerUpdatesListeners(
+        socket,
+        bookingReminderRef,
+        myBookings,
+        setMyBookings,
+        allBookings,
+        setAllBookings
+      );
     });
+
+    loadMyBookings();
 
     return () => {
       console.log("PracticesPage-Component unmounted → disconnecting socket");
@@ -203,6 +228,17 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
           setAvailableCalls={setAvailableCalls}
           currentBooking={currentBooking}
           setCurrentBooking={setCurrentBooking}
+          selectedBookings={selectedBookings}
+          allBookings={allBookings}
+          myBookings={myBookings}
+          loading={loading}
+          error={error}
+          loadBookingsForDate={loadBookingsForDate}
+          loadAllFreeBookings={loadAllFreeBookings}
+          loadMyBookings={loadMyBookings}
+          setSelectedBookings={setSelectedBookings}
+          setAllBookings={setAllBookings}
+          setMyBookings={setMyBookings}
         />
       </div>
       <NavigationBar />
