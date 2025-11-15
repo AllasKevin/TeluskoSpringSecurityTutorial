@@ -333,7 +333,7 @@ export class BookingService {
       }
       
       const bookingForApi = {
-        id: null,
+        id: bookingId,
         initialBookerUser: {
           username: bookingData.userName
         },

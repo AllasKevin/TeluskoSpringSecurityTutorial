@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import java.time.Instant;
 import java.util.List;
 
+//Todo: make bookingRecord class and make the mapping in frontend and signling server more clear
 public class Booking {
     @Id
     private ObjectId id;

@@ -1,0 +1,42 @@
+.bookings-section {
+  /* Container styles */
+}
+
+.bookings-section h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.bookings-section h4 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.bookings-list-container {
+  margin-bottom: 20px;
+}
+
+.bookings-empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bookings-back-button-container {
+  text-align: center;
+}
+
+.bookings-back-button {
+  background-color: #6c757d;
+  color: white;
+}
+

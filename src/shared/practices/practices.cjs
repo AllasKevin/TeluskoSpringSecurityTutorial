@@ -1,4 +1,4 @@
-export const practices = [
+const practices = [
     {
       title: "Asking Practice",
       name: "askingpractice",
@@ -56,3 +56,5 @@ export const practices = [
       videoUrl: "/instructionvideos/noticing_game_fixed.mp4"
     },
 ];
+
+module.exports = { practices };

@@ -2,10 +2,14 @@ package com.example.TeluskoSpringSecurityTutorial.controller;
 
 import com.example.TeluskoSpringSecurityTutorial.model.Booking;
 import com.example.TeluskoSpringSecurityTutorial.model.BookingStatus;
+import com.example.TeluskoSpringSecurityTutorial.model.SignalingServerPath;
 import com.example.TeluskoSpringSecurityTutorial.model.Users;
 import com.example.TeluskoSpringSecurityTutorial.service.BookingService;
 import com.example.TeluskoSpringSecurityTutorial.service.JWTService;
+import com.example.TeluskoSpringSecurityTutorial.service.RestTemplateService;
 import com.example.TeluskoSpringSecurityTutorial.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,10 +33,21 @@ import static org.springframework.http.ResponseEntity.ok;
 public class BookingController {
 
     @Autowired
+    ObjectMapper mapper;
+    @PostConstruct
+    public void verifyMapper() throws Exception {
+        var obj = new org.bson.types.ObjectId();
+        System.out.println("ObjectId test: " + mapper.writeValueAsString(obj));
+    }
+
+    @Autowired
     private BookingService service;
+    @Autowired
+    private RestTemplateService restTemp;
 
     @PostMapping("/bookcall")
-    public Booking bookCall(@CookieValue("jwt") String jwt, @RequestParam Instant bookedtime, @RequestParam String practice) {
+    public ResponseEntity<Booking> bookCall(@CookieValue("jwt") String jwt, @RequestParam Instant bookedtime, @RequestParam String practice) {
+        System.out.println(("/bookCall called"));
         String userFromToken = JWTService.extractUsername(jwt);
         Users user = new Users();
         user.setUsername(userFromToken);
@@ -40,11 +55,15 @@ public class BookingController {
         booking.setInitialBookerUser(user);
         booking.setBookedTime(bookedtime);
         booking.setPractice(practice);
-        booking.setStatus(BookingStatus.PENDING);
-        return service.save(booking);
+        booking.setStatus(BookingStatus.PENDING); // TODO: det kommer att gå att skapa en ny bokning när status är annat än pending. Lös detta.
+        if (service.bookingExists(booking)) return ResponseEntity.badRequest().body(null);
+        booking = service.save(booking);
+        restTemp.sendRequest(SignalingServerPath.CREATE_BOOKING.get(), booking); // Only send request if it's a new booking
+        return ResponseEntity.ok(booking);
     }
 
     /** Endpoint to get all bookings for the user identified by the JWT token in the cookie.
+     *
      * @param jwt The JWT token from the cookie.
      * @return A list of bookings for the user.
      */
@@ -68,9 +87,12 @@ public class BookingController {
 
     @PostMapping("/respondtobooking")
     public Booking respondToBooking(@CookieValue("jwt") String jwt, @RequestBody Booking booking) {
-        String userFromToken = JWTService.extractUsername(jwt);
         System.out.println("Responding to booking called. Booking: ");
+        String userFromToken = JWTService.extractUsername(jwt);
         System.out.println(booking);
+
+        Booking updatedBooking = service.respondToBooking(booking, userFromToken);
+        restTemp.sendRequest(SignalingServerPath.BOOKING_RESPONSE.get(), updatedBooking);
         return service.respondToBooking(booking, userFromToken);
     }
 
@@ -80,16 +102,25 @@ public class BookingController {
         if(userFromToken.equals(acceptedresponderusername)){
             return ResponseEntity.badRequest().body(null);
         }
-        return ResponseEntity.ok(service.acceptBookingResponse(booking, userFromToken, acceptedresponderusername));
+
+        Booking updatedBooking = service.acceptBookingResponse(booking, userFromToken, acceptedresponderusername);
+        restTemp.sendRequest(SignalingServerPath.ACCEPT_BOOKING_RESPONSE.get(), updatedBooking);
+        return ResponseEntity.ok(updatedBooking);
     }
 
     @PostMapping("/declinebookingresponse")
     public ResponseEntity<Booking> declineBookingResponse(@CookieValue("jwt") String jwt, @RequestBody Booking booking, @RequestParam String declinedresponderusername) {
+        System.out.println("declineBookingResponse called with booking: ");
+        System.out.println(booking);
         String userFromToken = JWTService.extractUsername(jwt);
         if(userFromToken.equals(declinedresponderusername)){
             return ResponseEntity.badRequest().body(null);
         }
-        return ResponseEntity.ok(service.declineBookingResponse(booking, userFromToken, declinedresponderusername));
+        Booking updatedBooking = service.declineBookingResponse(booking, userFromToken, declinedresponderusername);
+        Booking updatedBookingForDeclinedUser = service.removeAllOtherUsers(declinedresponderusername, updatedBooking);
+        updatedBookingForDeclinedUser.setStatus(BookingStatus.CANCELLED);
+        restTemp.sendRequest(SignalingServerPath.DECLINE_BOOKING_RESPONSE.get(), updatedBookingForDeclinedUser);
+        return ResponseEntity.ok(updatedBooking);
     }
 
     /*** Endpoint to withdraw a response or the acceptance to a response.
@@ -102,8 +133,9 @@ public class BookingController {
         System.out.println("withdrawAcceptBooking called with booking: ");
         System.out.println(booking);
         String userFromToken = JWTService.extractUsername(jwt);
-
-        return ResponseEntity.ok(service.withdrawAcceptBooking(booking, userFromToken, responderusername));
+        Booking updatedBooking = service.withdrawAcceptBooking(booking, userFromToken, responderusername);
+        restTemp.sendRequest(SignalingServerPath.WITHDRAW_ACCEPT_BOOKING_RESPONSE.get(), updatedBooking);
+        return ResponseEntity.ok(updatedBooking);
     }
 
     @PostMapping("/withdrawbookingresponse")
@@ -111,8 +143,9 @@ public class BookingController {
         System.out.println("withdrawBookingResponse called with booking: ");
         System.out.println(booking);
         String userFromToken = JWTService.extractUsername(jwt);
-
-        return ResponseEntity.ok(service.withdrawBookingResponse(booking, userFromToken));
+        Booking updatedBooking = service.withdrawBookingResponse(booking, userFromToken);
+        restTemp.sendRequest(SignalingServerPath.WITHDRAW_BOOKING_RESPONSE.get(), updatedBooking);
+        return ResponseEntity.ok(updatedBooking);
     }
 
 
@@ -124,7 +157,10 @@ public class BookingController {
         if(!userFromToken.equals(booking.getInitialBookerUser().getUsername())){
             return ResponseEntity.badRequest().body(null);
         }
-        return ResponseEntity.ok(service.deleteBooking(booking));
+        Booking updatedBooking = service.deleteBooking(booking);
+        updatedBooking.setStatus(BookingStatus.CANCELLED);
+        restTemp.sendRequest(SignalingServerPath.CANCEL_BOOKING.get(), updatedBooking);
+        return ResponseEntity.ok(updatedBooking);
     }
 
     public BookingController(){

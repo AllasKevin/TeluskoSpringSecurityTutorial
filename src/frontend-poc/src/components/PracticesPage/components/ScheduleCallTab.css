@@ -1,0 +1,73 @@
+.scheduler-section {
+  /* Container styles */
+}
+
+.scheduler-section h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.scheduler-section h4 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.scheduler-datepicker-container {
+  margin-bottom: 20px;
+}
+
+.scheduler-datepicker-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.scheduler-selected-date-display {
+  margin-bottom: 20px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.scheduler-bookings-container {
+  margin-bottom: 20px;
+}
+
+.scheduler-empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.scheduler-bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scheduler-create-button-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.scheduler-create-button {
+  background-color: #007bff;
+  color: white;
+  min-height: 48px;
+  min-width: 200px;
+}
+
+.scheduler-back-button-container {
+  text-align: center;
+}
+
+.scheduler-back-button {
+  background-color: #6c757d;
+  color: white;
+}
+

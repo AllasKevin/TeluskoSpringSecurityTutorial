@@ -1,7 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import { Booking } from "../types/booking";
 import { formatDateTime, getStatusColor } from "../utils/bookingUtils";
 import { BookingService } from "../services/bookingService";
+
+export interface BookingReminderNewHandle {
+  checkForUpcomingBookings: () => Promise<void>;
+}
 
 interface BookingReminderProps {
   currentUsername: string | null;
@@ -11,28 +20,34 @@ interface BookingReminderProps {
   currentBooking: Booking | undefined;
 }
 
-const BookingReminder: React.FC<BookingReminderProps> = ({
-  currentUsername,
-  setShowPopup,
-  setChosenPractice,
-  setCurrentBooking,
-  currentBooking,
-}) => {
-  const [upcomingBooking, setUpcomingBooking] = useState<Booking | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    if (!currentUsername) {
-      return;
-    }
-
-    let intervalId: number;
+const BookingReminder = forwardRef<
+  BookingReminderNewHandle,
+  BookingReminderProps
+>(
+  (
+    {
+      currentUsername,
+      setShowPopup,
+      setChosenPractice,
+      setCurrentBooking,
+      currentBooking,
+    },
+    ref
+  ) => {
+    const [upcomingBooking, setUpcomingBooking] = useState<Booking | null>(
+      null
+    );
+    const [isVisible, setIsVisible] = useState(false);
+    //let intervalId: number;
 
     const checkForUpcomingBookings = async () => {
       try {
         // Get all user's bookings (both as initial booker and responder)
         const bookings = await BookingService.getAllBookings();
 
+        console.log(
+          "checkForUpcomingBookings. Checking bookings for upcoming reminders!!!!!!"
+        );
         // Find confirmed bookings within 15 minutes
         const now = new Date();
         const upcoming = bookings.find((booking: Booking) => {
@@ -64,238 +79,252 @@ const BookingReminder: React.FC<BookingReminderProps> = ({
         });
 
         if (upcoming) {
+          console.log("setting upcoming booking and visible to true");
           setUpcomingBooking(upcoming);
           setIsVisible(true);
           // Stop polling once we found an upcoming booking
-          clearInterval(intervalId);
+          //clearInterval(intervalId);
         }
       } catch (error) {
         console.error("Error checking for upcoming bookings:", error);
       }
     };
 
-    // Check immediately
-    checkForUpcomingBookings();
+    useEffect(() => {
+      if (!currentUsername) {
+        return;
+      }
 
-    // Poll every 30 seconds for responsive detection
-    intervalId = setInterval(checkForUpcomingBookings, 10000);
+      // Check immediately
+      checkForUpcomingBookings();
 
-    // Cleanup function
-    return () => {
-      clearInterval(intervalId);
+      // Poll every 30 seconds for responsive detection
+      //intervalId = setInterval(checkForUpcomingBookings, 10000);
+
+      // Cleanup function
+      return () => {
+        //clearInterval(intervalId);
+      };
+    }, [currentUsername]);
+
+    const handleClose = () => {
+      setIsVisible(false);
+      setUpcomingBooking(null);
     };
-  }, [currentUsername]);
 
-  const handleClose = () => {
-    setIsVisible(false);
-    setUpcomingBooking(null);
-  };
+    const handleJoinCall = () => {
+      // TODO: Implement join call functionality
+      setChosenPractice(upcomingBooking?.practice || "");
+      setCurrentBooking(upcomingBooking || undefined);
+      handleClose();
+      setShowPopup(true);
+    };
 
-  const handleJoinCall = () => {
-    // TODO: Implement join call functionality
-    setChosenPractice(upcomingBooking?.practice || "");
-    setCurrentBooking(upcomingBooking || undefined);
-    handleClose();
-    setShowPopup(true);
-  };
+    useImperativeHandle(ref, () => ({
+      checkForUpcomingBookings,
+    }));
 
-  if (!isVisible || !upcomingBooking) return null;
+    if (!isVisible || !upcomingBooking) return null;
 
-  return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 99999,
-      }}
-    >
+    return (
       <div
         style={{
-          backgroundColor: "white",
-          borderRadius: "12px",
-          padding: "24px",
-          maxWidth: "500px",
-          width: "90%",
-          maxHeight: "80vh",
-          overflow: "auto",
-          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 99999,
         }}
       >
-        {/* Header */}
         <div
           style={{
-            textAlign: "center",
-            marginBottom: "20px",
-            borderBottom: "2px solid #007bff",
-            paddingBottom: "15px",
+            backgroundColor: "white",
+            borderRadius: "12px",
+            padding: "24px",
+            maxWidth: "500px",
+            width: "90%",
+            maxHeight: "80vh",
+            overflow: "auto",
+            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
           }}
         >
-          <h2
-            style={{
-              color: "#007bff",
-              margin: 0,
-              fontSize: "1.5rem",
-              fontWeight: "bold",
-            }}
-          >
-            🎯 It's Time for Your Booking!
-          </h2>
-          <p
-            style={{
-              color: "#6c757d",
-              margin: "8px 0 0 0",
-              fontSize: "1rem",
-            }}
-          >
-            Your confirmed booking is starting soon
-          </p>
-        </div>
-
-        {/* Booking Card */}
-        <div
-          style={{
-            border: "2px solid #28a745",
-            borderRadius: "8px",
-            padding: "16px",
-            marginBottom: "20px",
-            backgroundColor: "#f8f9fa",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "12px",
-            }}
-          >
-            <div
-              style={{
-                fontWeight: "bold",
-                fontSize: "1.1rem",
-                color: "#333",
-              }}
-            >
-              {upcomingBooking.userName}
-            </div>
-            <div
-              style={{
-                padding: "4px 12px",
-                borderRadius: "20px",
-                backgroundColor: getStatusColor(upcomingBooking.status),
-                color: "white",
-                fontSize: "0.9rem",
-                fontWeight: "bold",
-              }}
-            >
-              {upcomingBooking.status}
-            </div>
-          </div>
-
-          <div style={{ marginBottom: "8px" }}>
-            <strong>Practice:</strong> {upcomingBooking.practice}
-          </div>
-
-          <div style={{ marginBottom: "8px" }}>
-            <strong>Time:</strong> {formatDateTime(upcomingBooking.dateTime)}
-          </div>
-
-          <div style={{ marginBottom: "8px" }}>
-            <strong>Booked by:</strong> {upcomingBooking.userName}
-          </div>
-
-          {/* Show participant info for confirmed bookings */}
-          {upcomingBooking.status === "CONFIRMED" &&
-            upcomingBooking.responses &&
-            upcomingBooking.responses.length > 0 && (
-              <div style={{ marginBottom: "8px" }}>
-                <strong>Participant:</strong>{" "}
-                {upcomingBooking.responses
-                  .filter((response) => response.responseStatus === "ACCEPTED")
-                  .map((response) => response.responder.username)
-                  .join(", ")}
-              </div>
-            )}
-
+          {/* Header */}
           <div
             style={{
               textAlign: "center",
-              padding: "12px",
-              backgroundColor: "#d4edda",
-              borderRadius: "6px",
-              color: "#155724",
-              fontWeight: "bold",
-              marginTop: "12px",
+              marginBottom: "20px",
+              borderBottom: "2px solid #007bff",
+              paddingBottom: "15px",
             }}
           >
-            ✅ Call confirmed! Your session will take place at the booked time.
+            <h2
+              style={{
+                color: "#007bff",
+                margin: 0,
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+              }}
+            >
+              🎯 It's Time for Your Booking!
+            </h2>
+            <p
+              style={{
+                color: "#6c757d",
+                margin: "8px 0 0 0",
+                fontSize: "1rem",
+              }}
+            >
+              Your confirmed booking is starting soon
+            </p>
+          </div>
+
+          {/* Booking Card */}
+          <div
+            style={{
+              border: "2px solid #28a745",
+              borderRadius: "8px",
+              padding: "16px",
+              marginBottom: "20px",
+              backgroundColor: "#f8f9fa",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "12px",
+              }}
+            >
+              <div
+                style={{
+                  fontWeight: "bold",
+                  fontSize: "1.1rem",
+                  color: "#333",
+                }}
+              >
+                {upcomingBooking.userName}
+              </div>
+              <div
+                style={{
+                  padding: "4px 12px",
+                  borderRadius: "20px",
+                  backgroundColor: getStatusColor(upcomingBooking.status),
+                  color: "white",
+                  fontSize: "0.9rem",
+                  fontWeight: "bold",
+                }}
+              >
+                {upcomingBooking.status}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Practice:</strong> {upcomingBooking.practice}
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Time:</strong> {formatDateTime(upcomingBooking.dateTime)}
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <strong>Booked by:</strong> {upcomingBooking.userName}
+            </div>
+
+            {/* Show participant info for confirmed bookings */}
+            {upcomingBooking.status === "CONFIRMED" &&
+              upcomingBooking.responses &&
+              upcomingBooking.responses.length > 0 && (
+                <div style={{ marginBottom: "8px" }}>
+                  <strong>Participant:</strong>{" "}
+                  {upcomingBooking.responses
+                    .filter(
+                      (response) => response.responseStatus === "ACCEPTED"
+                    )
+                    .map((response) => response.responder.username)
+                    .join(", ")}
+                </div>
+              )}
+
+            <div
+              style={{
+                textAlign: "center",
+                padding: "12px",
+                backgroundColor: "#d4edda",
+                borderRadius: "6px",
+                color: "#155724",
+                fontWeight: "bold",
+                marginTop: "12px",
+              }}
+            >
+              ✅ Call confirmed! Your session will take place at the booked
+              time.
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              justifyContent: "center",
+            }}
+          >
+            <button
+              onClick={handleJoinCall}
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                padding: "12px 24px",
+                fontSize: "1rem",
+                fontWeight: "bold",
+                cursor: "pointer",
+                minWidth: "120px",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "#218838";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "#28a745";
+              }}
+            >
+              Join Call
+            </button>
+
+            <button
+              onClick={handleClose}
+              style={{
+                backgroundColor: "#6c757d",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                padding: "12px 24px",
+                fontSize: "1rem",
+                fontWeight: "bold",
+                cursor: "pointer",
+                minWidth: "120px",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "#5a6268";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "#6c757d";
+              }}
+            >
+              Dismiss
+            </button>
           </div>
         </div>
-
-        {/* Action Buttons */}
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            justifyContent: "center",
-          }}
-        >
-          <button
-            onClick={handleJoinCall}
-            style={{
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              padding: "12px 24px",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              cursor: "pointer",
-              minWidth: "120px",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#218838";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#28a745";
-            }}
-          >
-            Join Call
-          </button>
-
-          <button
-            onClick={handleClose}
-            style={{
-              backgroundColor: "#6c757d",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              padding: "12px 24px",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              cursor: "pointer",
-              minWidth: "120px",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#5a6268";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#6c757d";
-            }}
-          >
-            Dismiss
-          </button>
-        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 export default BookingReminder;

@@ -15,6 +15,7 @@ public interface BookingRepo extends MongoRepository<Booking, ObjectId> {
     List<Booking> findByResponses_Responder_Username(String username);
     List<Booking> findByBookedTimeBetweenAndStatus(Instant start, Instant end, BookingStatus status);
     List<Booking> findByStatus(BookingStatus status, Sort sort);
+    Booking findByInitialBookerUser_UsernameAndBookedTimeAndPractice(String initialBookerUsername, Instant bookedTime, String practice);
     Booking findByInitialBookerUser_UsernameAndBookedTimeAndPracticeAndStatus(String initialBookerUsername, Instant bookedTime, String practice, BookingStatus status);
     Booking findByInitialBookerUser_UsernameAndResponses_Responder_UsernameAndBookedTimeAndPracticeAndStatus(String initialBookerUsername, String responderUsername, Instant bookedTime, String practice, BookingStatus status);
     Booking deleteByInitialBookerUser_UsernameAndBookedTimeAndPractice(String initialBookerUsername, Instant bookedTime, String practice);

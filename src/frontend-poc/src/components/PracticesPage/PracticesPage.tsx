@@ -3,13 +3,6 @@ import { PracticeCard, PracticeCardHandle } from "./components/PracticeCard";
 import { FilterHeader } from "./components/FilterHeader";
 import { NavigationBar } from "./components/NavigationBar";
 import "./PracticesPage.css";
-import Profilbild from "../../assets/Profilbild.jpg";
-import dileva from "../../assets/dileva.jpg";
-import gabor from "../../assets/gabor-mate.jpg";
-import tony from "../../assets/tony-robbins.webp";
-import nadine from "../../assets/nadine.jpg";
-import lore from "../../assets/lore.jpg";
-import swan from "../../assets/teal-swan.webp";
 import { practices } from "../../../../shared/practices/practices";
 
 import { ListGroup } from "react-bootstrap";
@@ -18,6 +11,13 @@ import { CallHandlerPopUp } from "./components/CallHandlerPopUp";
 import { CallModal } from "./components/CallModal";
 import { CallData } from "../Dashboard";
 import { Booking } from "../../types/booking";
+import {
+  socketConnectionServerUpdates,
+  disconnectSocket,
+} from "../../webrtc/webrtcUtilities/socketConnectionServerUpdates";
+import clientSocketForServerUpdatesListeners from "../../webrtc/webrtcUtilities/clientSocketForServerUpdatesListeners";
+import { BookingReminderNewHandle } from "../BookingReminder";
+import { useBookings } from "../../hooks/useBookings";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
@@ -48,6 +48,7 @@ interface PracticesPageProps {
   chosenPractice: string;
   setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
   currentBooking: Booking | undefined;
+  bookingReminderRef: RefObject<BookingReminderNewHandle | null>;
 }
 
 export const PracticesPage: React.FC<PracticesPageProps> = ({
@@ -73,12 +74,38 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   chosenPractice,
   setCurrentBooking,
   currentBooking,
+  bookingReminderRef,
 }) => {
   const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
     null
   );
   const [showCallModal, setShowCallModal] = useState(false);
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
+
+  const {
+    selectedBookings,
+    availableBookings,
+    myBookings,
+    loading,
+    error,
+    loadBookingsForDate,
+    loadAllFreeBookings,
+    loadMyBookings,
+    setSelectedBookings,
+    setAvailableBookings,
+    setMyBookings,
+    allBookings,
+  } = useBookings();
+  // TODO myBookingsRef används inte just nu. Ta bort vid tillfälle
+  const myBookingsRef = useRef<Booking[]>(myBookings);
+
+  useEffect(() => {
+    console.log(
+      "myBookings updated and setting myBookingsRef: " +
+        JSON.stringify(myBookings)
+    );
+    myBookingsRef.current = myBookings;
+  }, [myBookings]);
 
   const handleCardClick = (index: number, practice: string) => {
     console.log("Card clicked, index: " + index);
@@ -92,7 +119,28 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   };
 
   useEffect(() => {
-    console.log("showPopup:", showPopup);
+    const username = sessionStorage.getItem("username");
+
+    const socket = socketConnectionServerUpdates(username);
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      clientSocketForServerUpdatesListeners(
+        socket,
+        bookingReminderRef,
+        myBookingsRef,
+        myBookings,
+        setMyBookings,
+        availableBookings,
+        setAvailableBookings,
+      );
+    });
+
+    loadMyBookings();
+
+    return () => {
+      console.log("PracticesPage-Component unmounted → disconnecting socket");
+      disconnectSocket;
+    };
   }, []);
 
   /*  const cardRef = useRef<PracticeCardHandle>(null);
@@ -191,6 +239,18 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
           setAvailableCalls={setAvailableCalls}
           currentBooking={currentBooking}
           setCurrentBooking={setCurrentBooking}
+          selectedBookings={selectedBookings}
+          availableBookings={availableBookings}
+          myBookings={myBookings}
+          loading={loading}
+          error={error}
+          loadBookingsForDate={loadBookingsForDate}
+          loadAllFreeBookings={loadAllFreeBookings}
+          loadMyBookings={loadMyBookings}
+          setSelectedBookings={setSelectedBookings}
+          setAvailableBookings={setAvailableBookings}
+          setMyBookings={setMyBookings}
+          allBookings={allBookings}
         />
       </div>
       <NavigationBar />

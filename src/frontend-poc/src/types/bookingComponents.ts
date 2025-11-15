@@ -44,11 +44,12 @@ export interface ScheduleCallTabProps extends TabProps, BookingActionProps {
   onSearchBookings: () => void;
   onCreateBooking: () => void;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  allBookings: Booking[];
 }
 
 // Props for AvailableBookingsTab
 export interface AvailableBookingsTabProps extends TabProps, BookingActionProps {
-  allBookings: Booking[];
+  availableBookings: Booking[];
     setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 
 }
