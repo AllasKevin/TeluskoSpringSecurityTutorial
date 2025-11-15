@@ -95,11 +95,14 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     setAllBookings,
     setMyBookings,
   } = useBookings();
-
+  // TODO myBookingsRef används inte just nu. Ta bort vid tillfälle
   const myBookingsRef = useRef<Booking[]>(myBookings);
 
   useEffect(() => {
-    console.log("myBookings updated and setting myBookingsRef: " + JSON.stringify(myBookings));
+    console.log(
+      "myBookings updated and setting myBookingsRef: " +
+        JSON.stringify(myBookings)
+    );
     myBookingsRef.current = myBookings;
   }, [myBookings]);
 
@@ -124,6 +127,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
         socket,
         bookingReminderRef,
         myBookingsRef,
+        myBookings,
         setMyBookings,
         allBookings,
         setAllBookings

@@ -58,6 +58,7 @@ public class BookingController {
     }
 
     /** Endpoint to get all bookings for the user identified by the JWT token in the cookie.
+     *
      * @param jwt The JWT token from the cookie.
      * @return A list of bookings for the user.
      */
@@ -104,12 +105,16 @@ public class BookingController {
 
     @PostMapping("/declinebookingresponse")
     public ResponseEntity<Booking> declineBookingResponse(@CookieValue("jwt") String jwt, @RequestBody Booking booking, @RequestParam String declinedresponderusername) {
+        System.out.println("declineBookingResponse called with booking: ");
+        System.out.println(booking);
         String userFromToken = JWTService.extractUsername(jwt);
         if(userFromToken.equals(declinedresponderusername)){
             return ResponseEntity.badRequest().body(null);
         }
         Booking updatedBooking = service.declineBookingResponse(booking, userFromToken, declinedresponderusername);
-        restTemp.sendRequest(updatedBooking);
+        Booking updatedBookingForDeclinedUser = service.removeAllOtherUsers(declinedresponderusername, updatedBooking);
+        updatedBookingForDeclinedUser.setStatus(BookingStatus.CANCELLED);
+        restTemp.sendRequest(updatedBookingForDeclinedUser);
         return ResponseEntity.ok(updatedBooking);
     }
 
@@ -148,6 +153,7 @@ public class BookingController {
             return ResponseEntity.badRequest().body(null);
         }
         Booking updatedBooking = service.deleteBooking(booking);
+        updatedBooking.setStatus(BookingStatus.CANCELLED);
         restTemp.sendRequest(updatedBooking);
         return ResponseEntity.ok(updatedBooking);
     }

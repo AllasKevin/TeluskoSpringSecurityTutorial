@@ -52,6 +52,7 @@ export const useBookings = () => {
     setError(null);
     try {
       const bookings = await BookingService.getAllBookings();
+      console.log("Loaded my bookings:", bookings);
       setMyBookings(bookings);
     } catch (err) {
       console.error("Error loading my bookings:", err);

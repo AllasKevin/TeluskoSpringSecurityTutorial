@@ -378,8 +378,8 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
 
       console.log(`Booking ${bookingId} deleted successfully`);
     } catch (error) {
-      console.error("Error deleting booking:", error);
-      alert("Failed to delete booking. Please try again.");
+      console.error("Error canceling booking:", error);
+      alert("Failed to canxel booking. Please try again.");
     }
   };
 
@@ -387,9 +387,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   const handleWithdrawBookingResponse = async (bookingId: string) => {
     try {
       const booking =
-        allBookings.find((b) => b.id === bookingId) ||
+        myBookings.find((b) => b.id === bookingId) ||
         selectedBookings.find((b) => b.id === bookingId) ||
-        myBookings.find((b) => b.id === bookingId);
+        allBookings.find((b) => b.id === bookingId);
 
       if (!booking) {
         console.error("Booking not found in state");
@@ -397,6 +397,11 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         return;
       }
 
+      console.log(
+        "Before calling withdrawBookingResponse myBookings: ",
+        myBookings
+      );
+      console.log(myBookings);
       await withdrawBookingResponse(bookingId, booking, (updatedBooking) => {
         // Update all relevant state arrays
         setAllBookings((prev) =>
@@ -453,7 +458,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
       );
 
       console.log(
-        `Declined response from ${declinedResponderUsername} for booking ${bookingId} successfully`
+        `Declined response from ${declinedResponderUsername} for booking ${bookingId} successfully. setting updated booking ${JSON.stringify(
+          booking
+        )}`
       );
     } catch (error) {
       console.error("Error declining booking response:", error);

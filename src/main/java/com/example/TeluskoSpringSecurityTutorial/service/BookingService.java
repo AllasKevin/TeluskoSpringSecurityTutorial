@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -27,9 +28,19 @@ public class BookingService {
     public List<Booking> getBookingsForUser(String username) {
         List<Booking> bookingsAsBooker = repo.findByInitialBookerUser_Username(username);
         List<Booking> bookingsAsResponder = repo.findByResponses_Responder_Username(username);
-        System.out.println("BookingService: Bookings as booker: " + bookingsAsBooker + ", Bookings as responder: " + bookingsAsResponder);
-        bookingsAsBooker.addAll(bookingsAsResponder);
-        return bookingsAsBooker;
+        // Combine both lists
+        List<Booking> allBookings = new ArrayList<>();
+        allBookings.addAll(bookingsAsBooker);
+        allBookings.addAll(bookingsAsResponder);
+
+        // Filter out any bookings where ANY response is DECLINED TODO: bad practice to mutate object in stream
+        return allBookings.stream()
+                .filter(booking -> booking.getBookingResponses() == null
+                        || booking.getBookingResponses().stream()
+                        .noneMatch(response -> (response.getResponseStatus() == ResponseStatus.DECLINED
+                                // Exclude if the booking has been confirmed but it is not this users response that was accepted
+                                    || (booking.getStatus() == BookingStatus.CONFIRMED && response.getResponseStatus() != ResponseStatus.NOT_ANSWERED))))
+                .toList();
     }
 
     public List<Booking> getBookingsBetween(Instant startTime, Instant endTime) {
@@ -39,6 +50,11 @@ public class BookingService {
     public List<Booking> getAllFreeBookings(String username) {
         Sort sort = Sort.by(Sort.Direction.ASC, "bookedTime");
         List<Booking> bookings = repo.findByStatus(BookingStatus.PENDING, sort);
+        bookings.removeIf(b -> b.getBookingResponses() != null &&
+                b.getBookingResponses().stream()
+                        .anyMatch(r -> r.getResponder().getUsername().equals(username)
+                        && r.getResponseStatus() == ResponseStatus.DECLINED)
+        );
         for (Booking booking : bookings) {
             if (booking.getBookingResponses() != null)
             {
@@ -119,7 +135,42 @@ public class BookingService {
     }
 
     public Booking getBookingByInitialBookerUserAndResponderUsername(Booking booking, String initialBookerUsername, String responderUsername) {
+        // TODO: Booking should have unique ID, use that instead of all these fields to identify booking
         return repo.findByInitialBookerUser_UsernameAndResponses_Responder_UsernameAndBookedTimeAndPracticeAndStatus(initialBookerUsername, responderUsername, booking.getBookedTime(), booking.getPractice(), booking.getStatus());
+    }
+
+    /**
+     * Remove all users from the booking except the specified username.
+     * @param username The username to retain in the booking.
+     * @param booking The original Booking object.
+     * @return A copied new Booking object with only the specified user retained.
+     */
+    public Booking removeAllOtherUsers(String username, Booking booking) {
+        Booking newBooking = new Booking();
+        newBooking.setId(booking.getId());
+        newBooking.setBookedTime(booking.getBookedTime());
+        newBooking.setPractice(booking.getPractice());
+        newBooking.setStatus(booking.getStatus());
+        if (booking.getInitialBookerUser() != null && booking.getInitialBookerUser().getUsername().equals(username)) {
+            Users newUser = new Users();
+            newUser.setUsername(username);
+            newBooking.setInitialBookerUser(newUser);
+            return newBooking;
+        }
+
+        if (booking.getBookingResponses() != null) {
+            Optional<BookingResponse> newBookingResponse =
+                    booking.getBookingResponses().stream()
+                            .filter(response -> response.getResponder().getUsername().equals(username))
+                            .findFirst();
+
+            if(newBookingResponse.isPresent()) {
+                newBooking.setBookingResponses(List.of(newBookingResponse.get()));
+                return newBooking;
+            }
+        }
+
+        throw new RuntimeException("No such user found in booking to retain.");
     }
 
 
@@ -179,9 +230,9 @@ public class BookingService {
 
         List<BookingResponse> responses = booking.getBookingResponses();
 
-        responses.stream()
+        responses.stream() // TODO: bad practice to mutate object in stream
                 .filter(r -> r.getResponder().getUsername().equals(otherUsername) && r.getResponseStatus() == ResponseStatus.ACCEPTED)
-                .forEach(r -> r.setResponseStatus(ResponseStatus.DECLINED));
+                .forEach(r -> r.setResponseStatus(ResponseStatus.NOT_ANSWERED));
 
         booking.setBookingResponses(responses);
         booking.setStatus(BookingStatus.PENDING);

@@ -93,15 +93,31 @@ app.post("/serverUpdatesConnectedSockets", (req, res) => {
     );
 
     if (responderUserSocket) {
+      console.log("Emitting bookingUpdate to responder: " + responderUserSocket.userName);
+
+
+      // Create a filtered copy of updatedBooking that only includes the response for this responder
+      const filteredBooking = {
+        ...updatedBooking,
+        bookingResponses: updatedBooking.bookingResponses.filter(
+          (r) => r.responder.username === response.responder.username
+        ),
+      };
+
+      if (updatedBooking.status === "CONFIRMED" && response.responseStatus !== "ACCEPTED") {
+        filteredBooking.status = "CANCELLED";
+      }
+
       serverUpdates
         .to(responderUserSocket.socketId)
-        .emit("bookingUpdate", updatedBooking);
+        .emit("bookingUpdate", filteredBooking);
     }
   }  
 
-  const initialBookerUserSocket = serverUpdatesConnectedSockets.find(s=>s.userName === updatedBooking.initialBookerUser.username);
+  const initialBookerUserSocket = serverUpdatesConnectedSockets.find(s=>s.userName === updatedBooking.initialBookerUser?.username);
   if (initialBookerUserSocket)
   {
+    console.log("Emitting bookingUpdate to initialBookerUser: " + initialBookerUserSocket.userName);
     serverUpdates.to(initialBookerUserSocket.socketId).emit("bookingUpdate", updatedBooking);
   }
 
