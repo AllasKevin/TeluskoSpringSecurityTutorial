@@ -84,6 +84,7 @@ const serverUpdates = io.of("/server-updates");
 app.use(express.json());
 app.post("/serverUpdatesConnectedSockets", (req, res) => {
   console.log("POST /serverUpdatesConnectedSockets called");
+  console.log("req.body: " + JSON.stringify(req.body));
   
   const updatedBooking = req.body;
   for (const response of updatedBooking.bookingResponses || []) {

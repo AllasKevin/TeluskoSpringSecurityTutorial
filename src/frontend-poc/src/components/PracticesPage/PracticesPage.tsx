@@ -82,7 +82,6 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   const [showCallModal, setShowCallModal] = useState(false);
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
 
-  // Use bookings hook at the top level
   const {
     selectedBookings,
     allBookings,
@@ -96,6 +95,13 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     setAllBookings,
     setMyBookings,
   } = useBookings();
+
+  const myBookingsRef = useRef<Booking[]>(myBookings);
+
+  useEffect(() => {
+    console.log("myBookings updated and setting myBookingsRef: " + JSON.stringify(myBookings));
+    myBookingsRef.current = myBookings;
+  }, [myBookings]);
 
   const handleCardClick = (index: number, practice: string) => {
     console.log("Card clicked, index: " + index);
@@ -117,7 +123,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
       clientSocketForServerUpdatesListeners(
         socket,
         bookingReminderRef,
-        myBookings,
+        myBookingsRef,
         setMyBookings,
         allBookings,
         setAllBookings

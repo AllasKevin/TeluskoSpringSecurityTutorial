@@ -22,15 +22,27 @@ public class RestTemplateService {
     String signalingServerUrl;
 
     public void sendRequest(Booking booking) {
-        String path = "/serverUpdatesConnectedSockets";
+        restTemplate.getMessageConverters().forEach(c ->
+                System.out.println("Converter: " + c.getClass().getName())
+        );
 
+        String path = "/serverUpdatesConnectedSockets";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Booking> request = new HttpEntity<>(booking, headers);
 
         System.out.println("Before sending request to signaling server: " + signalingServerUrl + path);
-        ResponseEntity<String> response = restTemplate.postForEntity(signalingServerUrl + path, request, String.class);
-        System.out.println("Response from signaling server: " + response.getBody());
+
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(
+                    signalingServerUrl + path,
+                    request,
+                    Map.class // ✅ parse JSON object safely
+            );
+            System.out.println("Response from signaling server: " + response.getBody());
+        } catch (Exception ex) {
+            System.err.println("Error sending request: " + ex.getMessage());
+        }
     }
 }

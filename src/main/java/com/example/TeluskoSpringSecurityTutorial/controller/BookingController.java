@@ -7,6 +7,8 @@ import com.example.TeluskoSpringSecurityTutorial.service.BookingService;
 import com.example.TeluskoSpringSecurityTutorial.service.JWTService;
 import com.example.TeluskoSpringSecurityTutorial.service.RestTemplateService;
 import com.example.TeluskoSpringSecurityTutorial.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +30,14 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 public class BookingController {
+
+    @Autowired
+    ObjectMapper mapper;
+    @PostConstruct
+    public void verifyMapper() throws Exception {
+        var obj = new org.bson.types.ObjectId();
+        System.out.println("ObjectId test: " + mapper.writeValueAsString(obj));
+    }
 
     @Autowired
     private BookingService service;

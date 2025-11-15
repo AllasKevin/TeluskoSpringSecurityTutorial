@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MyBookingsTabProps } from "../../../types/bookingComponents";
 import BookingCard from "./BookingCard";
 import { isUserBooking, hasUserResponded } from "../../../utils/bookingUtils";
@@ -22,6 +22,10 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
 }) => {
   console.log("myBookings: " + JSON.stringify(myBookings));
   console.log(myBookings);
+  useEffect(() => {
+    console.log("MyBookingsTab mounted or myBookings changed.");
+    console.log("Current myBookings: " + JSON.stringify(myBookings));
+  }, [myBookings]);
 
   // Filter out bookings where user withdrew their response
   // Only show bookings where user is the creator OR has an active response
@@ -72,7 +76,7 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
                 setCurrentBooking={setCurrentBooking}
               />
             ))}
-          </div>
+          </div>  
         )}
       </div>
 
