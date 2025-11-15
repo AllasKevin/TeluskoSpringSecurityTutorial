@@ -41,7 +41,7 @@ interface CallModalProps {
   setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
   // Bookings props from useBookings hook
   selectedBookings: Booking[];
-  allBookings: Booking[];
+  availableBookings: Booking[];
   myBookings: Booking[];
   loading: boolean;
   error: string | null;
@@ -49,8 +49,9 @@ interface CallModalProps {
   loadAllFreeBookings: () => Promise<void>;
   loadMyBookings: () => Promise<void>;
   setSelectedBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
-  setAllBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  setAvailableBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
   setMyBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  allBookings: Booking[];
 }
 
 export const CallModal: React.FC<CallModalProps> = ({
@@ -79,7 +80,7 @@ export const CallModal: React.FC<CallModalProps> = ({
   currentBooking,
   setCurrentBooking,
   selectedBookings,
-  allBookings,
+  availableBookings,
   myBookings,
   loading,
   error,
@@ -87,8 +88,9 @@ export const CallModal: React.FC<CallModalProps> = ({
   loadAllFreeBookings,
   loadMyBookings,
   setSelectedBookings,
-  setAllBookings,
+  setAvailableBookings,
   setMyBookings,
+  allBookings
 }) => {
   if (!isOpen) return null;
 
@@ -132,7 +134,7 @@ export const CallModal: React.FC<CallModalProps> = ({
             currentBooking={currentBooking}
             setCurrentBooking={setCurrentBooking}
             selectedBookings={selectedBookings}
-            allBookings={allBookings}
+            availableBookings={availableBookings}
             myBookings={myBookings}
             loading={loading}
             error={error}
@@ -140,8 +142,9 @@ export const CallModal: React.FC<CallModalProps> = ({
             loadAllFreeBookings={loadAllFreeBookings}
             loadMyBookings={loadMyBookings}
             setSelectedBookings={setSelectedBookings}
-            setAllBookings={setAllBookings}
+            setAvailableBookings={setAvailableBookings}
             setMyBookings={setMyBookings}
+            allBookings={allBookings}
           />
         </div>
       </div>

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ScheduleCallTabProps } from "../../../types/bookingComponents";
 import BookingCard from "./BookingCard";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./ScheduleCallTab.css";
+import { all } from "axios";
 
 const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
   selectedBookings,
@@ -26,6 +27,7 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
   setShowPopup,
   currentBooking,
   setCurrentBooking,
+  allBookings,
 }) => {
   return (
     <div className="scheduler-section">
@@ -101,36 +103,40 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
       {/* Bookings List */}
       {startDate && (
         <div className="scheduler-bookings-container">
-          <h4>
-            Available bookings for selected time:
-          </h4>
+          <h4>Available bookings for selected time:</h4>
 
-          {selectedBookings.length === 0 ? (
+          {allBookings.filter(
+            (b) => startDate?.getTime() === new Date(b.dateTime).getTime()
+          ).length === 0 ? (
             <div className="scheduler-empty-message">
               No bookings found for this time
             </div>
           ) : (
             <div className="scheduler-bookings-list">
-              {selectedBookings.map((booking) => (
-                <BookingCard
-                  key={booking.id}
-                  booking={booking}
-                  currentUsername={currentUsername}
-                  onRespondToBooking={onRespondToBooking}
-                  onAcceptBookingResponse={onAcceptBookingResponse}
-                  onDeclineBookingResponse={onDeclineBookingResponse}
-                  onWithdrawAcceptance={onWithdrawAcceptance}
-                  onDeleteBooking={onDeleteBooking}
-                  onWithdrawBookingResponse={onWithdrawBookingResponse}
-                  formatDateTime={formatDateTime}
-                  getStatusColor={getStatusColor}
-                  isUserBooking={isUserBooking}
-                  hasUserResponded={hasUserResponded}
-                  setShowPopup={setShowPopup}
-                  currentBooking={currentBooking}
-                  setCurrentBooking={setCurrentBooking}
-                />
-              ))}
+              {allBookings
+                .filter(
+                  (b) => startDate?.getTime() === new Date(b.dateTime).getTime()
+                )
+                .map((booking) => (
+                  <BookingCard
+                    key={booking.id}
+                    booking={booking}
+                    currentUsername={currentUsername}
+                    onRespondToBooking={onRespondToBooking}
+                    onAcceptBookingResponse={onAcceptBookingResponse}
+                    onDeclineBookingResponse={onDeclineBookingResponse}
+                    onWithdrawAcceptance={onWithdrawAcceptance}
+                    onDeleteBooking={onDeleteBooking}
+                    onWithdrawBookingResponse={onWithdrawBookingResponse}
+                    formatDateTime={formatDateTime}
+                    getStatusColor={getStatusColor}
+                    isUserBooking={isUserBooking}
+                    hasUserResponded={hasUserResponded}
+                    setShowPopup={setShowPopup}
+                    currentBooking={currentBooking}
+                    setCurrentBooking={setCurrentBooking}
+                  />
+                ))}
             </div>
           )}
 

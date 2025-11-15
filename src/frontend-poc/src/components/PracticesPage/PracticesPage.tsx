@@ -84,7 +84,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
 
   const {
     selectedBookings,
-    allBookings,
+    availableBookings,
     myBookings,
     loading,
     error,
@@ -92,8 +92,9 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     loadAllFreeBookings,
     loadMyBookings,
     setSelectedBookings,
-    setAllBookings,
+    setAvailableBookings,
     setMyBookings,
+    allBookings,
   } = useBookings();
   // TODO myBookingsRef används inte just nu. Ta bort vid tillfälle
   const myBookingsRef = useRef<Booking[]>(myBookings);
@@ -129,8 +130,8 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
         myBookingsRef,
         myBookings,
         setMyBookings,
-        allBookings,
-        setAllBookings
+        availableBookings,
+        setAvailableBookings,
       );
     });
 
@@ -239,7 +240,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
           currentBooking={currentBooking}
           setCurrentBooking={setCurrentBooking}
           selectedBookings={selectedBookings}
-          allBookings={allBookings}
+          availableBookings={availableBookings}
           myBookings={myBookings}
           loading={loading}
           error={error}
@@ -247,8 +248,9 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
           loadAllFreeBookings={loadAllFreeBookings}
           loadMyBookings={loadMyBookings}
           setSelectedBookings={setSelectedBookings}
-          setAllBookings={setAllBookings}
+          setAvailableBookings={setAvailableBookings}
           setMyBookings={setMyBookings}
+          allBookings={allBookings}
         />
       </div>
       <NavigationBar />

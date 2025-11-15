@@ -4,8 +4,10 @@ import { BookingService } from "../services/bookingService";
 
 export const useBookings = () => {
   const [selectedBookings, setSelectedBookings] = useState<Booking[]>([]);
-  const [allBookings, setAllBookings] = useState<Booking[]>([]);
+  const [availableBookings, setAvailableBookings] = useState<Booking[]>([]);
   const [myBookings, setMyBookings] = useState<Booking[]>([]);
+  // allBookings is for storing the sum of availableBookings, myBookings and selectedBookings without duplicates.
+  const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,11 +39,11 @@ export const useBookings = () => {
     setError(null);
     try {
       const bookings = await BookingService.getAllFreeBookings();
-      setAllBookings(bookings);
+      setAvailableBookings(bookings);
     } catch (err) {
       console.error("Error loading all free bookings:", err);
       setError("Failed to load available bookings");
-      setAllBookings([]);
+      setAvailableBookings([]);
     } finally {
       setLoading(false);
     }
@@ -63,9 +65,21 @@ export const useBookings = () => {
     }
   }, []);
 
+  useEffect(() => {
+    setAllBookings(
+      [
+        ...new Map(
+          [...myBookings, ...availableBookings]
+            .sort((a, b) => (a.id === b.id ? (a.responses?.length ?? 0) - (b.responses?.length ?? 0) : 0))
+            .map(item => [item.id, item])
+        ).values()
+      ]
+    );
+  }, [myBookings, availableBookings]);
+  
   return {
     selectedBookings,
-    allBookings,
+    availableBookings,
     myBookings,
     loading,
     error,
@@ -73,7 +87,8 @@ export const useBookings = () => {
     loadAllFreeBookings,
     loadMyBookings,
     setSelectedBookings,
-    setAllBookings,
+    setAvailableBookings,
     setMyBookings,
+    allBookings, 
   };
 };

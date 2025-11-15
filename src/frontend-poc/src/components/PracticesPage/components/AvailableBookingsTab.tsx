@@ -4,7 +4,7 @@ import BookingCard from "./BookingCard";
 import "./BookingsTab.css";
 
 const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
-  allBookings,
+  availableBookings,
   currentUsername,
   onRespondToBooking,
   onAcceptBookingResponse,
@@ -21,7 +21,7 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
   setCurrentBooking,
 }) => {
   // Filter out bookings where the current user is the initial booker
-  const availableBookings = allBookings.filter(
+  availableBookings = availableBookings.filter(
     (booking) => !isUserBooking(booking)
   );
 
@@ -34,9 +34,7 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
         <h4>Pending bookings from other users:</h4>
 
         {availableBookings.length === 0 ? (
-          <div className="bookings-empty-message">
-            No bookings found
-          </div>
+          <div className="bookings-empty-message">No bookings found</div>
         ) : (
           <div className="bookings-list">
             {availableBookings.map((booking) => (

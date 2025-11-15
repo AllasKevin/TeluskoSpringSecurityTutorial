@@ -1,35 +1,15 @@
-const clientSocketForServerUpdatesListeners = (socket, bookingReminderRef, myBookingsRef, myBookings, setMyBookings, allBookings, setAllBookings)=>{
+const clientSocketForServerUpdatesListeners = (socket, bookingReminderRef, myBookingsRef, myBookings, setMyBookings, availableBookings, setAvailableBookings)=>{
 
     socket.on('updateMyBookingsTab',bookingUpdate=>{
-        console.log("updateMyBookingsTab. allBookings before bookingUpdate: " + JSON.stringify(allBookings));
-        //console.log("bookingReminderRef: " + bookingReminderRef);
-        //console.log("bookingReminderRef?.current: " + bookingReminderRef?.current);
-        //console.log("bookingReminderRef?.current?.checkForUpcomingBookings: " + bookingReminderRef?.current?.checkForUpcomingBookings);
+        console.log("updateMyBookingsTab called.");
         bookingReminderRef?.current?.checkForUpcomingBookings();
 
-        //console.log("bookedTime (ISO):", bookingUpdate.bookedTime);
-        //console.log("parsed date:", date);
-
-        //const formatted = formatDate(date);
-
-        //console.log(formatted);
-        //console.log("bookingUpdate called. A change has been made to your booking of practice " + bookingUpdate.practice + " at " + formatted +  " with " + bookingUpdate?.initialBookerUser?.username +  ". New status: " + bookingUpdate.status);
-        //console.log("bookingUpdate object: " + JSON.stringify(bookingUpdate));
-        //console.log("myBookingsRef before update: " + JSON.stringify(myBookingsRef.current));
-
         setBookingsWrapper(setMyBookings, bookingUpdate);
-
-        //console.log("myBookingsRef after update: " + JSON.stringify(myBookingsRef.current));
     })
 
     socket.on('updateAvailableBookingsTab',bookingUpdate=>{
-        console.log("updateAvailableBookingsTab. allBookings before bookingUpdate: " + JSON.stringify(allBookings));
-        console.log("updateAvailableBookingsTab. bookingUpdate : " + JSON.stringify(bookingUpdate));
-        //console.log("myBookingsRef before update: " + JSON.stringify(myBookingsRef.current));
-
-        setBookingsWrapper(setAllBookings, bookingUpdate);
-
-        //console.log("myBookingsRef after update: " + JSON.stringify(myBookingsRef.current));
+        console.log("updateAvailableBookingsTab called.");
+        setBookingsWrapper(setAvailableBookings, bookingUpdate);
     })
     console.log("clientSocketForServerUpdatesListeners initialized. socket.connected: " + socket.connected);
 }
