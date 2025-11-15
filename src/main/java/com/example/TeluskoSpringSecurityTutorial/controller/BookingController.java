@@ -2,6 +2,7 @@ package com.example.TeluskoSpringSecurityTutorial.controller;
 
 import com.example.TeluskoSpringSecurityTutorial.model.Booking;
 import com.example.TeluskoSpringSecurityTutorial.model.BookingStatus;
+import com.example.TeluskoSpringSecurityTutorial.model.SignalingServerPath;
 import com.example.TeluskoSpringSecurityTutorial.model.Users;
 import com.example.TeluskoSpringSecurityTutorial.service.BookingService;
 import com.example.TeluskoSpringSecurityTutorial.service.JWTService;
@@ -45,7 +46,8 @@ public class BookingController {
     private RestTemplateService restTemp;
 
     @PostMapping("/bookcall")
-    public Booking bookCall(@CookieValue("jwt") String jwt, @RequestParam Instant bookedtime, @RequestParam String practice) {
+    public ResponseEntity<Booking> bookCall(@CookieValue("jwt") String jwt, @RequestParam Instant bookedtime, @RequestParam String practice) {
+        System.out.println(("/bookCall called"));
         String userFromToken = JWTService.extractUsername(jwt);
         Users user = new Users();
         user.setUsername(userFromToken);
@@ -53,8 +55,11 @@ public class BookingController {
         booking.setInitialBookerUser(user);
         booking.setBookedTime(bookedtime);
         booking.setPractice(practice);
-        booking.setStatus(BookingStatus.PENDING);
-        return service.save(booking);
+        booking.setStatus(BookingStatus.PENDING); // TODO: det kommer att gå att skapa en ny bokning när status är annat än pending. Lös detta.
+        if (service.bookingExists(booking)) return ResponseEntity.badRequest().body(null);
+        booking = service.save(booking);
+        restTemp.sendRequest(SignalingServerPath.CREATE_BOOKING.get(), booking); // Only send request if it's a new booking
+        return ResponseEntity.ok(booking);
     }
 
     /** Endpoint to get all bookings for the user identified by the JWT token in the cookie.
@@ -87,7 +92,7 @@ public class BookingController {
         System.out.println(booking);
 
         Booking updatedBooking = service.respondToBooking(booking, userFromToken);
-        restTemp.sendRequest(updatedBooking);
+        restTemp.sendRequest(SignalingServerPath.BOOKING_RESPONSE.get(), updatedBooking);
         return service.respondToBooking(booking, userFromToken);
     }
 
@@ -99,7 +104,7 @@ public class BookingController {
         }
 
         Booking updatedBooking = service.acceptBookingResponse(booking, userFromToken, acceptedresponderusername);
-        restTemp.sendRequest(updatedBooking);
+        restTemp.sendRequest(SignalingServerPath.ACCEPT_BOOKING_RESPONSE.get(), updatedBooking);
         return ResponseEntity.ok(updatedBooking);
     }
 
@@ -114,7 +119,7 @@ public class BookingController {
         Booking updatedBooking = service.declineBookingResponse(booking, userFromToken, declinedresponderusername);
         Booking updatedBookingForDeclinedUser = service.removeAllOtherUsers(declinedresponderusername, updatedBooking);
         updatedBookingForDeclinedUser.setStatus(BookingStatus.CANCELLED);
-        restTemp.sendRequest(updatedBookingForDeclinedUser);
+        restTemp.sendRequest(SignalingServerPath.DECLINE_BOOKING_RESPONSE.get(), updatedBookingForDeclinedUser);
         return ResponseEntity.ok(updatedBooking);
     }
 
@@ -129,7 +134,7 @@ public class BookingController {
         System.out.println(booking);
         String userFromToken = JWTService.extractUsername(jwt);
         Booking updatedBooking = service.withdrawAcceptBooking(booking, userFromToken, responderusername);
-        restTemp.sendRequest(updatedBooking);
+        restTemp.sendRequest(SignalingServerPath.WITHDRAW_ACCEPT_BOOKING_RESPONSE.get(), updatedBooking);
         return ResponseEntity.ok(updatedBooking);
     }
 
@@ -139,7 +144,7 @@ public class BookingController {
         System.out.println(booking);
         String userFromToken = JWTService.extractUsername(jwt);
         Booking updatedBooking = service.withdrawBookingResponse(booking, userFromToken);
-        restTemp.sendRequest(updatedBooking);
+        restTemp.sendRequest(SignalingServerPath.WITHDRAW_BOOKING_RESPONSE.get(), updatedBooking);
         return ResponseEntity.ok(updatedBooking);
     }
 
@@ -154,7 +159,7 @@ public class BookingController {
         }
         Booking updatedBooking = service.deleteBooking(booking);
         updatedBooking.setStatus(BookingStatus.CANCELLED);
-        restTemp.sendRequest(updatedBooking);
+        restTemp.sendRequest(SignalingServerPath.CANCEL_BOOKING.get(), updatedBooking);
         return ResponseEntity.ok(updatedBooking);
     }
 

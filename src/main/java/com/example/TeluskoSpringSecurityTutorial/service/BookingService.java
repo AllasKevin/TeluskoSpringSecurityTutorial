@@ -18,9 +18,9 @@ public class BookingService {
     private BookingRepo repo;
 
     public Booking save(Booking booking) {
-        if (getBookingByInitialBookerUser(booking) != null) {
-            System.out.println("Booking already exists for this user with this practice at this time.");
-            return booking;
+        Booking existingBooking = getBookingByInitialBookerUser(booking);
+        if (existingBooking != null) {
+            return existingBooking;
         }
         return repo.save(booking);
     }
@@ -37,9 +37,9 @@ public class BookingService {
         return allBookings.stream()
                 .filter(booking -> booking.getBookingResponses() == null
                         || booking.getBookingResponses().stream()
-                        .noneMatch(response -> (response.getResponseStatus() == ResponseStatus.DECLINED
+                        .noneMatch(response -> (response.getResponseStatus() == ResponseStatus.DECLINED && response.getResponder().getUsername().equals(username))
                                 // Exclude if the booking has been confirmed but it is not this users response that was accepted
-                                    || (booking.getStatus() == BookingStatus.CONFIRMED && response.getResponseStatus() != ResponseStatus.NOT_ANSWERED))))
+                                    || (booking.getStatus() == BookingStatus.CONFIRMED && response.getResponder().getUsername().equals(username) && response.getResponseStatus() == ResponseStatus.NOT_ANSWERED)))
                 .toList();
     }
 
@@ -119,8 +119,6 @@ public class BookingService {
         return repo.save(existingBooking);
     }
 
-
-
     public Booking deleteBooking(Booking booking) {
         System.out.println("user: " + booking.getInitialBookerUser() + " deleting booking response");
         if (booking == null) {
@@ -130,8 +128,13 @@ public class BookingService {
         return repo.deleteByInitialBookerUser_UsernameAndBookedTimeAndPractice(booking.getInitialBookerUser().getUsername(), booking.getBookedTime(), booking.getPractice());
     }
 
+    public boolean bookingExists(Booking booking) {
+        Booking existingBooking = getBookingByInitialBookerUser(booking);
+        return existingBooking != null;
+    }
+
     public Booking getBookingByInitialBookerUser(Booking booking) {
-        return repo.findByInitialBookerUser_UsernameAndBookedTimeAndPracticeAndStatus(booking.getInitialBookerUser().getUsername(), booking.getBookedTime(), booking.getPractice(), booking.getStatus());
+        return repo.findByInitialBookerUser_UsernameAndBookedTimeAndPractice(booking.getInitialBookerUser().getUsername(), booking.getBookedTime(), booking.getPractice());
     }
 
     public Booking getBookingByInitialBookerUserAndResponderUsername(Booking booking, String initialBookerUsername, String responderUsername) {
@@ -226,7 +229,6 @@ public class BookingService {
         if (booking == null) {
             throw new RuntimeException("No such booking found to accept.");
         }
-        System.out.println("user: " + username + " withdrawing acceptance from " + otherUsername + " in booking: " + booking + " " + booking.getId());
 
         List<BookingResponse> responses = booking.getBookingResponses();
 
@@ -242,7 +244,6 @@ public class BookingService {
         if (booking == null) {
             throw new RuntimeException("No such booking found to accept.");
         }
-        System.out.println("user: " + username + " withdrawing booking response from " + otherUsername + " in booking: " + booking + " " + booking.getId());
 
         List<BookingResponse> responses = booking.getBookingResponses();
 

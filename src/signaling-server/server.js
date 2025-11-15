@@ -74,27 +74,87 @@ const connectedSockets = [
     //username, socketId
 ]
 
-// --- Add an HTTP endpoint ---
-app.get("/serverUpdatesConnectedSockets", (req, res) => {
-  res.json(serverUpdatesConnectedSockets);
-});
-
 const serverUpdates = io.of("/server-updates");
 // Example POST endpoint (if you need it)
 app.use(express.json());
-app.post("/serverUpdatesConnectedSockets", (req, res) => {
-  console.log("POST /serverUpdatesConnectedSockets called");
-  console.log("req.body: " + JSON.stringify(req.body));
+app.post("/createbooking", (req, res) => {
+  console.log("POST /createbooking called");
+  //console.log("req.body: " + JSON.stringify(req.body));
   
-  const updatedBooking = req.body;
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "createbooking received, emitting it to all connected clients." });
+});
+
+app.post("/bookingresponse", (req, res) => {
+  console.log("POST /bookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+
+  res.status(201).json({ message: "bookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/acceptbookingresponse", (req, res) => {
+  console.log("POST /acceptbookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "acceptbookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/declinebookingresponse", (req, res) => {
+  console.log("POST /declinebookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "declinebookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/withdrawbookingresponse", (req, res) => {
+  console.log("POST /withdrawbookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "withdrawbookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/withdrawacceptbookingresponse", (req, res) => {
+  console.log("POST /withdrawacceptbookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+  
+  res.status(201).json({ message: "withdrawacceptbookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/cancelbooking", (req, res) => {
+  console.log("POST /cancelbooking called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "cancelbooking received, emitting it to all connected clients." });
+});
+
+function updateMyBookingsTab(req) {
+  const updatedBooking = JSON.parse(JSON.stringify(req.body));
   for (const response of updatedBooking.bookingResponses || []) {
     const responderUserSocket = serverUpdatesConnectedSockets.find(
       (s) => s.userName === response.responder.username
     );
 
     if (responderUserSocket) {
-      console.log("Emitting bookingUpdate to responder: " + responderUserSocket.userName);
-
+      console.log("Emitting updateMyBookingsTab to responder: " + responderUserSocket.userName);
 
       // Create a filtered copy of updatedBooking that only includes the response for this responder
       const filteredBooking = {
@@ -104,26 +164,44 @@ app.post("/serverUpdatesConnectedSockets", (req, res) => {
         ),
       };
 
+      // If the overall booking status is CONFIRMED but this response is not ACCEPTED, that means another response has been ACCEPTED and we should set this status to CANCELLED 
       if (updatedBooking.status === "CONFIRMED" && response.responseStatus !== "ACCEPTED") {
         filteredBooking.status = "CANCELLED";
       }
 
       serverUpdates
         .to(responderUserSocket.socketId)
-        .emit("bookingUpdate", filteredBooking);
+        .emit("updateMyBookingsTab", filteredBooking);
     }
   }  
 
   const initialBookerUserSocket = serverUpdatesConnectedSockets.find(s=>s.userName === updatedBooking.initialBookerUser?.username);
   if (initialBookerUserSocket)
   {
-    console.log("Emitting bookingUpdate to initialBookerUser: " + initialBookerUserSocket.userName);
-    serverUpdates.to(initialBookerUserSocket.socketId).emit("bookingUpdate", updatedBooking);
+    console.log("Emitting updateMyBookingsTab to initialBookerUser: " + initialBookerUserSocket.userName);
+    serverUpdates.to(initialBookerUserSocket.socketId).emit("updateMyBookingsTab", updatedBooking);
   }
+}
 
+function updateAvailableBookingsTab(req) {
+  serverUpdatesConnectedSockets
+    .filter(s => s.userName !== req.body.initialBookerUser?.username)
+    .forEach(s => {
+      const updatedBooking = JSON.parse(JSON.stringify(req.body));
 
-  res.status(201).json({ message: "serverUpdatesConnectedSocket received, emitting it to all connected clients." });
-});
+      const filteredResponses = updatedBooking.bookingResponses?.filter(r => r.responder.username === s.userName);
+      updatedBooking.responses = filteredResponses;
+
+      if (updatedBooking.status === "CONFIRMED" && (!filteredResponses || filteredResponses.length === 0 || filteredResponses[0].responseStatus !== "ACCEPTED")) {
+        console.log("Setting updatedBooking.status to CANCELLED for user: " + s.userName);
+
+        updatedBooking.status = "CANCELLED";
+      }
+      console.log("Emitting updateAvailableBookingsTab to: " + s.userName + " filteredResponses: " + JSON.stringify(filteredResponses));
+      console.log(updatedBooking);
+      serverUpdates.to(s.socketId).emit("updateAvailableBookingsTab", updatedBooking);
+    });
+}
 
 
 
@@ -592,6 +670,7 @@ function usersHaveDeclinedEachOther(userA, userB) {
 
 
 const readline = require('readline');
+const { json } = require('stream/consumers');
 
 const rl = readline.createInterface({
   input: process.stdin,

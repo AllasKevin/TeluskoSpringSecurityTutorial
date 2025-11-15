@@ -21,12 +21,11 @@ public class RestTemplateService {
     @Value("${signalingserver.url}")
     String signalingServerUrl;
 
-    public void sendRequest(Booking booking) {
+    public void sendRequest(String path, Booking booking) {
         restTemplate.getMessageConverters().forEach(c ->
                 System.out.println("Converter: " + c.getClass().getName())
         );
 
-        String path = "/serverUpdatesConnectedSockets";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

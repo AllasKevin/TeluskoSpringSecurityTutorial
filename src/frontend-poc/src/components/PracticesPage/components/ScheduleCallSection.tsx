@@ -349,7 +349,11 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         console.log("Booking created successfully");
       } catch (error) {
         console.error("Error creating booking:", error);
-        alert("Failed to create booking. Please try again.");
+        if ((error as any).status === 400) {
+          alert("You can not book two calls at the same timeslot.");
+        } else {
+          alert("Failed to create booking. Please try again.");
+        }
       }
     }
   };
