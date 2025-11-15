@@ -33,8 +33,8 @@ console.log(`Loaded environment file: ${envFile}`);
 // 🧩 Dynamically choose shared path based on environment
 const sharedPath =
   process.env.NODE_ENV === "production"
-    ? "./shared/practices/practices.js"
-    : "../shared/practices/practices.js";
+    ? "./shared/practices/practices.cjs"
+    : "../shared/practices/practices.cjs";
 const { practices } = require(path.resolve(__dirname, sharedPath));
 
 
@@ -74,7 +74,134 @@ const connectedSockets = [
     //username, socketId
 ]
 
+const serverUpdates = io.of("/server-updates");
+// Example POST endpoint (if you need it)
+app.use(express.json());
+app.post("/createbooking", (req, res) => {
+  console.log("POST /createbooking called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
 
+  res.status(201).json({ message: "createbooking received, emitting it to all connected clients." });
+});
+
+app.post("/bookingresponse", (req, res) => {
+  console.log("POST /bookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+
+  res.status(201).json({ message: "bookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/acceptbookingresponse", (req, res) => {
+  console.log("POST /acceptbookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "acceptbookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/declinebookingresponse", (req, res) => {
+  console.log("POST /declinebookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "declinebookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/withdrawbookingresponse", (req, res) => {
+  console.log("POST /withdrawbookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "withdrawbookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/withdrawacceptbookingresponse", (req, res) => {
+  console.log("POST /withdrawacceptbookingresponse called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+  
+  res.status(201).json({ message: "withdrawacceptbookingresponse received, emitting it to all connected clients." });
+});
+
+app.post("/cancelbooking", (req, res) => {
+  console.log("POST /cancelbooking called");
+  //console.log("req.body: " + JSON.stringify(req.body));
+  
+  updateMyBookingsTab(req);
+  updateAvailableBookingsTab(req);
+
+  res.status(201).json({ message: "cancelbooking received, emitting it to all connected clients." });
+});
+
+function updateMyBookingsTab(req) {
+  const updatedBooking = JSON.parse(JSON.stringify(req.body));
+  for (const response of updatedBooking.bookingResponses || []) {
+    const responderUserSocket = serverUpdatesConnectedSockets.find(
+      (s) => s.userName === response.responder.username
+    );
+
+    if (responderUserSocket) {
+      console.log("Emitting updateMyBookingsTab to responder: " + responderUserSocket.userName);
+
+      // Create a filtered copy of updatedBooking that only includes the response for this responder
+      const filteredBooking = {
+        ...updatedBooking,
+        bookingResponses: updatedBooking.bookingResponses.filter(
+          (r) => r.responder.username === response.responder.username
+        ),
+      };
+
+      // If the overall booking status is CONFIRMED but this response is not ACCEPTED, that means another response has been ACCEPTED and we should set this status to CANCELLED 
+      if (updatedBooking.status === "CONFIRMED" && response.responseStatus !== "ACCEPTED") {
+        filteredBooking.status = "CANCELLED";
+      }
+
+      serverUpdates
+        .to(responderUserSocket.socketId)
+        .emit("updateMyBookingsTab", filteredBooking);
+    }
+  }  
+
+  const initialBookerUserSocket = serverUpdatesConnectedSockets.find(s=>s.userName === updatedBooking.initialBookerUser?.username);
+  if (initialBookerUserSocket)
+  {
+    console.log("Emitting updateMyBookingsTab to initialBookerUser: " + initialBookerUserSocket.userName);
+    serverUpdates.to(initialBookerUserSocket.socketId).emit("updateMyBookingsTab", updatedBooking);
+  }
+}
+
+function updateAvailableBookingsTab(req) {
+  serverUpdatesConnectedSockets
+    .filter(s => s.userName !== req.body.initialBookerUser?.username)
+    .forEach(s => {
+      const updatedBooking = JSON.parse(JSON.stringify(req.body));
+
+      const filteredResponses = updatedBooking.bookingResponses?.filter(r => r.responder.username === s.userName);
+      updatedBooking.responses = filteredResponses;
+
+      if (updatedBooking.status === "CONFIRMED" && (!filteredResponses || filteredResponses.length === 0 || filteredResponses[0].responseStatus !== "ACCEPTED")) {
+        console.log("Setting updatedBooking.status to CANCELLED for user: " + s.userName);
+
+        updatedBooking.status = "CANCELLED";
+      }
+      console.log("Emitting updateAvailableBookingsTab to: " + s.userName + " filteredResponses: " + JSON.stringify(filteredResponses));
+      console.log(updatedBooking);
+      serverUpdates.to(s.socketId).emit("updateAvailableBookingsTab", updatedBooking);
+    });
+}
 
 
 
@@ -312,6 +439,46 @@ io.of("/matching").on("connection", socket => {
     })
 });
 
+
+const serverUpdatesConnectedSockets = [
+    //username, socketId
+]
+
+const serverupdatesRoom = "server-updates-room";
+
+io.of("/server-updates").on("connection", socket => {
+
+    const userName = socket.handshake.auth.userName;
+    const password = socket.handshake.auth.password;
+    console.log(`${userName} connected with socketId: ${socket.id} server-updates NS`);
+
+    const senderSocketId = socket.id;
+    //namespaceSocketServer = io.of("/matching");
+
+    if(password !== "x")
+    {
+        socket.disconnect(true);
+        return;
+    }
+
+    addServerUpdatesSocketId(userName, socket.id);
+
+    socket.join(serverupdatesRoom); // 👈 JOIN ROOM HERE
+
+    socket.on('findMatch', (data, ackFunction) => {
+        findMatch(userName, socket.id, practice, ackFunction)
+    })
+
+    socket.on('disconnect',()=>{
+        console.log("Client disconnected from serverupdates NS: " + userName + " with socketId: " + socket.id );
+
+        const socketIndex = serverUpdatesConnectedSockets.findIndex(s => s.userName === userName);
+        if (socketIndex !== -1) {
+          serverUpdatesConnectedSockets.splice(socketIndex, 1);
+        }
+    })
+});
+
 function findMatch(userName, socketId, practice, ackFunction) {
   currentQueue = getQueueForPractice(practice);
 
@@ -455,6 +622,16 @@ function addMatchingSocketId(userName, socketId) {
   }
 }
 
+function addServerUpdatesSocketId(userName, socketId) {
+  const existing = serverUpdatesConnectedSockets.find(s => s.userName === userName);
+  if (existing) {
+    existing.socketId = socketId;
+  } else {
+    serverUpdatesConnectedSockets.push({ userName, socketId: socketId });
+  }
+}
+
+
 function addDeclinedMatch(userName, declinedMatch, findMatchMap) {
   const existing = connectedSockets.find(s => s.userName === userName);
   if (existing) {
@@ -493,6 +670,7 @@ function usersHaveDeclinedEachOther(userA, userB) {
 
 
 const readline = require('readline');
+const { json } = require('stream/consumers');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -516,6 +694,13 @@ rl.on('line', (input) => {
     console.log('connectedSockets:', connectedSockets);
     console.log('matchedPairs:', matchedPairs);
     console.log('findMatchMap:', findMatchMap);
+    console.log('serverUpdatesConnectedSockets:', serverUpdatesConnectedSockets);
+  }
+  else if (input.trim() === 'server') {
+    console.log('serverUpdatesConnectedSockets:', serverUpdatesConnectedSockets);
+  } else if (input.trim() === 'count') {
+    console.log("Active sockets. io:", io.engine.clientsCount);  
+    console.log("Active sockets. serverUpdates:", serverUpdates.engine.clientsCount);  
   } else if (input.trim() === '') {
   } else if (input.trim() === 'exit') {
     console.log('Exiting...');

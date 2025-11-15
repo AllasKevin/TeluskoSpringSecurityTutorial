@@ -20,7 +20,6 @@ import {
 import { CallData } from "../../Dashboard";
 import { Booking } from "../../../types/booking";
 import { BookingService } from "../../../services/bookingService";
-import { useBookings } from "../../../hooks/useBookings";
 import { useBookingActions } from "../../../hooks/useBookingActions";
 import {
   formatDateTime,
@@ -61,6 +60,19 @@ interface ScheduleCallSectionProps {
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
   currentBooking: Booking | undefined; // Optional prop to pass the booking
   setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>; // Optional setter for the booking
+  // Bookings props from useBookings hook
+  selectedBookings: Booking[];
+  availableBookings: Booking[];
+  myBookings: Booking[];
+  loading: boolean;
+  error: string | null;
+  loadBookingsForDate: (startDate: Date | null) => Promise<void>;
+  loadAllFreeBookings: () => Promise<void>;
+  loadMyBookings: () => Promise<void>;
+  setSelectedBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  setAvailableBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  setMyBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
+  allBookings: Booking[];
 }
 
 export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
@@ -86,6 +98,18 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   setAvailableCalls,
   currentBooking,
   setCurrentBooking,
+  selectedBookings,
+  availableBookings,
+  myBookings,
+  loading,
+  error,
+  loadBookingsForDate,
+  loadAllFreeBookings,
+  loadMyBookings,
+  setSelectedBookings,
+  setAvailableBookings,
+  setMyBookings,
+  allBookings,
 }) => {
   const [activeTab, setActiveTab] = useState<
     "join" | "schedule" | "bookings" | "mybookings"
@@ -117,17 +141,6 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   );
   const [isMobile, setIsMobile] = useState(false);
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
-  const {
-    selectedBookings,
-    allBookings,
-    myBookings,
-    loadBookingsForDate,
-    loadAllFreeBookings,
-    loadMyBookings,
-    setSelectedBookings,
-    setAllBookings,
-    setMyBookings,
-  } = useBookings();
   const {
     respondToBooking,
     acceptBookingResponse,
@@ -167,6 +180,13 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
       loadBookingsForDate(startDate);
     }
   }, [startDate, loadBookingsForDate]);
+
+  useEffect(() => {
+    if (activeTab === "schedule") {
+      loadAllFreeBookings();
+      loadMyBookings();
+    }
+  }, [activeTab]);
 
   // Load all free bookings when bookings tab is active
   useEffect(() => {
@@ -219,7 +239,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   const handleRespondToBooking = async (bookingId: string) => {
     try {
       const booking =
-        allBookings.find((b) => b.id === bookingId) ||
+        availableBookings.find((b) => b.id === bookingId) ||
         selectedBookings.find((b) => b.id === bookingId) ||
         myBookings.find((b) => b.id === bookingId);
 
@@ -230,7 +250,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
 
       await respondToBooking(bookingId, booking, (updatedBooking) => {
         // Update all relevant state arrays
-        setAllBookings((prev) =>
+        setAvailableBookings((prev) =>
           prev.map((b) => (b.id === bookingId ? updatedBooking : b))
         );
         setSelectedBookings((prev) =>
@@ -265,7 +285,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
       const booking =
         myBookings.find((b) => b.id === bookingId) ||
         selectedBookings.find((b) => b.id === bookingId) ||
-        allBookings.find((b) => b.id === bookingId);
+        availableBookings.find((b) => b.id === bookingId);
 
       if (!booking) {
         console.error("Booking not found");
@@ -284,7 +304,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           setSelectedBookings((prev) =>
             prev.map((b) => (b.id === bookingId ? updatedBooking : b))
           );
-          setAllBookings((prev) =>
+          setAvailableBookings((prev) =>
             prev.map((b) => (b.id === bookingId ? updatedBooking : b))
           );
         }
@@ -338,7 +358,11 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         console.log("Booking created successfully");
       } catch (error) {
         console.error("Error creating booking:", error);
-        alert("Failed to create booking. Please try again.");
+        if ((error as any).status === 400) {
+          alert("You can not book two calls at the same timeslot.");
+        } else {
+          alert("Failed to create booking. Please try again.");
+        }
       }
     }
   };
@@ -348,7 +372,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
     try {
       // Find the booking data from any of the state arrays
       const booking =
-        allBookings.find((b) => b.id === bookingId) ||
+        availableBookings.find((b) => b.id === bookingId) ||
         selectedBookings.find((b) => b.id === bookingId) ||
         myBookings.find((b) => b.id === bookingId);
 
@@ -361,14 +385,14 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
       await deleteBooking(bookingId, booking, () => {
         // Remove from all relevant state arrays
         setSelectedBookings((prev) => prev.filter((b) => b.id !== bookingId));
-        setAllBookings((prev) => prev.filter((b) => b.id !== bookingId));
+        setAvailableBookings((prev) => prev.filter((b) => b.id !== bookingId));
         setMyBookings((prev) => prev.filter((b) => b.id !== bookingId));
       });
 
       console.log(`Booking ${bookingId} deleted successfully`);
     } catch (error) {
-      console.error("Error deleting booking:", error);
-      alert("Failed to delete booking. Please try again.");
+      console.error("Error canceling booking:", error);
+      alert("Failed to canxel booking. Please try again.");
     }
   };
 
@@ -376,9 +400,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   const handleWithdrawBookingResponse = async (bookingId: string) => {
     try {
       const booking =
-        allBookings.find((b) => b.id === bookingId) ||
+        myBookings.find((b) => b.id === bookingId) ||
         selectedBookings.find((b) => b.id === bookingId) ||
-        myBookings.find((b) => b.id === bookingId);
+        availableBookings.find((b) => b.id === bookingId);
 
       if (!booking) {
         console.error("Booking not found in state");
@@ -386,9 +410,14 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         return;
       }
 
+      console.log(
+        "Before calling withdrawBookingResponse myBookings: ",
+        myBookings
+      );
+      console.log(myBookings);
       await withdrawBookingResponse(bookingId, booking, (updatedBooking) => {
         // Update all relevant state arrays
-        setAllBookings((prev) =>
+        setAvailableBookings((prev) =>
           prev.map((b) => (b.id === bookingId ? updatedBooking : b))
         );
         setSelectedBookings((prev) =>
@@ -413,7 +442,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   ) => {
     try {
       const booking =
-        allBookings.find((b) => b.id === bookingId) ||
+        availableBookings.find((b) => b.id === bookingId) ||
         selectedBookings.find((b) => b.id === bookingId) ||
         myBookings.find((b) => b.id === bookingId);
 
@@ -429,7 +458,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         booking,
         (updatedBooking) => {
           // Update all relevant state arrays
-          setAllBookings((prev) =>
+          setAvailableBookings((prev) =>
             prev.map((b) => (b.id === bookingId ? updatedBooking : b))
           );
           setSelectedBookings((prev) =>
@@ -442,7 +471,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
       );
 
       console.log(
-        `Declined response from ${declinedResponderUsername} for booking ${bookingId} successfully`
+        `Declined response from ${declinedResponderUsername} for booking ${bookingId} successfully. setting updated booking ${JSON.stringify(
+          booking
+        )}`
       );
     } catch (error) {
       console.error("Error declining booking response:", error);
@@ -454,13 +485,13 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   const handleWithdrawAcceptance = async (bookingId: string) => {
     console.log("=== HANDLE WITHDRAW ACCEPTANCE CALLED ===");
     console.log("Looking for booking with ID:", bookingId);
-    console.log("All bookings:", allBookings);
+    console.log("All bookings:", availableBookings);
     console.log("Selected bookings:", selectedBookings);
     console.log("My bookings:", myBookings);
 
     try {
       const booking =
-        allBookings.find((b) => b.id === bookingId) ||
+        availableBookings.find((b) => b.id === bookingId) ||
         selectedBookings.find((b) => b.id === bookingId) ||
         myBookings.find((b) => b.id === bookingId);
 
@@ -475,7 +506,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
       console.log("Calling withdrawAcceptance with booking:", booking);
       await withdrawAcceptance(bookingId, booking, (updatedBooking) => {
         // Update all relevant state arrays
-        setAllBookings((prev) =>
+        setAvailableBookings((prev) =>
           prev.map((b) => (b.id === bookingId ? updatedBooking : b))
         );
         setSelectedBookings((prev) =>
@@ -581,12 +612,13 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           setShowPopup={setShowPopup}
           currentBooking={currentBooking}
           setCurrentBooking={setCurrentBooking}
+          allBookings={allBookings}
         />
       )}
 
       {activeTab === "bookings" && (
         <AvailableBookingsTab
-          allBookings={allBookings}
+          availableBookings={availableBookings}
           currentUsername={currentUsername}
           onRespondToBooking={handleRespondToBooking}
           onAcceptBookingResponse={handleAcceptBookingResponse}

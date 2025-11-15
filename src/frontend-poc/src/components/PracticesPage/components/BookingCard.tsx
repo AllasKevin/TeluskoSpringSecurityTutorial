@@ -37,9 +37,8 @@ const BookingCard: React.FC<BookingCardProps> = ({
     setCurrentBooking(booking);
     setShowPopup(true);
   };
-
+  // TODO: så mycket här borde gå att undvika att duplicera.
   const renderActionButtons = () => {
-
     // Handle confirmed bookings first
     if (booking.status === "CONFIRMED") {
       if (isUser) {
@@ -86,7 +85,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 onClick={() => onDeleteBooking?.(booking.id)}
                 className="action-button delete-large"
               >
-                Delete Booking
+                Cancel Booking
               </button>
             </div>
           </div>
@@ -178,7 +177,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 onClick={() => onDeleteBooking?.(booking.id)}
                 className="action-button delete-large"
               >
-                Delete Booking
+                Cancel Booking
               </button>
             </div>
           );
@@ -193,7 +192,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 onClick={() => onDeleteBooking?.(booking.id)}
                 className="action-button delete-large"
               >
-                Delete Booking
+                Cancel Booking
               </button>
             </div>
           );
