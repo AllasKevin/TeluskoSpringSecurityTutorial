@@ -31,6 +31,7 @@ export interface BookingCardProps extends BaseBookingProps, BookingActionProps {
 
 // Props for tab components
 export interface TabProps extends BaseBookingProps {
+  practice: string;
   bookings?: Booking[];
   onBack?: () => void;
 }
@@ -49,6 +50,7 @@ export interface ScheduleCallTabProps extends TabProps, BookingActionProps {
 
 // Props for AvailableBookingsTab
 export interface AvailableBookingsTabProps extends TabProps, BookingActionProps {
+
   availableBookings: Booking[];
     setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 

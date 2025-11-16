@@ -590,6 +590,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
 
       {activeTab === "schedule" && (
         <ScheduleCallTab
+          practice={practice}
           selectedBookings={selectedBookings}
           currentUsername={currentUsername}
           onRespondToBooking={handleRespondToBooking}
@@ -618,6 +619,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
 
       {activeTab === "bookings" && (
         <AvailableBookingsTab
+          practice={practice}
           availableBookings={availableBookings}
           currentUsername={currentUsername}
           onRespondToBooking={handleRespondToBooking}
@@ -640,6 +642,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
 
       {activeTab === "mybookings" && (
         <MyBookingsTab
+          practice={practice}
           myBookings={myBookings}
           currentUsername={currentUsername}
           onAcceptBookingResponse={handleAcceptBookingResponse}
