@@ -4,6 +4,7 @@ import BookingCard from "./BookingCard";
 import "./BookingsTab.css";
 
 const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
+  practice,
   availableBookings,
   currentUsername,
   onRespondToBooking,
@@ -37,26 +38,28 @@ const AvailableBookingsTab: React.FC<AvailableBookingsTabProps> = ({
           <div className="bookings-empty-message">No bookings found</div>
         ) : (
           <div className="bookings-list">
-            {availableBookings.map((booking) => (
-              <BookingCard
-                key={booking.id}
-                booking={booking}
-                currentUsername={currentUsername}
-                onRespondToBooking={onRespondToBooking}
-                onAcceptBookingResponse={onAcceptBookingResponse}
-                onDeclineBookingResponse={onDeclineBookingResponse}
-                onWithdrawAcceptance={onWithdrawAcceptance}
-                onDeleteBooking={onDeleteBooking}
-                onWithdrawBookingResponse={onWithdrawBookingResponse}
-                formatDateTime={formatDateTime}
-                getStatusColor={getStatusColor}
-                isUserBooking={isUserBooking}
-                hasUserResponded={hasUserResponded}
-                setShowPopup={setShowPopup}
-                currentBooking={currentBooking}
-                setCurrentBooking={setCurrentBooking}
-              />
-            ))}
+            {availableBookings
+              .filter((b) => b.practice === practice)
+              .map((booking) => (
+                <BookingCard
+                  key={booking.id}
+                  booking={booking}
+                  currentUsername={currentUsername}
+                  onRespondToBooking={onRespondToBooking}
+                  onAcceptBookingResponse={onAcceptBookingResponse}
+                  onDeclineBookingResponse={onDeclineBookingResponse}
+                  onWithdrawAcceptance={onWithdrawAcceptance}
+                  onDeleteBooking={onDeleteBooking}
+                  onWithdrawBookingResponse={onWithdrawBookingResponse}
+                  formatDateTime={formatDateTime}
+                  getStatusColor={getStatusColor}
+                  isUserBooking={isUserBooking}
+                  hasUserResponded={hasUserResponded}
+                  setShowPopup={setShowPopup}
+                  currentBooking={currentBooking}
+                  setCurrentBooking={setCurrentBooking}
+                />
+              ))}
           </div>
         )}
       </div>

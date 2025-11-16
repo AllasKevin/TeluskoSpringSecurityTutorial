@@ -7,6 +7,7 @@ import "./ScheduleCallTab.css";
 import { all } from "axios";
 
 const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
+  practice,
   selectedBookings,
   currentUsername,
   onRespondToBooking,
@@ -106,7 +107,9 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
           <h4>Available bookings for selected time:</h4>
 
           {allBookings.filter(
-            (b) => startDate?.getTime() === new Date(b.dateTime).getTime()
+            (b) =>
+              startDate?.getTime() === new Date(b.dateTime).getTime() &&
+              b.practice === practice
           ).length === 0 ? (
             <div className="scheduler-empty-message">
               No bookings found for this time
