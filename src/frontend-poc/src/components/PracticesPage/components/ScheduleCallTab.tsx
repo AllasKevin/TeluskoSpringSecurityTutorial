@@ -109,7 +109,7 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
           {allBookings.filter(
             (b) =>
               startDate?.getTime() === new Date(b.dateTime).getTime() &&
-              b.practice === practice
+              (b.practice === practice || practice == "anypractice")
           ).length === 0 ? (
             <div className="scheduler-empty-message">
               No bookings found for this time
@@ -120,7 +120,7 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
                 .filter(
                   (b) =>
                     startDate?.getTime() === new Date(b.dateTime).getTime() &&
-                    b.practice === practice
+                    (b.practice === practice || practice == "anypractice")
                 )
                 .map((booking) => (
                   <BookingCard
