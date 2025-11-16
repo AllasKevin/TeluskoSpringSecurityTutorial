@@ -118,7 +118,9 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
             <div className="scheduler-bookings-list">
               {allBookings
                 .filter(
-                  (b) => startDate?.getTime() === new Date(b.dateTime).getTime()
+                  (b) =>
+                    startDate?.getTime() === new Date(b.dateTime).getTime() &&
+                    b.practice === practice
                 )
                 .map((booking) => (
                   <BookingCard
