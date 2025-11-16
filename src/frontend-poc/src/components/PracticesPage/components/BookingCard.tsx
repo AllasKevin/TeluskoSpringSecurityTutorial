@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BookingCardProps } from "../../../types/bookingComponents";
 import {
   formatDateTime,
@@ -29,6 +29,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
 }) => {
   const isUser = isUserBooking(booking, currentUsername);
   const hasResponded = hasUserResponded(booking, currentUsername);
+  const [accepterUsername, setAcceptedUsername] = useState<string | null>(null);
 
   const handleReadyForCall = () => {
     // TODO: Implement join call functionality
@@ -74,6 +75,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                       console.log("=== WITHDRAW ACCEPTANCE BUTTON CLICKED ===");
                       console.log("Booking ID:", booking.id);
                       onWithdrawAcceptance?.(booking.id);
+                      setAcceptedUsername(null);
                     }}
                     className="action-button withdraw"
                   >
@@ -153,6 +155,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                               booking.id,
                               response.responder.username
                             );
+                            setAcceptedUsername(response.responder.username);
                           }}
                           className="action-button accept"
                         >
