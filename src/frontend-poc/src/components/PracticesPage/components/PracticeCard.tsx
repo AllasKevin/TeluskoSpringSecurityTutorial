@@ -106,11 +106,19 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
         }}
       >
         <div className="card-content">
-          <img
-            src={practice.imageUrl}
-            alt={practice.title}
-            className="practice-image"
-          />
+          {practice.imageUrl.endsWith("mandala.png") ? (
+            <img
+              src={practice.imageUrl}
+              alt="Company Logo"
+              className="practice-logo-icon"
+            />
+          ) : (
+            <img
+              src={practice.imageUrl}
+              alt={practice.title}
+              className="practice-image"
+            />
+          )}
           <div className="practice-details">
             <div className="practice-title">{practice.title}</div>
             <div className="practice-description">
@@ -122,15 +130,17 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
         {isExpanded && (
           <div className="expanded-content">
             <div className="centered-video-container">
-              <div
-                className="video-section"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <video controls>
-                  <source src={practice.videoUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
+              {practice.videoUrl && (
+                <div
+                  className="video-section"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <video controls>
+                    <source src={practice.videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              )}
               <button
                 className="call-action-button"
                 onClick={(e) => {

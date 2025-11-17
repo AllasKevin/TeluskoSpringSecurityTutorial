@@ -49,6 +49,7 @@ interface CallHandlerPopUpProps {
   practice: string;
   currentBooking: Booking | undefined; // Optional prop to pass the booking
   setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>; // Optional setter for the booking
+  setChosenPractice: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const CallHandlerPopUp = forwardRef<
@@ -79,6 +80,7 @@ export const CallHandlerPopUp = forwardRef<
       practice,
       currentBooking,
       setCurrentBooking,
+      setChosenPractice,
     },
     ref
   ) => {
@@ -196,6 +198,7 @@ export const CallHandlerPopUp = forwardRef<
           setAvailableCalls={setAvailableCalls}
           setAvailableMatches={setAvailableMatches}
           practice={practice}
+          setChosenPractice={setChosenPractice}
           setShowPopup={setShowPopup}
         />
         <div className="popup-content" onClick={(e) => e.stopPropagation()}>
@@ -206,7 +209,8 @@ export const CallHandlerPopUp = forwardRef<
                 availableMatches.map((match, index) => (
                   <li key={index}>
                     {match.userName}
-                    {" Calling"}
+                    {" in "}
+                    {match.practice}
                     {/* <button onClick={() => handleJoinCall(match.userName)}>
                       Join
                     </button>  */}

@@ -131,7 +131,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
         myBookings,
         setMyBookings,
         availableBookings,
-        setAvailableBookings,
+        setAvailableBookings
       );
     });
 
@@ -212,6 +212,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
             practice={chosenPractice}
             currentBooking={currentBooking}
             setCurrentBooking={setCurrentBooking}
+            setChosenPractice={setChosenPractice}
           />
         )}
         <CallModal

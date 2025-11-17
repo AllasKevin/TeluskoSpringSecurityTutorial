@@ -54,6 +54,13 @@ const practices = [
         "Speak your truth and experience the power of being heard and affirmed by another.",
       imageUrl: "/profilepictures/teal-swan.webp",
       videoUrl: "/instructionvideos/noticing_game_fixed.mp4"
+    },    
+    {
+      title: "Any Practice",
+      name: "anypractice",
+      description:
+        "If you are up for whichever practice, here you can see all available calls and bookings for all practices..",
+      imageUrl: "/profilepictures/mandala.png"
     },
 ];
 

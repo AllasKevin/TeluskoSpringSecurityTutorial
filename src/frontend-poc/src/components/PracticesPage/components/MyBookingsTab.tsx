@@ -59,7 +59,9 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
         ) : (
           <div className="bookings-list">
             {activeBookings
-              .filter((b) => b.practice === practice)
+              .filter(
+                (b) => b.practice === practice || practice == "anypractice"
+              )
               .map((booking) => (
                 <BookingCard
                   key={booking.id}
