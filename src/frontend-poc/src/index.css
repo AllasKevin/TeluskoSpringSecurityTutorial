@@ -71,7 +71,14 @@ label {
     align-self: center;
   }
 
-  
+  .practice-logo-icon {  
+    width: 70px;
+    height: 70px;
+    border-radius: 59px;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    animation: pulse 5s ease-in-out infinite;
+  }
 
 
   .shape-1 {

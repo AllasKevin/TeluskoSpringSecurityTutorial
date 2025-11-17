@@ -69,6 +69,7 @@ interface WebRtcManagerNewProps {
     >
   >;
   practice: string;
+  setChosenPractice: React.Dispatch<React.SetStateAction<string>>;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -98,6 +99,7 @@ export const WebRtcManager = forwardRef<
       setAvailableMatches,
       practice,
       setShowPopup,
+      setChosenPractice,
     },
     ref
   ) => {
@@ -171,7 +173,10 @@ export const WebRtcManager = forwardRef<
 
         setAvailableMatches((prevMatches) => [
           ...prevMatches,
-          { userName: foundMatch.userName, practice: chosenPractice },
+          {
+            userName: foundMatch.userName,
+            practice: foundMatch.chosenPractice,
+          },
         ]);
       } else {
         console.log(
@@ -274,7 +279,8 @@ export const WebRtcManager = forwardRef<
         matchMutuallyAccepted,
         setMatchMutuallyAccepted,
         setAvailableMatches,
-        chosenPractice
+        chosenPractice,
+        setChosenPractice
       );
       setStep0InitListeningForMatchesExecuted(true);
     };

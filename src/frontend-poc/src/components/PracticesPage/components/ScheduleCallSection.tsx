@@ -541,19 +541,21 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
             alt={MandalaImage}
           />
         </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setActiveTab("schedule");
-          }}
-          className={activeTab === "schedule" ? "active-button" : ""}
-        >
-          <img
-            className="call-section-item"
-            src={PlannerImage}
-            alt={PlannerImage}
-          />{" "}
-        </button>
+        {practice != "anypractice" && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveTab("schedule");
+            }}
+            className={activeTab === "schedule" ? "active-button" : ""}
+          >
+            <img
+              className="call-section-item"
+              src={PlannerImage}
+              alt={PlannerImage}
+            />{" "}
+          </button>
+        )}
         <button
           onClick={(e) => {
             e.stopPropagation();
