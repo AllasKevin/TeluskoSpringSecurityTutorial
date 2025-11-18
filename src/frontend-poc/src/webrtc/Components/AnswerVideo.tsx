@@ -69,7 +69,7 @@ const AnswerVideo = ({
   const config = useMemo(() => practiceConfigs[practiceType], [practiceType]);
 
   const countdown = usePracticeManager(config, onEnd);
-  /*
+
   console.log("AnswerVideo component mounted offerData:", offerData);
   // Clean on route/component change
   useEffect(() => {
@@ -87,7 +87,7 @@ const AnswerVideo = ({
     window.addEventListener("beforeunload", handleUnload);
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);
-*/
+
   /*
   // end the call
   useEffect(() => {
