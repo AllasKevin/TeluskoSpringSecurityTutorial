@@ -1,6 +1,9 @@
 package com.example.TeluskoSpringSecurityTutorial.controller;
 
+import com.example.TeluskoSpringSecurityTutorial.model.InviteCode;
+import com.example.TeluskoSpringSecurityTutorial.model.UserRecord;
 import com.example.TeluskoSpringSecurityTutorial.model.Users;
+import com.example.TeluskoSpringSecurityTutorial.service.InviteCodeService;
 import com.example.TeluskoSpringSecurityTutorial.service.UserService;
 import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.Cookie;
@@ -25,24 +28,45 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private InviteCodeService inviteCodeService;
+
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody Users user) {
+    public ResponseEntity<String> registerUser(@RequestBody UserRecord user) {
         try {
-            user.setPassword(encoder.encode(user.getPassword()));
-            userService.register(user);
+            InviteCode inviteCode = inviteCodeService.getInviteCode(user.getInviteCode());
+            if(inviteCode != null && inviteCode.isAvailable()) {
+                user.setPassword(encoder.encode(user.getPassword()));
+                userService.register(new Users(user.getUsername(), user.getPassword()));
+                inviteCode.setAvailable(false);
+                inviteCode.setUsedBy(user.getUsername());
+                inviteCodeService.saveInviteCode(inviteCode);
+                inviteCodeService.createNInviteCodesFor(3, user.getUsername());
 
-            return user.getUsername() + " registered successfully!";
+                return ResponseEntity.ok(user.getUsername() + " registered successfully!");
+            }
+            else {
+                throw new Exception("Invite code is not valid.");
+            }
+
         }
         catch (Exception e){
             System.out.println("Error: " + e.getMessage());
 
             if (e.getMessage().contains("duplicate key error")) {
-                return "User already exists";
+                return ResponseEntity
+                        .badRequest()
+                        .body("Username already exists");            }
+            else if (e.getMessage().contains("Invite code is not valid.")) {
+                return ResponseEntity
+                        .badRequest()
+                        .body("Invite code is not valid");
             }
-
-            return "Error registering user";
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error registering user");
         }
     }
 

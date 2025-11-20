@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/", "/index.html", "/static/**", "/vite.svg", "/assets/**").permitAll()
-                        .requestMatchers("/register", "/login", "/logout", "/loginpage", "/app").permitAll()
+                        .requestMatchers("/register", "/login", "/logout", "/loginpage", "/app", "/availableinvitecode").permitAll()
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated())
                 //.httpBasic(Customizer.withDefaults())

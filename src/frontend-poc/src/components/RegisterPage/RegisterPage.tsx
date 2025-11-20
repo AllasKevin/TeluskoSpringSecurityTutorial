@@ -13,7 +13,8 @@ import mandala from "../../assets/mandala.png";
 import RegisterService, {
   RegisterRequest,
 } from "../../services/RegisterService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import InviteCodeService from "../../services/InviteCodeService";
 
 /**
  * Zod schema for form validation
@@ -32,6 +33,7 @@ const registerSchema = z.object({
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     .regex(/[0-9]/, "Password must contain at least one number"),
+  inviteCode: z.string().uuid("Invitation code must be a valid UUID"),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -46,19 +48,48 @@ type RegisterFormData = z.infer<typeof registerSchema>;
  * ```
  */
 export function RegisterPage() {
+  const [inviteCode, setInviteCode] = useState<string>();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [noInviteCodeError, setNoInviteCodeError] = useState<string | null>(
+    null
+  );
 
   const onSignInClick = () => {
     navigate("/loginpage");
   };
+
+  const getAndSetInviteCode = () => {
+    InviteCodeService.getAvailableInviteCode()
+      .then((res) => {
+        setInviteCode(res.data);
+        setValue("inviteCode", res.data); // <--- THIS updates the field
+        setNoInviteCodeError(null);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        const message =
+          err.response?.data ||
+          err.message ||
+          "Could not generate an invite code.";
+        setNoInviteCodeError(message);
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    getAndSetInviteCode();
+  }, []);
 
   /**
    * Handles form submission
@@ -71,11 +102,18 @@ export function RegisterPage() {
         //sessionStorage.setItem("username", registerRequest.username);
         //login();
         setRegistered(true);
+        setServerError(null);
         //navigate("/app");
       })
       .catch((err) => {
         console.log("Registration failed");
         console.log(err);
+        if (err.response && err.response.data) {
+          // Backend error message (string or JSON)
+          setServerError(err.response.data);
+        } else {
+          setServerError("Registration failed. Please try again.");
+        }
       });
   };
 
@@ -98,6 +136,11 @@ export function RegisterPage() {
         </div>
 
         <div className="form-container">
+          {serverError && (
+            <div className="login-server-error-message " role="alert">
+              {serverError}
+            </div>
+          )}
           {registered && (
             <div className="register-success-message" role="alert">
               <p>Registration successful!</p>
@@ -169,6 +212,35 @@ export function RegisterPage() {
                       {errors.password.message}
                     </span>
                   )}
+                </div>
+
+                <div className="register-form-group">
+                  <label className="register-label">Invitation Code</label>
+                  <div className="register-input-wrapper">
+                    <input
+                      type="text"
+                      placeholder="Please enter your invitation code"
+                      className="register-input"
+                      {...register("inviteCode")}
+                    />
+                  </div>
+                  {noInviteCodeError && (
+                    <div className="login-server-error-message " role="alert">
+                      {noInviteCodeError}
+                    </div>
+                  )}
+                  {errors.inviteCode && (
+                    <span className="error-message">
+                      {errors.inviteCode.message}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    className="register-signin-link"
+                    onClick={getAndSetInviteCode}
+                  >
+                    Click to generate a new invitation code
+                  </button>
                 </div>
 
                 <button type="submit" className="purple-button">
