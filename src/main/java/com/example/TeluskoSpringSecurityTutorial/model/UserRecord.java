@@ -6,32 +6,19 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
-public class Users {
+public class UserRecord {
 
-    @Id
-    private ObjectId id;
     @Indexed(unique = true)
     private String username;
     private String password;
+    private String inviteCode;
 
-    public Users() {
+    public String getInviteCode() {
+        return inviteCode;
     }
 
-    public Users(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "Users{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                '}';
-    }
-
-    public ObjectId getId() {
-        return id;
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
     }
 
     public String getUsername() {
