@@ -515,6 +515,7 @@ const serverUpdatesConnectedSockets = [
 ]
 
 const serverupdatesRoom = "server-updates-room";
+var serverUpdatesSocketServer;
 
 io.of("/server-updates").on("connection", socket => {
 
@@ -531,9 +532,10 @@ io.of("/server-updates").on("connection", socket => {
         return;
     }
 
+    serverUpdatesSocketServer = io.of("/server-updates");
     addServerUpdatesSocketId(userName, socket.id);
-
     socket.join(serverupdatesRoom); // 👈 JOIN ROOM HERE
+    serverUpdatesSocketServer.emit('usersCurrentlyOnline', serverUpdatesConnectedSockets.length);
 
     socket.on('disconnect',()=>{
         console.log("Client disconnected from serverupdates NS: " + userName + " with socketId: " + socket.id );
@@ -542,6 +544,7 @@ io.of("/server-updates").on("connection", socket => {
         if (socketIndex !== -1) {
           serverUpdatesConnectedSockets.splice(socketIndex, 1);
         }
+        serverUpdatesSocketServer.emit('usersCurrentlyOnline', serverUpdatesConnectedSockets.length);
     })
 });
 
