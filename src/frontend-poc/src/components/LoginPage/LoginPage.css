@@ -122,7 +122,13 @@ margin: 0;
   margin-top: 4px;
 }
 
-
+.login-server-error-message {
+  color: #dc3545;
+  font-size: 24px;
+  margin-top: 4px;
+  font-weight: bold;
+  text-align: center;
+}
 
 .login-signup-text {
   text-align: center;

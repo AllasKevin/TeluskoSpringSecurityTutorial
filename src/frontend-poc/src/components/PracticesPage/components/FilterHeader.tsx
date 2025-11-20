@@ -1,15 +1,28 @@
 import React from "react";
 import FilterImage from "../../../assets/filter.png";
+import { useNavigate } from "react-router-dom";
 
 export const FilterHeader: React.FC = () => {
+  const navigate = useNavigate();
+
+  const onHeaderClick = (path: string) => {
+    navigate(path);
+  };
+
   return (
     <div className="header-section">
-      <div className="header-practices">Practices</div>
-      <div className="header-sessions">Available Sessions</div>
-      <div className="header-filter">
-        <img src={FilterImage} alt={FilterImage} className="filter-image" />
-        Filter
-      </div>
+      <button
+        className="header-practices"
+        onClick={() => onHeaderClick("/app")}
+      >
+        Practices
+      </button>
+      <button
+        className="header-sessions"
+        onClick={() => onHeaderClick("/invitecodes")}
+      >
+        Invitation Codes
+      </button>
     </div>
   );
 };

@@ -14,6 +14,7 @@ import BookingReminder, {
   BookingReminderNewHandle,
 } from "./components/BookingReminder";
 import { Booking } from "./types/booking";
+import { InviteCodesPage } from "./components/InviteCodesPage/InviteCodesPage";
 
 export interface CallStatus {
   haveMedia: boolean;
@@ -142,6 +143,14 @@ function App() {
                 currentBooking={currentBooking}
                 bookingReminderRef={BookingReminderRef}
               />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invitecodes"
+          element={
+            <ProtectedRoute>
+              <InviteCodesPage />
             </ProtectedRoute>
           }
         />
