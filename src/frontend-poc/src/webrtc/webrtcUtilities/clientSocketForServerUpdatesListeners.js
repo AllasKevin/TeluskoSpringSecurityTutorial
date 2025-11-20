@@ -1,4 +1,4 @@
-const clientSocketForServerUpdatesListeners = (socket, bookingReminderRef, myBookingsRef, myBookings, setMyBookings, availableBookings, setAvailableBookings)=>{
+const clientSocketForServerUpdatesListeners = (socket, bookingReminderRef, myBookingsRef, myBookings, setMyBookings, availableBookings, setAvailableBookings, setCurrentlyOnlineUsers)=>{
 
     socket.on('updateMyBookingsTab',bookingUpdate=>{
         console.log("updateMyBookingsTab called.");
@@ -10,6 +10,11 @@ const clientSocketForServerUpdatesListeners = (socket, bookingReminderRef, myBoo
     socket.on('updateAvailableBookingsTab',bookingUpdate=>{
         console.log("updateAvailableBookingsTab called.");
         setBookingsWrapper(setAvailableBookings, bookingUpdate);
+    })
+
+    socket.on('usersCurrentlyOnline',usersCurrentlyOnline=>{
+        console.log("usersCurrentlyOnline: " + usersCurrentlyOnline);
+        setCurrentlyOnlineUsers(usersCurrentlyOnline);
     })
     console.log("clientSocketForServerUpdatesListeners initialized. socket.connected: " + socket.connected);
 }

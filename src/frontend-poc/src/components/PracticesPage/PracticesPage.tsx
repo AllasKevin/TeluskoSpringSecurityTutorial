@@ -18,6 +18,7 @@ import {
 import clientSocketForServerUpdatesListeners from "../../webrtc/webrtcUtilities/clientSocketForServerUpdatesListeners";
 import { BookingReminderNewHandle } from "../BookingReminder";
 import { useBookings } from "../../hooks/useBookings";
+import { UsersOnlineCounter } from "./components/UsersOnlineCounter/UsersOnlineCounter";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
@@ -81,6 +82,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   );
   const [showCallModal, setShowCallModal] = useState(false);
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
+  const [currentlyOnlineUsers, setCurrentlyOnlineUsers] = useState(0);
 
   const {
     selectedBookings,
@@ -131,7 +133,8 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
         myBookings,
         setMyBookings,
         availableBookings,
-        setAvailableBookings
+        setAvailableBookings,
+        setCurrentlyOnlineUsers
       );
     });
 
@@ -254,6 +257,8 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
           allBookings={allBookings}
         />
       </div>
+      <UsersOnlineCounter currentlyOnlineUsers={currentlyOnlineUsers} />
+
       <NavigationBar />
     </>
   );
