@@ -1,11 +1,12 @@
 export const practiceConfigs = {
   askingpractice: {
-    duration: 30000,
-    endingDuration: 5000, // 5 seconds countdown
+    duration: 202000,
+    endingDuration: 20000, // 20 seconds countdown
     audioCues: [
-      { time: 2_000, src: "/audio/choose-one-vocal.wav" },
-      { time: 10_000, src: "/audio/vocal-two.wav" },
-      { time: 20_000, src: "/audio/vocal-three-hey.wav" },
+      { time: 2_000, src: "/audio/asking_practice_instructions_1.mp3" },
+      { time: 62_000, src: "/audio/asking_practice_instructions_2.mp3" },
+      { time: 122_000, src: "/audio/asking_practice_instructions_3.mp3" },
+      { time: 182_000, src: "/audio/asking_practice_instructions_4.mp3" },
     ],
   },
   noticinggame: {

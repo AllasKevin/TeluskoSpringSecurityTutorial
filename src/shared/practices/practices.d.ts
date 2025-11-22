@@ -5,6 +5,7 @@ export interface Practice {
   description: string;
   imageUrl: string;
   videoUrl?: string;
+  thumbnailUrl?: string;
 }
 
 export const practices: Practice[];

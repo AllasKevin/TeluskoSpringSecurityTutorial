@@ -135,7 +135,7 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
                   className="video-section"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <video controls>
+                  <video controls poster={practice.thumbnailUrl ?? undefined}>
                     <source src={practice.videoUrl} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
