@@ -526,7 +526,7 @@ io.of("/server-updates").on("connection", socket => {
     const senderSocketId = socket.id;
     //namespaceSocketServer = io.of("/matching");
 
-    if(password !== "x")
+    if(password !== "x" || userName === null || userName === "null")
     {
         socket.disconnect(true);
         return;

@@ -24,6 +24,9 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -43,9 +46,18 @@ public class SecurityConfig {
         //httpSecurity.formLogin(Customizer.withDefaults());
 
         return httpSecurity
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
+                        .configurationSource( request -> {
+                            var corsConfig = new CorsConfiguration();
+                            corsConfig.setAllowedOrigins(List.of("https://growhub.life", "https://www.growhub.life"));
+                            corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                            corsConfig.setAllowedHeaders(List.of("*"));
+                            corsConfig.setAllowCredentials(true);
+                            return corsConfig;
+                        }))
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/", "/index.html", "/static/**", "/vite.svg", "/assets/**").permitAll()
+                        .requestMatchers("/", "/index.html", "/static/**", "/vite.svg", "/assets/**", "/profilepictures/**", "/instructionvideos/**", "/audio/**").permitAll()
                         .requestMatchers("/register", "/login", "/logout", "/loginpage", "/app", "/availableinvitecode").permitAll()
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated())

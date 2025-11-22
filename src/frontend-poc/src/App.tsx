@@ -44,6 +44,7 @@ function App() {
   const [chosenPractice, setChosenPractice] = useState<string>("");
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
   const [currentBooking, setCurrentBooking] = useState<Booking>();
+  const [currentlyOnlineUsers, setCurrentlyOnlineUsers] = useState(0);
 
   const { hangupCall } = useCallManager({
     peerConnection,
@@ -110,6 +111,8 @@ function App() {
                 setCurrentBooking={setCurrentBooking}
                 currentBooking={currentBooking}
                 bookingReminderRef={BookingReminderRef}
+                currentlyOnlineUsers={currentlyOnlineUsers}
+                setCurrentlyOnlineUsers={setCurrentlyOnlineUsers}
               />
             </ProtectedRoute>
           }
@@ -142,6 +145,8 @@ function App() {
                 setCurrentBooking={setCurrentBooking}
                 currentBooking={currentBooking}
                 bookingReminderRef={BookingReminderRef}
+                currentlyOnlineUsers={currentlyOnlineUsers}
+                setCurrentlyOnlineUsers={setCurrentlyOnlineUsers}
               />
             </ProtectedRoute>
           }

@@ -13,6 +13,8 @@ spec:
   tls:
     - hosts:
         - lb-0a98c983d7c44f16b391ae58965e9ece-1.upcloudlb.com
+        - growhub.life
+        - www.growhub.life
       secretName: growhub-tls
   ingressClassName: nginx
   rules:
@@ -33,3 +35,38 @@ spec:
                 name: growhub-service
                 port:
                   number: 8080
+    - host: growhub.life
+      http:
+        paths:
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: signaling-server-service
+                port:
+                  number: 8181
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: growhub-service
+                port:
+                  number: 8080
+    - host: www.growhub.life
+      http:
+        paths:
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: signaling-server-service
+                port:
+                  number: 8181
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: growhub-service
+                port:
+                  number: 8080
+
