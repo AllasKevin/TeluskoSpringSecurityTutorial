@@ -262,7 +262,7 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
       </div>
       <UsersOnlineCounter currentlyOnlineUsers={currentlyOnlineUsers} />
 
-      <NavigationBar />
+      {/*<NavigationBar />*/}
     </>
   );
 };
