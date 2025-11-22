@@ -50,6 +50,8 @@ interface PracticesPageProps {
   setCurrentBooking: React.Dispatch<React.SetStateAction<Booking | undefined>>;
   currentBooking: Booking | undefined;
   bookingReminderRef: RefObject<BookingReminderNewHandle | null>;
+  currentlyOnlineUsers: number;
+  setCurrentlyOnlineUsers: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const PracticesPage: React.FC<PracticesPageProps> = ({
@@ -76,13 +78,14 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   setCurrentBooking,
   currentBooking,
   bookingReminderRef,
+  currentlyOnlineUsers,
+  setCurrentlyOnlineUsers,
 }) => {
   const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
     null
   );
   const [showCallModal, setShowCallModal] = useState(false);
   const [availableCalls, setAvailableCalls] = useState<CallData[]>([]);
-  const [currentlyOnlineUsers, setCurrentlyOnlineUsers] = useState(0);
 
   const {
     selectedBookings,

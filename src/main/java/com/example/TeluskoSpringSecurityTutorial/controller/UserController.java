@@ -85,7 +85,7 @@ public class UserController {
                 .secure(true) // TODO: Set to true in production
                 .path("/")
                 .maxAge(Duration.ofHours(1))
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
