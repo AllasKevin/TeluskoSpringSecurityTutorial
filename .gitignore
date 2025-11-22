@@ -58,3 +58,5 @@ src/signaling-server/certs/
 
 src/frontend-poc/public/instructionvideos/asking_practice.mp4
 src/main/resources/static/instructionvideos/asking_practice.mp4
+
+src/main/resources/static/
