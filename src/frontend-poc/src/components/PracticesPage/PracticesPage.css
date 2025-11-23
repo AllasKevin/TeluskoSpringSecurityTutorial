@@ -509,10 +509,13 @@
 }
 
 .popup-content {
-  background: #6515c6;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .popup-text {

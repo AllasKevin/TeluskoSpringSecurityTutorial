@@ -7,6 +7,7 @@ import React, {
   useEffect,
 } from "react";
 import "../PracticesPage.css";
+import "./CallHandlerPopUp.css";
 import { ScheduleCallSection } from "./ScheduleCallSection";
 import { CallStatus } from "../../../App";
 import {
@@ -15,6 +16,7 @@ import {
 } from "../../WebRtcManager/WebRtcManager";
 import { CallData } from "../../Dashboard";
 import { Booking } from "../../../types/booking";
+import { practices } from "../../../../../shared/practices/practices";
 
 export interface CallHandlerPopUpHandle {
   minimizeCard: () => void;
@@ -78,6 +80,7 @@ export const CallHandlerPopUp = forwardRef<
       setRemoteDescAddedForOfferer,
       setAvailableCalls,
       practice,
+      // currentBooking indicates if the automated flow should be used
       currentBooking,
       setCurrentBooking,
       setChosenPractice,
@@ -94,7 +97,7 @@ export const CallHandlerPopUp = forwardRef<
     const handleAcceptCall = (
       otherCallerUserName: string | null | undefined
     ) => {
-      console.log("handleStartCall called, setting showPopup to false");
+      console.log("handleStartCall called");
       webRtcManagerRef.current?.acceptMatch(practice, otherCallerUserName);
 
       //setShowPopup(false);
@@ -107,26 +110,49 @@ export const CallHandlerPopUp = forwardRef<
       //setShowPopup(false);
     };
     const handleStartCall = () => {
-      console.log("handleStartCall called, setting showPopup to false");
+      console.log("handleStartCall called");
       webRtcManagerRef.current?.startNewCall(practice);
 
       //setShowPopup(false);
     };
     const handleFindMatch = () => {
-      console.log("handleFindMatch called, setting showPopup to false");
+      console.log("handleFindMatch called");
       console.log(availableMatches);
       setCheckingMatch(true);
       webRtcManagerRef.current?.findMatch(practice);
-
       //setShowPopup(false);
     };
 
+    useEffect(() => {
+      // currentBooking indicates if the automated flow should be used
+      if (!currentBooking) {
+        console.log("CallHandlerPopUp mounted.");
+        // TODO: Detta ska ändras mot att köra findMatch när socket.on(connect) istället som körs i practicesPage
+        const timeoutId = setTimeout(() => {
+          console.log(
+            "Delayed findMatch call - WebRTC manager should be ready now"
+          );
+          handleFindMatch();
+          console.log("Called findMatch with practice:", practice);
+        }, 2000); // 2 seconds to ensure socket listeners are set up
+
+        // Cleanup timeout if component unmounts or dependencies change
+        return () => clearTimeout(timeoutId);
+      }
+      return () => {
+        console.log("CallHandlerPopUp-Component unmounted.");
+        setCurrentBooking(undefined);
+      };
+    }, []);
+
     // Use useEffect to ensure webRtcManagerRef is available before calling findMatch
     useEffect(() => {
+      // currentBooking indicates if the automated flow should be used
       if (currentBooking && webRtcManagerRef.current) {
         console.log("Current booking in CallHandlerPopUp:", currentBooking);
         console.log("webRtcManagerRef is available, calling findMatch");
 
+        // TODO: Detta ska ändras mot att köra findMatch när socket.on(connect) istället som körs i practicesPage
         // Add a delay to ensure WebRTC manager socket listeners are fully initialized
         // The WebRtcManager initializes socket listeners in a useEffect that runs on mount
         const timeoutId = setTimeout(() => {
@@ -202,33 +228,101 @@ export const CallHandlerPopUp = forwardRef<
           setShowPopup={setShowPopup}
         />
         <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-          <div className="popup-text">
-            <h2>Potential matches found </h2>{" "}
-            <ul>
-              {Array.isArray(availableMatches) &&
-                availableMatches.map((match, index) => (
-                  <li key={index}>
-                    {match.userName}
-                    {" in "}
-                    {match.practice}
-                    {/* <button onClick={() => handleJoinCall(match.userName)}>
-                      Join
-                    </button>  */}
-                    <button onClick={() => handleAcceptCall(match.userName)}>
-                      Accept
-                    </button>
-                    <button onClick={() => handleDeclineCall(match.userName)}>
-                      Decline
-                    </button>
-                  </li>
-                ))}
-            </ul>
+          <div className="call-handler-popup-container">
+            {/* Header */}
+            <div className="call-handler-popup-header">
+              <h2 className="call-handler-popup-title">
+                {availableMatches.length > 0
+                  ? "✨ Potential Match found"
+                  : "🔍 Searching for available matches"}
+              </h2>
+            </div>
+
+            {/* Matches List */}
+            {!currentBooking &&
+              Array.isArray(availableMatches) &&
+              availableMatches.length > 0 && (
+                <div className="call-handler-matches-list">
+                  {availableMatches.map((match, index) => (
+                    <div key={index} className="call-handler-match-card">
+                      <div className="call-handler-match-header">
+                        <div>
+                          <div className="call-handler-match-username">
+                            You have been matched with{" "}
+                            <strong className="call-handler-match">
+                              {match.userName}
+                            </strong>
+                          </div>
+                          <div className="call-handler-match-practice">
+                            Practice:{" "}
+                            <strong>
+                              {
+                                practices.find((p) => p.name === match.practice)
+                                  ?.title
+                              }
+                            </strong>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="call-handler-match-actions">
+                        <button
+                          onClick={() => handleAcceptCall(match.userName)}
+                          className="call-handler-button call-handler-button-accept"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleDeclineCall(match.userName)}
+                          className="call-handler-button call-handler-button-decline"
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+            {/* Loading State */}
             {Array.isArray(availableMatches) &&
               availableMatches.length === 0 &&
-              checkingMatch && <div>Checking for match... </div>}
-            {/* <button onClick={handleStartCall}>Start New Call</button>  */}
-            <button onClick={handleFindMatch}>Check Match</button>
-            <button onClick={() => setShowPopup(false)}>Close</button>
+              checkingMatch && (
+                <div className="call-handler-loading-state">
+                  <div className="call-handler-state-icon">⏳</div>
+                  <div>Checking for matches...</div>
+                </div>
+              )}
+
+            {/* Empty State */}
+            {!currentBooking &&
+              Array.isArray(availableMatches) &&
+              availableMatches.length === 0 &&
+              !checkingMatch && (
+                <div className="call-handler-empty-state">
+                  <div className="call-handler-state-icon">🔍</div>
+                  <div>Connecting...</div>
+                </div>
+              )}
+
+            {currentBooking &&
+              Array.isArray(availableMatches) &&
+              availableMatches.length === 0 &&
+              !checkingMatch && (
+                <div className="call-handler-empty-state">
+                  <div className="call-handler-state-icon">⏳</div>
+                  <div>Waiting for your partner to join...</div>
+                </div>
+              )}
+
+            {/* Action Buttons */}
+            <div className="call-handler-action-buttons">
+              <button
+                onClick={() => setShowPopup(false)}
+                className="call-handler-button-secondary"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </div>
