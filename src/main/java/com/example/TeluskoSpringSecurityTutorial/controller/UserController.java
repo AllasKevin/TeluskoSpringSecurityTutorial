@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -32,6 +33,9 @@ public class UserController {
     private InviteCodeService inviteCodeService;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    @Value("${growhub.jwtexpirationtime}")
+    long jwtExpirationTime;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserRecord user) {
@@ -84,7 +88,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(true) // TODO: Set to true in production
                 .path("/")
-                .maxAge(Duration.ofHours(1))
+                .maxAge(Duration.ofMillis(jwtExpirationTime))
                 .sameSite("None")
                 .build();
 

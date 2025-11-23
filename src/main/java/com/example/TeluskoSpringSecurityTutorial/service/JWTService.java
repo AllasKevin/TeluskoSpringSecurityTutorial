@@ -22,6 +22,8 @@ import java.util.function.Function;
 public class JWTService {
 
     private static String secretKey;
+    @Value("${growhub.jwtexpirationtime}")
+    long jwtExpirationTime;
 
     public JWTService(@Value("${jwt.secret}") String secretKey) {
         this.secretKey = secretKey;
@@ -44,7 +46,7 @@ public class JWTService {
                 .add(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 days
+                .expiration(new Date(System.currentTimeMillis() + jwtExpirationTime)) // 7 days
                 .and()
                 .signWith(getKey())
                 .compact();

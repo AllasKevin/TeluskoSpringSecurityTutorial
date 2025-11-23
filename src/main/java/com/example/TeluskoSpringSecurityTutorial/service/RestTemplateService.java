@@ -18,7 +18,7 @@ public class RestTemplateService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${signalingserver.url}")
+    @Value("${growhub.signalingserver.url}")
     String signalingServerUrl;
 
     public void sendRequest(String path, Booking booking) {
