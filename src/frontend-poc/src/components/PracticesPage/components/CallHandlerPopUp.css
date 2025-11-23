@@ -1,0 +1,159 @@
+.call-handler-popup-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.call-handler-popup-header {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #3b0f6e;
+  padding-bottom: 15px;
+}
+
+.call-handler-popup-title {
+  color: #3b0f6e;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.call-handler-popup-subtitle {
+  color: #6c757d;
+  margin: 8px 0 0 0;
+  font-size: 1rem;
+}
+
+.call-handler-matches-list {
+  margin-bottom: 20px;
+}
+
+.call-handler-match-card {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background-color: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.call-handler-match-card:hover {
+  border-color: #3b0f6e;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.call-handler-match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.call-handler-match-username {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.call-handler-match-practice {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.call-handler-match-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.call-handler-button {
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.call-handler-button-accept {
+  background-color: #28a745;
+}
+
+.call-handler-button-accept:hover {
+  background-color: #218838;
+}
+
+.call-handler-button-decline {
+  background-color: #dc3545;
+}
+
+.call-handler-button-decline:hover {
+  background-color: #c82333;
+}
+
+.call-handler-loading-state,
+.call-handler-empty-state {
+  text-align: center;
+  padding: 24px;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+.call-handler-state-icon {
+  margin-bottom: 12px;
+  font-size: 2rem;
+}
+
+.call-handler-action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.call-handler-button-primary {
+  background-color: #3b0f6e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.call-handler-match {
+  color: #3b0f6e;
+}
+
+.call-handler-button-primary:hover {
+  background-color: #3b0f6e;
+}
+
+.call-handler-button-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.call-handler-button-secondary:hover {
+  background-color: #5a6268;
+}
+
