@@ -538,8 +538,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           <img
             className="call-section-item call-section-logo-item"
             src={MandalaImage}
-            alt={MandalaImage}
+            alt="Join"
           />
+          <span className="tab-label">Join</span>
         </button>
         {practice != "anypractice" && (
           <button
@@ -552,8 +553,9 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
             <img
               className="call-section-item"
               src={PlannerImage}
-              alt={PlannerImage}
-            />{" "}
+              alt="Schedule"
+            />
+            <span className="tab-label">Schedule</span>
           </button>
         )}
         <button
@@ -568,6 +570,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
             src={FilterImage}
             alt="All Bookings"
           />
+          <span className="tab-label">All Bookings</span>
         </button>
         <button
           onClick={(e) => {
@@ -581,11 +584,17 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
             src={PlannerImage}
             alt="My Bookings"
           />
+          <span className="tab-label">My Bookings</span>
         </button>
       </div>
 
       {activeTab === "join" && (
         <div className="join-call-content">
+          <h3>Ready to Practice?</h3>
+          <p>
+            Start an instant practice session and connect with others who are
+            ready to explore together right now.
+          </p>
           <button onClick={handlePracticeNow}>Practice Now</button>
         </div>
       )}
