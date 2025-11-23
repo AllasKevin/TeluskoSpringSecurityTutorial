@@ -84,19 +84,6 @@ const MyBookingsTab: React.FC<MyBookingsTabProps> = ({
           </div>
         )}
       </div>
-
-      {/* Back Button */}
-      <div className="bookings-back-button-container">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            // This will be handled by the parent component
-          }}
-          className="mobile-button bookings-back-button"
-        >
-          Back to Join Call
-        </button>
-      </div>
     </div>
   );
 };

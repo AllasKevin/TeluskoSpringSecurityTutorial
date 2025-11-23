@@ -156,19 +156,6 @@ const ScheduleCallTab: React.FC<ScheduleCallTabProps> = ({
               </button>
             </div>
           )}
-
-          {/* Back Button */}
-          <div className="scheduler-back-button-container">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                // This will be handled by the parent component
-              }}
-              className="mobile-button scheduler-back-button"
-            >
-              Back to Join Call
-            </button>
-          </div>
         </div>
       )}
     </div>
