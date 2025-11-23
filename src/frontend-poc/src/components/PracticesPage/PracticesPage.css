@@ -106,6 +106,97 @@
   border-radius: 15px;
 }
 
+.intro-video-element-hidden {
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+/* When video is in fullscreen, override hidden styles so controls work */
+video:fullscreen,
+video:-webkit-full-screen,
+video:-moz-full-screen,
+video:-ms-fullscreen {
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  position: static !important;
+}
+
+/* Ensure video controls are always interactive in fullscreen */
+video:fullscreen::-webkit-media-controls-panel,
+video:-webkit-full-screen::-webkit-media-controls-panel {
+  pointer-events: auto !important;
+}
+
+.video-thumb {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.video-thumb:hover {
+  transform: scale(1.05);
+}
+
+.video-thumb:active {
+  transform: scale(0.98);
+}
+
+.thumb-wrapper {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.thumb-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.35);
+}
+
+.thumb-icon {
+  background: white;
+  color: black;
+  font-size: 18px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.thumb-instruction {
+  text-align: left;
+  margin-top: 0;
+  opacity: 0.8;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "Inder", sans-serif;
+}
+
+
 .practices-list {
   display: grid;
   gap: 12px;
@@ -141,6 +232,10 @@
   gap: 16px; /* or whatever you like */
 }
 
+.practice-card.expanded .card-content {
+  grid-template-rows: auto auto;
+}
+
 .practice-image {
   width: 70px;
   height: 70px;
@@ -158,9 +253,30 @@
   font-family: "Abril Fatface", serif;
   font-size: 18px;
   color: black;
-  text-decoration: underline;
   margin-bottom: 4px;
   letter-spacing: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25em;
+}
+
+.practice-title .title-text {
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.instructor-name-in-title {
+  font-family: "Dancing Script", "Brush Script MT", "Lucida Handwriting", "Comic Sans MS", cursive;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  display: inline;
+  margin-left: 0.25em;
+  white-space: pre;
 }
 
 .practice-description {
@@ -179,10 +295,12 @@
 }
 
 .expanded-content {
-  display: block;
+  display: flex;
+  flex-direction: column;
   margin-top: 0.7rem;
   overflow: visible;
   transition: max-height 0.4s ease;
+  gap: 0.5rem;
 }
 
 /* Container for centered video + button */
@@ -193,6 +311,103 @@
   gap: 1rem;
   margin-top: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.expanded-bottom-section {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: stretch;
+  gap: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.thumbnail-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.instructor-links-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.instructor-name-text {
+  margin: 0 0 0.25rem 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.95);
+  font-family: "Inder", sans-serif;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.social-media-links {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.instructor-link,
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  border-radius: 50%;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.instructor-link:hover,
+.social-link:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.link-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.call-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .video-section {
@@ -214,7 +429,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 12px 24px;
+  padding: 14px 28px;
   background: linear-gradient(135deg, #3b0f6e, #6515c6);
   color: white;
   border: none;
@@ -224,15 +439,17 @@
   font-family: "Abril Fatface", serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(59, 15, 110, 0.3);
+  box-shadow: 0 4px 15px rgba(59, 15, 110, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
   min-width: 200px;
   justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .call-action-button:hover {
   background: linear-gradient(135deg, #46157e, #7a1dd1);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 15, 110, 0.4);
+  box-shadow: 0 6px 20px rgba(59, 15, 110, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .call-action-button:active {
@@ -668,6 +885,30 @@
   padding-right: 3px; /* Make it symmetrical with your left padding */
   padding-left: 4px;
 }
+
+  .expanded-bottom-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .thumbnail-section {
+    width: 100%;
+    align-items: center;
+  }
+
+  .thumb-wrapper {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto;
+  }
+
+  .thumb-instruction {
+    text-align: center;
+  }
+
+  .instructor-links-section {
+    width: 100%;
+  }
 /*
   .header-section {
     height: 150px;

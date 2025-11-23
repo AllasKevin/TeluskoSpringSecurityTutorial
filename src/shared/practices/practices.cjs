@@ -7,6 +7,14 @@ const practices = [
       imageUrl: "/profilepictures/lore.jpg",
       videoUrl: "/instructionvideos/asking_practice.mp4",
       thumbnailUrl: "/instructionvideos/asking_practice.png",
+      instructor: {
+        name: "Lore Blancke",
+        website: "https://www.intimate-breath.com",
+        socialMedia: {
+          facebook: "https://www.facebook.com/IntimateBreath/",
+          instagram: "https://www.instagram.com/intimatebreath",
+        },
+      },
     },
     {
       title: "Noticing Game",

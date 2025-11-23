@@ -6,6 +6,17 @@ export interface Practice {
   imageUrl: string;
   videoUrl?: string;
   thumbnailUrl?: string;
+  instructor?: {
+    name?: string;
+    website?: string;
+    socialMedia?: {
+      instagram?: string;
+      facebook?: string;
+      twitter?: string;
+      linkedin?: string;
+      youtube?: string;
+    };
+  };
 }
 
 export const practices: Practice[];
