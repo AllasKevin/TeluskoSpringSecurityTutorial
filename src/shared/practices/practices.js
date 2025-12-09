@@ -23,6 +23,12 @@ export const practices = [
         "Explore what experiences are revealed inside yourself in the present moment and relate those authentically to your co-explorer.",
       imageUrl: "/profilepictures/nadine.jpg",
       videoUrl: "https://media.istockphoto.com/id/1370809321/sv/video/smiling-young-female-tutor-talking-to-web-camera-recording-vlog-online-video-conference-video.mp4?s=mp4-640x640-is&k=20&c=LEFPdcDbab1YLOLXSqo9JYJsdGRbI-SaLygESHD9rkE=",
+      instructor: {
+        name: "Nadine Edstrand",
+        socialMedia: {
+          instagram: "https://www.instagram.com/nadineedstrand",
+        },
+      },
     },
     {
       title: "Assert & Protect",

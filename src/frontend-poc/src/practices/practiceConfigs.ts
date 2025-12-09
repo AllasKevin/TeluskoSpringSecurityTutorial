@@ -1,12 +1,12 @@
 export const practiceConfigs = {
   askingpractice: {
-    duration: 262000,
+    duration: 602000,
     endingDuration: 60000, // 60 seconds countdown
     audioCues: [
       { time: 2_000, src: "/audio/asking_practice_instructions_1.mp3" },
-      { time: 62_000, src: "/audio/asking_practice_instructions_2.mp3" },
-      { time: 122_000, src: "/audio/asking_practice_instructions_3.mp3" },
-      { time: 182_000, src: "/audio/asking_practice_instructions_4.mp3" },
+      { time: 182_000, src: "/audio/asking_practice_instructions_2.mp3" },
+      { time: 362_000, src: "/audio/asking_practice_instructions_3.mp3" },
+      { time: 542_000, src: "/audio/asking_practice_instructions_4.mp3" },
     ],
   },
   noticinggame: {
