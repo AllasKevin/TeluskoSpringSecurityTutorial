@@ -73,7 +73,7 @@ const BookingReminder = forwardRef<
           const minutesDiff = timeDiff / (1000 * 60);
 
           // Within 15 minutes and not past the booking time
-          const isUpcoming = minutesDiff <= 15 && minutesDiff >= 0;
+          const isUpcoming = minutesDiff <= 5 && minutesDiff >= 0;
 
           return isUpcoming;
         });

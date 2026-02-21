@@ -15,7 +15,7 @@ export const UsersOnlineCounter: React.FC<UsersOnlineCounterProps> = ({
 
   return (
     <div className="users-online-counter">
-      <span className="label">Users Online: </span>
+      <span className="label">People Online: </span>
       <span className="online-count">{currentlyOnlineUsers}</span>
     </div>
   );

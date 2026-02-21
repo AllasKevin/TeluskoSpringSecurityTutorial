@@ -338,6 +338,12 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
                   </div>
                 </div>
               )}
+              <div>
+                <span>
+                  Session Length:{" "}
+                  {practice?.length && <span> approx. {practice.length}</span>}
+                </span>
+              </div>
             </div>
             <div className="call-button-container">
               <button

@@ -10,7 +10,7 @@ import java.util.UUID;
 @Component
 public class InviteCodeInitializer implements CommandLineRunner {
 
-    private final int NUMBER_OF_INVITE_CODES = 13;
+    private final int NUMBER_OF_INVITE_CODES = 250;
     private final InviteCodeRepo inviteRepo;
 
     public InviteCodeInitializer(InviteCodeRepo inviteRepo) {

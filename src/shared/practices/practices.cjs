@@ -15,6 +15,7 @@ const practices = [
           instagram: "https://www.instagram.com/intimatebreath",
         },
       },
+      length: "10 minutes",
     },
     {
       title: "Noticing Game",
@@ -22,48 +23,34 @@ const practices = [
       description:
         "Explore what experiences are revealed inside yourself in the present moment and relate those authentically to your co-explorer.",
       imageUrl: "/profilepictures/nadine.jpg",
-      videoUrl: "https://media.istockphoto.com/id/1370809321/sv/video/smiling-young-female-tutor-talking-to-web-camera-recording-vlog-online-video-conference-video.mp4?s=mp4-640x640-is&k=20&c=LEFPdcDbab1YLOLXSqo9JYJsdGRbI-SaLygESHD9rkE=",
+      videoUrl: "/instructionvideos/noticing_game.mp4",
+      thumbnailUrl: "/instructionvideos/noticing_game.png",
+      instructor: {
+        name: "Nadine Edstrand",
+        socialMedia: {
+          instagram: "https://www.instagram.com/nadineedstrand",
+          website: "https://www.bigheartcommunity.se",
+        },
+      },
+      length: "10 minutes",
     },
     {
-      title: "Assert & Protect",
-      name: "assertandprotect",
+      title: "IFS parts-sharing",
+      name: "ifspartssharing",
       description:
-        "Practice how to assert and protect your boundaries in a safe space.",
-      imageUrl: "/profilepictures/gabor-mate.jpg",
-      videoUrl: "https://media.istockphoto.com/id/1370809321/sv/video/smiling-young-female-tutor-talking-to-web-camera-recording-vlog-online-video-conference-video.mp4?s=mp4-640x640-is&k=20&c=LEFPdcDbab1YLOLXSqo9JYJsdGRbI-SaLygESHD9rkE=",
-    },
-    {
-      title: "Gratitude Practice",
-      name: "gratitudepractice",
-      description:
-        "Increase your awareness of the positive aspects of your life and cultivate a sense of gratitude.",
-      imageUrl: "/profilepictures/tony-robbins.webp",
-      videoUrl: "/instructionvideos/stock_woman_talking.mp4",
-    },
-    {
-      title: "Kirtan",
-      name: "kirtan",
-      description:
-        "Engage in guided call-and-response chanting of sacred names to harmonize breath, voice, and intention.",
-      imageUrl: "/profilepictures/dileva.jpg",
-      videoUrl: "https://media.istockphoto.com/id/1370809321/sv/video/smiling-young-female-tutor-talking-to-web-camera-recording-vlog-online-video-conference-video.mp4?s=mp4-640x640-is&k=20&c=LEFPdcDbab1YLOLXSqo9JYJsdGRbI-SaLygESHD9rkE=",
-    },
-    {
-      title: "Non-Contact Improv",
-      name: "noncontactimprov",
-      description:
-        "Reflect each other’s bodily directional impulses by mirroring small initiating movements and amplifying dynamic flow.",
-      imageUrl: "/profilepictures/Profilbild.jpg",
-      videoUrl: "https://media.istockphoto.com/id/1370809321/sv/video/smiling-young-female-tutor-talking-to-web-camera-recording-vlog-online-video-conference-video.mp4?s=mp4-640x640-is&k=20&c=LEFPdcDbab1YLOLXSqo9JYJsdGRbI-SaLygESHD9rkE=",
-    },
-    {
-      title: "Echo of True Self",
-      name: "echooftrueself",
-      description:
-        "Speak your truth and experience the power of being heard and affirmed by another.",
-      imageUrl: "/profilepictures/teal-swan.webp",
-      videoUrl: "https://media.istockphoto.com/id/1370809321/sv/video/smiling-young-female-tutor-talking-to-web-camera-recording-vlog-online-video-conference-video.mp4?s=mp4-640x640-is&k=20&c=LEFPdcDbab1YLOLXSqo9JYJsdGRbI-SaLygESHD9rkE=",
-    },    
+        "Step into different parts of yourself, and allow yourself to communicate from those places. Experience the integration and inner harmony that comes with that.",
+      imageUrl: "/profilepictures/daniel.jpg",
+      videoUrl: "/instructionvideos/ifs_parts_sharing.mp4",
+      thumbnailUrl: "/instructionvideos/ifs_parts_sharing.png",
+      instructor: {
+        name: "Daniel Rashid",
+        socialMedia: {
+          facebook: "https://www.facebook.com/Z7danneZ7",
+          website: "https://www.ifswithdaniel.com",
+        },
+      },
+      length: "60 minutes",
+    },  
     {
       title: "Any Practice",
       name: "anypractice",
