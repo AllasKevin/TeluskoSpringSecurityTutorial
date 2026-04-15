@@ -1,12 +1,12 @@
 import React from "react";
-import { CallStatus } from "../../../App";
+import { CallStatus } from "../../../../App";
 import {
   WebRtcManager,
   WebRtcManagerNewHandle,
-} from "../../WebRtcManager/WebRtcManager";
-import { CallData } from "../../Dashboard";
-import { ScheduleCallSection } from "./ScheduleCallSection";
-import { Booking } from "../../../types/booking";
+} from "../../../WebRtcManager/WebRtcManager";
+import { CallData } from "../../../Dashboard";
+import { ScheduleCallSection } from "../ScheduleCallSection";
+import { Booking } from "../../../../types/booking";
 
 interface CallModalProps {
   isOpen: boolean;

@@ -1,5 +1,5 @@
-import React from "react";
-import "./UsersOnlineCounter.css";
+import React from 'react';
+import './UsersOnlineCounter.css';
 
 interface UsersOnlineCounterProps {
   currentlyOnlineUsers: number;
@@ -8,11 +8,6 @@ interface UsersOnlineCounterProps {
 export const UsersOnlineCounter: React.FC<UsersOnlineCounterProps> = ({
   currentlyOnlineUsers,
 }) => {
-  console.log(
-    "UsersOnlineCounter rendered with currentlyOnlineUsers: " +
-      currentlyOnlineUsers
-  );
-
   return (
     <div className="users-online-counter">
       <span className="label">People Online: </span>

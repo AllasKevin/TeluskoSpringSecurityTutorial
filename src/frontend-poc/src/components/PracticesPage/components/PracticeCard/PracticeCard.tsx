@@ -5,11 +5,11 @@ import React, {
   forwardRef,
   useEffect,
 } from "react";
-import "../PracticesPage.css";
-import { ScheduleCallSection } from "./ScheduleCallSection";
-import { CallStatus } from "../../../App";
-import { CallData } from "../../Dashboard";
-import { Practice } from "../../../../../shared/practices/practices";
+import "../../PracticesPage.css";
+import { ScheduleCallSection } from "../ScheduleCallSection";
+import { CallStatus } from "../../../../App";
+import { CallData } from "../../../Dashboard";
+import { Practice } from "../../../../../../shared/practices/practices";
 
 export interface PracticeCardHandle {
   minimizeCard: () => void;
@@ -187,12 +187,8 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
       <div
         className={`practice-card ${isExpanded ? "expanded" : ""}`}
         onClick={(e) => {
-          console.log(
-            "PracticeCard clicked stopping proppegation for: " + practice.title
-          );
-          e.stopPropagation(); // Stop the click from reaching the parent
-          onClick(key, practice.title); // Call the onClick handler if provided
-          //setIsExpanded((prev) => !prev);
+          e.stopPropagation();
+          onClick(key, practice.title);
         }}
       >
         <div className="card-content">

@@ -1,8 +1,8 @@
 import React from "react";
-import AccountImage from "../../../assets/account.png";
-import PlannerImage from "../../../assets/planner.png";
-import ChatImage from "../../../assets/chat-bubble.png";
-import MandalaImage from "../../../assets/mandala.png";
+import AccountImage from "../../../../assets/account.png";
+import PlannerImage from "../../../../assets/planner.png";
+import ChatImage from "../../../../assets/chat-bubble.png";
+import MandalaImage from "../../../../assets/mandala.png";
 
 export const NavigationBar: React.FC = () => {
   return (

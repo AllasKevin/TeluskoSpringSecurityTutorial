@@ -6,17 +6,17 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import "../PracticesPage.css";
+import "../../PracticesPage.css";
 import "./CallHandlerPopUp.css";
-import { ScheduleCallSection } from "./ScheduleCallSection";
-import { CallStatus } from "../../../App";
+import { ScheduleCallSection } from "../ScheduleCallSection";
+import { CallStatus } from "../../../../App";
 import {
   WebRtcManager,
   WebRtcManagerNewHandle,
-} from "../../WebRtcManager/WebRtcManager";
-import { CallData } from "../../Dashboard";
-import { Booking } from "../../../types/booking";
-import { practices } from "../../../../../shared/practices/practices";
+} from "../../../WebRtcManager/WebRtcManager";
+import { CallData } from "../../../Dashboard";
+import { Booking } from "../../../../types/booking";
+import { practices } from "../../../../../../shared/practices/practices";
 
 export interface CallHandlerPopUpHandle {
   minimizeCard: () => void;

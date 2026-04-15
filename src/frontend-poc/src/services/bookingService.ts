@@ -1,378 +1,179 @@
-// Booking service for managing bookings
-import { Booking } from '../types/booking';
+import { Booking, type BookingResponseStatus } from '../types/booking';
 import apiClient from './api-client';
 
+interface BackendBookingResponse {
+  responder?: { username: string };
+  accepted?: boolean;
+  responseStatus?: BookingResponseStatus;
+}
+
+interface BackendBooking {
+  id?: string | number;
+  initialBookerUser?: { username: string };
+  status?: string;
+  bookedTime?: string;
+  practice?: string;
+  bookingResponses?: BackendBookingResponse[];
+}
+
+function mapBackendToFrontend(backend: BackendBooking, fallback?: Partial<Booking>): Booking {
+  return {
+    id: backend.id?.toString() ?? fallback?.id ?? Date.now().toString(),
+    userName: backend.initialBookerUser?.username ?? fallback?.userName ?? 'Unknown User',
+    status: (backend.status ?? fallback?.status ?? 'PENDING') as Booking['status'],
+    dateTime: new Date(backend.bookedTime ?? fallback?.dateTime ?? new Date()),
+    practice: backend.practice ?? fallback?.practice ?? 'Unknown Practice',
+    responses: (backend.bookingResponses ?? []).map((r) => ({
+      responder: r.responder ?? { username: 'Unknown' },
+      accepted: r.accepted ?? false,
+      responseStatus: r.responseStatus ?? 'NOT_ANSWERED',
+    })),
+  };
+}
+
+function toApiBooking(booking: Booking) {
+  return {
+    initialBookerUser: { username: booking.userName },
+    bookedTime: booking.dateTime.toISOString(),
+    practice: booking.practice,
+    status: booking.status,
+  };
+}
+
 export class BookingService {
-  // Get all bookings (current user's bookings)
   static async getAllBookings(): Promise<Booking[]> {
-    try {
-      const response = await apiClient.get('/bookings');
-      const backendBookings = response.data;
-      const frontendBookings: Booking[] = backendBookings.map((backendBooking: any) => ({
-        id: backendBooking.id || Date.now().toString(),
-        userName: backendBooking.initialBookerUser?.username || 'Unknown User',
-        status: backendBooking.status || 'PENDING',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || 'Unknown Practice',
-        responses: (backendBooking.bookingResponses || []).map((response: any) => ({
-          responder: response.responder || { username: 'Unknown' },
-          accepted: response.accepted || false,
-          responseStatus: response.responseStatus || 'NOT_ANSWERED'
-        }))
-      }));
-      
-      return frontendBookings;
-    } catch (error) {
-      console.error('Error fetching all bookings:', error);
-      throw error;
-    }
+    const response = await apiClient.get('/bookings');
+    return (response.data as BackendBooking[]).map((b) => mapBackendToFrontend(b));
   }
 
-  // Get all free bookings (available for response)
   static async getAllFreeBookings(): Promise<Booking[]> {
-    try {
-      const response = await apiClient.get('/allfreebookings');
-      const backendBookings = response.data;
-      const frontendBookings: Booking[] = backendBookings.map((backendBooking: any) => ({
-        id: backendBooking.id || Date.now().toString(),
-        userName: backendBooking.initialBookerUser?.username || 'Unknown User',
-        status: backendBooking.status || 'PENDING',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || 'Unknown Practice',
-        responses: (backendBooking.bookingResponses || []).map((response: any) => ({
-          responder: response.responder || { username: 'Unknown' },
-          accepted: response.accepted || false,
-          responseStatus: response.responseStatus || 'NOT_ANSWERED'
-        }))
-      }));
-      
-      return frontendBookings;
-    } catch (error) {
-      console.error('Error fetching all free bookings:', error);
-      throw error;
-    }
+    const response = await apiClient.get('/allfreebookings');
+    return (response.data as BackendBooking[]).map((b) => mapBackendToFrontend(b));
   }
 
-  // Get bookings for a specific date/time
   static async getBookingsForDateTime(dateTime: Date): Promise<Booking[]> {
-    try {
-      // Use a 10-minute window around the selected time to get bookings for that specific time slot
-      const startTime = new Date(dateTime.getTime() - 5 * 60 * 1000); // 5 minutes before
-      const endTime = new Date(dateTime.getTime() + 5 * 60 * 1000);   // 5 minutes after
-      
-      const response = await apiClient.get('/freebookingsbetween', {
-        params: {
-          starttime: startTime.toISOString(),
-          endtime: endTime.toISOString()
-        }
-      });
-      
-      const backendBookings = response.data;
-      const frontendBookings: Booking[] = backendBookings.map((backendBooking: any) => ({
-        id: backendBooking.id || Date.now().toString(),
-        userName: backendBooking.initialBookerUser?.username || 'Unknown User',
-        status: backendBooking.status || 'PENDING',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || 'Unknown Practice',
-        responses: (backendBooking.bookingResponses || []).map((response: any) => ({
-          responder: response.responder || { username: 'Unknown' },
-          accepted: response.accepted || false,
-          responseStatus: response.responseStatus || 'NOT_ANSWERED'
-        }))
+    const startTime = new Date(dateTime.getTime() - 5 * 60 * 1000);
+    const endTime = new Date(dateTime.getTime() + 5 * 60 * 1000);
+
+    const response = await apiClient.get('/freebookingsbetween', {
+      params: {
+        starttime: startTime.toISOString(),
+        endtime: endTime.toISOString(),
+      },
+    });
+    return (response.data as BackendBooking[]).map((b) => mapBackendToFrontend(b));
+  }
+
+  static async updateBookingStatus(bookingId: string, _status: string, bookingData?: Booking): Promise<Booking> {
+    if (!bookingData) {
+      throw new Error('Booking data is required');
+    }
+
+    const response = await apiClient.post('/respondtobooking', {
+      ...toApiBooking(bookingData),
+      status: 'PENDING',
+    });
+    return mapBackendToFrontend(response.data, bookingData);
+  }
+
+  static async createBooking(bookingData: { userName: string; dateTime: Date; practice: string }): Promise<Booking> {
+    const response = await apiClient.post('/bookcall', null, {
+      params: {
+        bookedtime: bookingData.dateTime.toISOString(),
+        practice: bookingData.practice,
+      },
+    });
+    return mapBackendToFrontend(response.data, {
+      userName: bookingData.userName,
+      practice: bookingData.practice,
+    });
+  }
+
+  static async acceptBookingResponse(
+    bookingId: string,
+    acceptedResponderUsername: string,
+    bookingData?: Booking,
+  ): Promise<Booking> {
+    if (!bookingData) {
+      throw new Error('Booking data is required');
+    }
+
+    const response = await apiClient.post('/acceptbookingresponse', {
+      ...toApiBooking(bookingData),
+      status: 'PENDING',
+    }, {
+      params: { acceptedresponderusername: acceptedResponderUsername },
+    });
+
+    const backend = response.data as BackendBooking;
+    const frontendBooking = mapBackendToFrontend(backend, bookingData);
+
+    if (!backend.bookingResponses?.length && bookingData.responses?.length) {
+      frontendBooking.responses = bookingData.responses.map((r) => ({
+        ...r,
+        responseStatus: r.responder.username === acceptedResponderUsername
+          ? 'ACCEPTED' as const
+          : r.responseStatus,
       }));
-      
-      return frontendBookings;
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-      throw error;
     }
+
+    return frontendBooking;
   }
 
-  // Respond to a booking
-  static async updateBookingStatus(bookingId: string, status: string, bookingData?: Booking): Promise<Booking> {
-    try {
-      if (!bookingData) {
-        throw new Error('Booking data is required');
-      }
-
-      const bookingForApi = {
-        initialBookerUser: {
-          username: bookingData.userName
-        },
-        bookedTime: bookingData.dateTime.toISOString(),
-        practice: bookingData.practice,
-        status: "PENDING"
-      };
-      
-      const response = await apiClient.post('/respondtobooking', bookingForApi);
-      
-      const backendBooking = response.data;
-      const frontendBooking: Booking = {
-        id: backendBooking.id || bookingId,
-        userName: backendBooking.initialBookerUser?.username || bookingData.userName,
-        status: backendBooking.status || 'PENDING',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || bookingData.practice,
-        responses: (backendBooking.bookingResponses || []).map((response: any) => ({
-          responder: response.responder || { username: 'Unknown' },
-          accepted: response.accepted || false,
-          responseStatus: response.responseStatus || 'ACCEPTED'
-        }))
-      };
-      
-      return frontendBooking;
-    } catch (error) {
-      console.error('Error updating booking status:', error);
-      throw error;
+  static async deleteBooking(_bookingId: string, bookingData?: Booking): Promise<void> {
+    if (!bookingData) {
+      throw new Error('Booking data is required');
     }
+    await apiClient.post('/deletebooking', toApiBooking(bookingData));
   }
 
-  // Create a new booking
-  static async createBooking(bookingData: {
-    userName: string;
-    dateTime: Date;
-    practice: string;
-  }): Promise<Booking> {
-    try {
-      const response = await apiClient.post('/bookcall', null, {
-        params: {
-          bookedtime: bookingData.dateTime.toISOString(),
-          practice: bookingData.practice
-        }
-      });
-      
-      const backendBooking = response.data;
-      const frontendBooking: Booking = {
-        id: backendBooking.id || Date.now().toString(),
-        userName: backendBooking.initialBookerUser?.username || bookingData.userName,
-        status: backendBooking.status || 'PENDING',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || bookingData.practice,
-        responses: (backendBooking.bookingResponses || []).map((response: any) => ({
-          responder: response.responder || { username: 'Unknown' },
-          accepted: response.accepted || false,
-          responseStatus: response.responseStatus || 'NOT_ANSWERED'
-        }))
-      };
-      
-      return frontendBooking;
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      throw error;
-    }
-  }
-
-  // Accept a booking response
-  static async acceptBookingResponse(bookingId: string, acceptedResponderUsername: string, bookingData?: Booking): Promise<Booking> {
-    try {
-      if (!bookingData) {
-        throw new Error('Booking data is required');
-      }
-      
-      const bookingForApi = {
-        initialBookerUser: {
-          username: bookingData.userName
-        },
-        bookedTime: bookingData.dateTime.toISOString(),
-        practice: bookingData.practice,
-        status: "PENDING"
-      };
-      
-      const response = await apiClient.post('/acceptbookingresponse', bookingForApi, {
-        params: {
-          acceptedresponderusername: acceptedResponderUsername
-        }
-      });
-      
-      const backendBooking = response.data;
-      const frontendBooking: Booking = {
-        id: backendBooking.id?.toString() || bookingId,
-        userName: backendBooking.initialBookerUser?.username || bookingData.userName,
-        status: backendBooking.status || 'CONFIRMED',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || bookingData.practice,
-        responses: (backendBooking.bookingResponses && backendBooking.bookingResponses.length > 0) 
-          ? backendBooking.bookingResponses.map((response: any) => ({
-              responder: response.responder || { username: 'Unknown' },
-              accepted: response.accepted || false,
-              responseStatus: response.responseStatus || 'NOT_ANSWERED'
-            }))
-          : bookingData.responses?.map(response => ({
-              ...response,
-              responseStatus: response.responder.username === acceptedResponderUsername ? 'ACCEPTED' as const : response.responseStatus
-            })) || []
-      };
-      
-      return frontendBooking;
-    } catch (error) {
-      console.error('Error accepting booking response:', error);
-      throw error;
-    }
-  }
-
-  // Delete booking
-  static async deleteBooking(bookingId: string, bookingData?: Booking): Promise<void> {
-    try {
-      if (!bookingData) {
-        throw new Error('Booking data is required');
-      }
-      
-      const bookingForApi = {
-        initialBookerUser: {
-          username: bookingData.userName
-        },
-        bookedTime: bookingData.dateTime.toISOString(),
-        practice: bookingData.practice,
-        status: bookingData.status
-      };
-      
-      await apiClient.post('/deletebooking', bookingForApi);
-    } catch (error) {
-      console.error('Error deleting booking:', error);
-      throw error;
-    }
-  }
-
-  // Withdraw response to booking
   static async withdrawBookingResponse(bookingId: string, bookingData: Booking): Promise<Booking> {
-    console.log('=== WITHDRAW BOOKING RESPONSE DEBUG START ===');
-    console.log('Function called with bookingId:', bookingId);
-    console.log('Booking data received:', bookingData);
-    
-    try {
-      const bookingForApi = {
-        id: null,
-        initialBookerUser: {
-          username: bookingData.userName
-        },
-        bookedTime: bookingData.dateTime.toISOString(),
-        practice: bookingData.practice,
-        status: bookingData.status,
-        bookingResponses: bookingData.responses || []
-      };
-      
-      console.log('=== WITHDRAW BOOKING RESPONSE REQUEST DATA ===');
-      console.log('Full request object:', bookingForApi);
-      console.log('Request JSON:', JSON.stringify(bookingForApi, null, 2));
-      console.log('=== MAKING API CALL TO /withdrawbookingresponse ===');
-      
-      const response = await apiClient.post('/withdrawbookingresponse', bookingForApi);
-      
-      const backendBooking = response.data;
-      const frontendBooking: Booking = {
-        id: backendBooking.id || bookingId,
-        userName: backendBooking.initialBookerUser?.username || bookingData.userName,
-        status: backendBooking.status || 'PENDING',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || bookingData.practice,
-        responses: (backendBooking.bookingResponses || []).map((response: any) => ({
-          responder: response.responder || { username: 'Unknown' },
-          accepted: response.accepted || false,
-          responseStatus: response.responseStatus || 'NOT_ANSWERED'
-        }))
-      };
-      
-      return frontendBooking;
-    } catch (error) {
-      console.error('Error withdrawing booking response:', error);
-      throw error;
-    }
+    const response = await apiClient.post('/withdrawbookingresponse', {
+      id: null,
+      ...toApiBooking(bookingData),
+      bookingResponses: bookingData.responses ?? [],
+    });
+    return mapBackendToFrontend(response.data, bookingData);
   }
 
-  // Decline a booking response
-  static async declineBookingResponse(bookingId: string, declinedResponderUsername: string, bookingData: Booking): Promise<Booking> {
-    try {
-      const bookingForApi = {
-        initialBookerUser: {
-          username: bookingData.userName
-        },
-        bookedTime: bookingData.dateTime.toISOString(),
-        practice: bookingData.practice,
-        status: "PENDING"
-      };
-      
-      const response = await apiClient.post(`/declinebookingresponse?declinedresponderusername=${encodeURIComponent(declinedResponderUsername)}`, bookingForApi);
-      
-      const backendBooking = response.data;
-      const frontendBooking: Booking = {
-        id: backendBooking.id || bookingId,
-        userName: backendBooking.initialBookerUser?.username || bookingData.userName,
-        status: backendBooking.status || 'PENDING',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || bookingData.practice,
-        responses: (backendBooking.bookingResponses || []).map((response: any) => ({
-          responder: response.responder || { username: 'Unknown' },
-          accepted: response.accepted || false,
-          responseStatus: response.responseStatus || 'NOT_ANSWERED'
-        }))
-      };
-      
-      return frontendBooking;
-    } catch (error) {
-      console.error('Error declining booking response:', error);
-      throw error;
-    }
+  static async declineBookingResponse(
+    bookingId: string,
+    declinedResponderUsername: string,
+    bookingData: Booking,
+  ): Promise<Booking> {
+    const response = await apiClient.post(
+      `/declinebookingresponse?declinedresponderusername=${encodeURIComponent(declinedResponderUsername)}`,
+      { ...toApiBooking(bookingData), status: 'PENDING' },
+    );
+    return mapBackendToFrontend(response.data, bookingData);
   }
 
-  // Withdraw acceptance (for initial booker to withdraw their acceptance of a response)
   static async withdrawAcceptance(bookingId: string, bookingData: Booking): Promise<Booking> {
-    console.log('=== WITHDRAW ACCEPTANCE DEBUG START ===');
-    console.log('Function called with bookingId:', bookingId);
-    console.log('Booking data received:', bookingData);
-    
-    try {
-      // Get the responder username from the accepted response
-      const acceptedResponse = bookingData.responses?.find(response => response.responseStatus === 'ACCEPTED');
-      const responderUsername = acceptedResponse?.responder?.username;
-      
-      console.log('Accepted response:', acceptedResponse);
-      console.log('Responder username:', responderUsername);
-      
-      if (!responderUsername) {
-        throw new Error('No accepted response found to withdraw');
-      }
-      
-      const bookingForApi = {
-        id: bookingId,
-        initialBookerUser: {
-          username: bookingData.userName
-        },
-        bookedTime: bookingData.dateTime.toISOString(),
-        practice: bookingData.practice,
-        status: bookingData.status,
-        bookingResponses: bookingData.responses || []
-      };
-      
-      console.log('=== REQUEST DATA BEING SENT ===');
-      console.log('Full request object:', bookingForApi);
-      console.log('Request JSON:', JSON.stringify(bookingForApi, null, 2));
-      console.log('Responses array:', bookingData.responses);
-      console.log('Responses length:', bookingData.responses?.length || 0);
-      console.log('=== MAKING API CALL TO /withdrawacceptbooking ===');
-      
-      const response = await apiClient.post(`/withdrawacceptbooking?responderusername=${encodeURIComponent(responderUsername)}`, bookingForApi);
-      
-      const backendBooking = response.data;
-      const frontendBooking: Booking = {
-        id: backendBooking.id || bookingId,
-        userName: backendBooking.initialBookerUser?.username || bookingData.userName,
-        status: backendBooking.status || 'PENDING',
-        dateTime: new Date(backendBooking.bookedTime),
-        practice: backendBooking.practice || bookingData.practice,
-        responses: (backendBooking.bookingResponses || []).map((response: any) => {
-          // When withdrawing acceptance, set all responses back to NOT_ANSWERED
-          return {
-            responder: response.responder || { username: 'Unknown' },
-            accepted: response.accepted || false,
-            responseStatus: 'NOT_ANSWERED' as const
-          };
-        })
-      };
-      
-      return frontendBooking;
-    } catch (error) {
-      console.error('Error withdrawing acceptance:', error);
-      throw error;
+    const acceptedResponse = bookingData.responses?.find(
+      (r) => r.responseStatus === 'ACCEPTED',
+    );
+    const responderUsername = acceptedResponse?.responder?.username;
+
+    if (!responderUsername) {
+      throw new Error('No accepted response found to withdraw');
     }
+
+    const response = await apiClient.post(
+      `/withdrawacceptbooking?responderusername=${encodeURIComponent(responderUsername)}`,
+      {
+        id: bookingId,
+        ...toApiBooking(bookingData),
+        bookingResponses: bookingData.responses ?? [],
+      },
+    );
+
+    const result = mapBackendToFrontend(response.data, bookingData);
+    result.responses = result.responses?.map((r) => ({
+      ...r,
+      responseStatus: 'NOT_ANSWERED' as const,
+    }));
+    return result;
   }
 }
+
+export { mapBackendToFrontend, toApiBooking };

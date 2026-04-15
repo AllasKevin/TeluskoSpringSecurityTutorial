@@ -1,5 +1,3 @@
-import create from "./HttpService"
+import create from './HttpService';
 
-
-
-export default create("/logout");
+export default create('/logout');

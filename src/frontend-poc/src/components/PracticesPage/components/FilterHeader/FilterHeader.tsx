@@ -1,5 +1,5 @@
 import React from "react";
-import FilterImage from "../../../assets/filter.png";
+import FilterImage from "../../../../assets/filter.png";
 import { useNavigate } from "react-router-dom";
 
 export const FilterHeader: React.FC = () => {
