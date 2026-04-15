@@ -1,15 +1,31 @@
 .users-online-counter {
   position: fixed;
-  top: 10px;
-  left: 18px;
-  z-index: 999999; /* higher than shapes */
-  color: black;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-weight: bold;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 40;
+  color: var(--on-secondary-container);
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px rgba(18, 28, 42, 0.06);
 }
 
 .users-online-counter .online-count {
-  color: #0dd40d; 
-  font-weight: 900;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+@media (max-width: 520px) {
+  .users-online-counter {
+    top: auto;
+    bottom: 5.5rem;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
 }

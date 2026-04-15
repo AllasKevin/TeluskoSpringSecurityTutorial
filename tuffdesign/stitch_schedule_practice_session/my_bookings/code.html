@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#121c2a",
+                    "secondary-fixed-dim": "#bdc7d9",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#27313f",
+                    "surface-tint": "#ba1928",
+                    "outline-variant": "#e4bebb",
+                    "tertiary-container": "#007531",
+                    "tertiary": "#005a24",
+                    "on-primary-container": "#ffdad7",
+                    "on-surface": "#121c2a",
+                    "on-tertiary-fixed-variant": "#005320",
+                    "primary-container": "#c3212d",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#3d4756",
+                    "background": "#f8f9ff",
+                    "primary-fixed-dim": "#ffb3af",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#930017",
+                    "primary-fixed": "#ffdad7",
+                    "surface": "#f8f9ff",
+                    "on-secondary-container": "#596373",
+                    "surface-container-highest": "#d9e3f6",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#121c2a",
+                    "tertiary-fixed-dim": "#62df7d",
+                    "secondary": "#555f6f",
+                    "surface-container-high": "#dee9fc",
+                    "outline": "#8f6f6d",
+                    "secondary-container": "#d6e0f3",
+                    "on-primary-fixed": "#410005",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#e6eeff",
+                    "on-tertiary-container": "#7ffc97",
+                    "secondary-fixed": "#d9e3f6",
+                    "on-tertiary-fixed": "#002109",
+                    "primary": "#9e001a",
+                    "surface-dim": "#d0dbed",
+                    "inverse-primary": "#ffb3af",
+                    "on-surface-variant": "#5b403e",
+                    "surface-variant": "#d9e3f6",
+                    "tertiary-fixed": "#7ffc97"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl fixed top-0 z-50 flex justify-between items-center px-6 py-4 w-full no-border shadow-[0_4px_30px_rgba(0,0,0,0.05)] bg-slate-50/50 dark:bg-slate-900/50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/10">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional man in a business setting with soft natural light and office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDweILDFWlh-WmX30uoLMTm2z-aS-cDwlls-xHYAdKQBv2x6aIictcWopZrOqOiAqUqh6k_Fv55wvaifHO3ru08t9LL0k7HTxgKtKndFHnfwlVnRYkmMAt4vUi_hltzLelLeDlZU0HzeB7l7Mb_Oc7VN-Y4oI_YpMKSCZnRmdSg48ZQ5vjneK2ZT6blARpODyO1vD6acZgtfzpjUOmQ5bBaHP49GSIFbL8kZl7kq4j0qKdNmiKe_qgUy9InTr91ZVRpJ5_lA8gG50AD"/>
+</div>
+<h1 class="text-lg font-black tracking-tighter text-red-900 dark:text-red-500 font-inter tracking-tight">Tuff Anytime</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors scale-95 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">notifications</span>
+</button>
+</header>
+<main class="pt-24 px-6 space-y-8">
+<!-- Title & Hero Section -->
+<section class="space-y-2">
+<span class="text-[11px] font-bold uppercase tracking-[0.2em] text-primary/60">Practice Management</span>
+<h2 class="text-3xl font-extrabold tracking-tight text-on-background">My Bookings</h2>
+<div class="h-1 w-12 bg-primary rounded-full"></div>
+</section>
+<!-- Tabs -->
+<div class="flex gap-4 p-1 bg-surface-container-low rounded-full w-fit">
+<button class="px-6 py-2 rounded-full bg-primary text-on-primary font-semibold text-sm shadow-sm transition-all">Upcoming</button>
+<button class="px-6 py-2 rounded-full text-secondary font-medium text-sm transition-all hover:bg-surface-container-high">Past Sessions</button>
+</div>
+<!-- Content Canvas -->
+<div class="space-y-6">
+<!-- Booking Card 1 (Upcoming - Active) -->
+<div class="relative group">
+<div class="absolute -inset-0.5 bg-gradient-to-br from-primary to-primary-container rounded-[2rem] opacity-5 blur-xl group-hover:opacity-10 transition-opacity"></div>
+<div class="relative bg-surface-container-lowest p-6 rounded-[1.5rem] shadow-[0_8px_30px_rgba(0,0,0,0.02)] space-y-5">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-2xl overflow-hidden shadow-inner">
+<img alt="Facilitator" class="w-full h-full object-cover" data-alt="Professional woman facilitator smiling warmly, outdoor setting with soft sunlight and greenery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiikUpD2N8873_dM1CZ0Pwh0BkzEQTlm9agkbVHSRylIJG0RWHRjqorgRQ0S9_aCi73zBCaBOVzQiH9hwNp_YD21l8z64Uw6iMUWn7NNw5Rreq0xhyePg1N1u2k6bceYjC7Yy_mDb9CYQfNBtjd9EjdJLQD2vT_yxEvjbDUADP_PO25lPCfpd3teuzDoOzK_ECEQNQYZwvPvShqz49CNE3kC090mhuEHt2MD4NpkuKO4ZEKekcaKLq6ByehVsHBgJsYr_a-yGzklI7"/>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-primary/70">Relational Practice</p>
+<h3 class="text-lg font-bold text-on-background leading-tight">Advanced Active Listening</h3>
+<p class="text-sm text-secondary font-medium">with Sarah Jenkins</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-tertiary-container/10 text-tertiary text-[10px] font-bold uppercase tracking-wider rounded-full">Confirmed</span>
+</div>
+<div class="flex items-center gap-6 py-4 border-y border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">calendar_month</span>
+<span class="text-sm font-semibold text-on-surface">Oct 24, 2023</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">schedule</span>
+<span class="text-sm font-semibold text-on-surface">09:00 - 10:30 AM</span>
+</div>
+</div>
+<div class="flex gap-3 pt-2">
+<button class="flex-1 bg-gradient-to-br from-primary to-primary-container text-on-primary py-4 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all">
+                            Join Room
+                        </button>
+<button class="px-4 py-4 rounded-xl bg-surface-container-low text-secondary hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Booking Card 2 (Upcoming - Pending) -->
+<div class="bg-surface-container-low/50 p-6 rounded-[1.5rem] border border-outline-variant/5 space-y-5">
+<div class="flex justify-between items-start">
+<div class="flex gap-4 opacity-80">
+<div class="w-14 h-14 rounded-2xl overflow-hidden grayscale-[20%]">
+<img alt="Facilitator" class="w-full h-full object-cover" data-alt="Candid portrait of a male professional facilitator in a bright modern studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAq2I4LoyolBSu7PIAFTn5XMVTeIn-iF4RnegH1WjEurV3egjKID0g6dTNzXgtp3RG2NLBGmBgrv_dzydpqR95YfLIWuD8p8yhaBoSg73VYqmUHjwKwYPWvPyDJDhGI0cEplyXRWWXrIqfwiw-VmFbIkF0pzwWpxxS1eDNvNKAPL3zSKsUxNJ25zN3wc3ekNPXJNmKj9KaP7of1pZaU2rGq-WAWRBo_YTWRGB25SO6Y6IosmHjZCvU-ewiguVBT43n858TRj2xhB5ke"/>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Leadership Lab</p>
+<h3 class="text-lg font-bold text-on-background leading-tight">Navigating Conflict</h3>
+<p class="text-sm text-secondary font-medium">with Marcus Thorne</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-secondary-container/30 text-secondary text-[10px] font-bold uppercase tracking-wider rounded-full">Pending</span>
+</div>
+<div class="flex items-center gap-6 py-4 opacity-70">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-xl">calendar_month</span>
+<span class="text-sm font-semibold">Oct 28, 2023</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-xl">schedule</span>
+<span class="text-sm font-semibold">02:00 PM</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-surface-container-highest text-on-surface py-4 rounded-xl font-bold text-sm hover:bg-primary hover:text-on-primary transition-all active:scale-[0.98]">
+                        Reschedule
+                    </button>
+<button class="flex-1 text-primary py-4 rounded-xl font-bold text-sm hover:bg-error-container/20 transition-all active:scale-[0.98]">
+                        Cancel Booking
+                    </button>
+</div>
+</div>
+<!-- Suggestion / Empty State style section -->
+<div class="p-8 border-2 border-dashed border-outline-variant/20 rounded-[2rem] flex flex-col items-center text-center space-y-4">
+<div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">add_task</span>
+</div>
+<div class="space-y-1">
+<h4 class="font-bold text-on-background">Need more practice?</h4>
+<p class="text-sm text-secondary leading-relaxed max-w-[200px]">Book a new session with our master facilitators.</p>
+</div>
+<button class="text-primary font-black text-xs uppercase tracking-widest pt-2 flex items-center gap-2">
+                    Explore Schedule <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 md:pb-6 bg-white/90 dark:bg-slate-950/90 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.04)] tonal-shift bg-slate-100/50 dark:bg-slate-800/50 rounded-t-3xl z-50">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-1 hover:text-red-700 dark:hover:text-red-300 transition-all" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[11px] font-bold uppercase tracking-wider mt-1">Discover</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-1 hover:text-red-700 dark:hover:text-red-300 transition-all" href="#">
+<span class="material-symbols-outlined">play_circle</span>
+<span class="text-[11px] font-bold uppercase tracking-wider mt-1">Practice</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-1 hover:text-red-700 dark:hover:text-red-300 transition-all" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-[11px] font-bold uppercase tracking-wider mt-1">Schedule</span>
+</a>
+<a class="flex flex-col items-center justify-center text-red-900 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-xl px-4 py-1 Active: opacity-80 scale-95 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_available</span>
+<span class="text-[11px] font-bold uppercase tracking-wider mt-1">Bookings</span>
+</a>
+</nav>
+</body></html>

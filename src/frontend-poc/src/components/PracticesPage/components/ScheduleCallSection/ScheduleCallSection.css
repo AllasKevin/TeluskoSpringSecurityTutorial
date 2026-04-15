@@ -4,9 +4,10 @@
   width: 100% !important;
   padding: 12px !important;
   font-size: 16px !important; /* Prevents zoom on iOS */
-  border: 2px solid #ddd !important;
+  border: none !important;
+  border-bottom: 2px solid rgba(228, 190, 187, 0.25) !important;
   border-radius: 8px !important;
-  background-color: #fff !important;
+  background-color: var(--surface-container-low) !important;
   box-sizing: border-box !important;
 }
 
@@ -19,23 +20,24 @@
   width: 100% !important;
   padding: 12px !important;
   font-size: 16px !important;
-  border: 2px solid #ddd !important;
+  border: none !important;
+  border-bottom: 2px solid rgba(228, 190, 187, 0.25) !important;
   border-radius: 8px !important;
-  background-color: #fff !important;
+  background-color: var(--surface-container-low) !important;
   box-sizing: border-box !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
 
 .custom-date-input:hover {
-  border-color: #007bff !important;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1) !important;
+  border-bottom-color: var(--primary) !important;
+  box-shadow: 0 4px 16px rgba(18, 28, 42, 0.06) !important;
 }
 
 .custom-date-input:focus-within {
   outline: none !important;
-  border-color: #007bff !important;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25) !important;
+  border-bottom: 2px solid var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(158, 0, 26, 0.25) !important;
 }
 
 .date-display {
@@ -47,7 +49,7 @@
 
 .date-icon {
   font-size: 20px !important;
-  color: #007bff !important;
+  color: var(--primary) !important;
   flex-shrink: 0 !important;
 }
 
@@ -87,7 +89,7 @@
 }
 
 .custom-date-input:hover .dropdown-arrow {
-  color: #007bff !important;
+  color: var(--primary) !important;
 }
 
 /* Mobile wrapper for date picker */
@@ -131,7 +133,7 @@
   .mobile-datepicker[readonly] {
     pointer-events: auto !important;
     cursor: pointer !important;
-    background-color: #fff !important;
+    background-color: var(--surface-container-low) !important;
   }
   
   .mobile-datepicker[readonly]:focus {
@@ -169,8 +171,8 @@
 
 .mobile-datepicker:focus {
   outline: none !important;
-  border-color: #007bff !important;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(158, 0, 26, 0.25) !important;
 }
 
 /* React DatePicker Portal Styles for Mobile */
@@ -371,7 +373,7 @@
   padding: 15px !important;
   border: 1px solid #ddd !important;
   border-radius: 8px !important;
-  background-color: #fff !important;
+  background-color: var(--surface-container-low) !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
   margin-bottom: 12px !important;
 }

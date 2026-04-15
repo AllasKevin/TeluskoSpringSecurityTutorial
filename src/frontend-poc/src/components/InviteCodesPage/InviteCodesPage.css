@@ -1,129 +1,130 @@
-.register-container {
-  width: 100%;
-  min-height: 100vh;
-  background-color: #6515c6;
+.invite-page {
+  min-height: 100dvh;
+  background: var(--surface);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
-.register-content {
+.invite-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 100% 60% at 0% 100%,
+    rgba(214, 224, 243, 0.55) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.invite-page__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 1.25rem 3rem;
+}
+
+.invite-page__header-block {
+  margin-bottom: 1.5rem;
+}
+
+.invite-page__eyebrow {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--on-secondary-container);
+  background: var(--secondary-container);
+  border-radius: var(--radius-pill);
+}
+
+.invite-page__title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 1.85rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--on-surface);
+}
+
+.invite-page__lead {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--secondary);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.invite-card {
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-2xl);
+  padding: 1.5rem 1.35rem 1.75rem;
+  box-shadow: var(--shadow-ambient);
+  margin-top: 1rem;
+}
+
+.invite-card__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 100vh;
-  position: relative;
+  gap: 0.85rem;
 }
 
-
-
-.register-title {
-  font-size: 20px;
-  color: #191919;
-  font-weight: 500;
-  line-height: 30px;
-  margin-bottom: 6px;
+.invite-card__item {
+  font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", monospace;
+  font-size: 0.8125rem;
+  padding: 0.85rem 1rem;
+  background: var(--surface-container-low);
+  border-radius: var(--radius-lg);
+  color: var(--on-surface);
+  word-break: break-all;
 }
 
-.register-subtitle {
-  color: #777e8e;
-  font-size: 16px;
-  line-height: 24px;
-  margin-bottom: 18px;
-}
-
-.register-form-group {
-  margin-bottom: 16px;
-}
-
-.register-label {
-  color: #154dc6;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 21px;
-  margin-bottom: 3px;
-}
-
-.register-input-wrapper {
-  width: 100%;
-  height: 48px;
-  border-radius: 8px;
-  border: 2px solid #e5e5e5;
-  padding: 0 11px;
-  display: flex;
-  align-items: center;
-}
-
-.register-input {
-  width: 100%;
-  height: 100%;
-  font-size: 16px;
-  color: #b2b2b2;
-  border: none;
-  outline: none;
-  background: transparent;
-}
-
-.register-input::placeholder {
-  color: #b2b2b2;
-}
-
-.register-button {
-  width: 100%;
-  height: 48px;
-  background-color: #154dc6;
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.register-button:hover {
-  background-color: #1242b0;
-}
-
-.register-signin-text {
-  text-align: center;
-  color: #154dc6;
-  font-size: 15px;
-  line-height: 21px;
-  margin-top: 16px;
-}
-
-.register-signin-link {
-  all: unset; /* resets default button styles */
-  color: #154dc6;
-  font-size: 15px;
+.invite-back-btn {
+  margin-top: 1.5rem;
+  font-family: inherit;
   font-weight: 700;
-  line-height: 21px;
+  font-size: 0.875rem;
+  color: var(--primary);
+  background: none;
+  border: none;
   cursor: pointer;
-  text-align: right;
-  white-space: nowrap;
+  padding: 0.5rem 0;
 }
 
-.register-signin-link:hover {
+.invite-back-btn:hover {
   text-decoration: underline;
 }
 
-.error-message {
-  color: #dc3545;
-  font-size: 14px;
-  margin-top: 4px;
+.invite-empty-hint {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 0.875rem;
 }
-.register-success-message {
+
+.invite-page .logo-container {
+  margin: 1.5rem 0 1.25rem;
   display: flex;
-  flex-direction: column;   /* stack children vertically */
-  align-items: center;      /* center horizontally */
-  justify-content: center;  /* center vertically */
-  font-size: 20px;
-  font-weight: 700;
-  height: 100%;             /* or desired height */
-  text-align: center;       /* center text inside <p> */
-  margin-top: 0px; /* adjust as needed */
-  margin-bottom: 1rem;
+  flex-direction: column;
+  align-items: center;
+}
+
+.invite-page .logo-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.invite-page .logo-text {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  color: var(--primary);
 }

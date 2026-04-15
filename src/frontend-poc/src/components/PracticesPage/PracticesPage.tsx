@@ -149,13 +149,18 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   return (
     <>
       <div className="practices-container" onClick={handleClickOutsideCard}>
-        <div className="shape-1" />
-        <div className="shape-2" />
-        <div className="shape-3" />
-        <div className="shape-4" />
-        <div className="shape-5" />
         <div className="practices-content">
           <FilterHeader />
+          <section className="practices-hero" aria-labelledby="practices-heading">
+            <p className="practices-hero__eyebrow">Growth protocol</p>
+            <h1 id="practices-heading" className="practices-hero__title">
+              Practice discovery
+            </h1>
+            <p className="practices-hero__sub">
+              Choose a module, watch the intro, then join or schedule a live relational
+              session with a partner.
+            </p>
+          </section>
           <ListGroup className="practices-list">
             {practices.map((practice, index) => (
               <PracticeCard

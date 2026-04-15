@@ -40,7 +40,7 @@ describe('InviteCodesPage', () => {
 
   it('renders the page heading', () => {
     renderComponent();
-    expect(screen.getByText('Invite Codes')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /invitation codes/i })).toBeInTheDocument();
   });
 
   it('fetches and displays invite codes', async () => {
@@ -56,7 +56,7 @@ describe('InviteCodesPage', () => {
     const user = userEvent.setup();
     renderComponent();
 
-    await user.click(screen.getByText('Go Back'));
+    await user.click(screen.getByRole('button', { name: /back to practices/i }));
     expect(mockNavigate).toHaveBeenCalledWith('/app');
   });
 });

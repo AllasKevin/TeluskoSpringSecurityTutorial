@@ -57,14 +57,9 @@ const LandingPage = () => {
 
   return (
     <div className="landing-container">
-      <div className="shape-1" />
-      <div className="shape-2" />
-      <div className="shape-3" />
-      <div className="shape-4" />
-      <div className="shape-5" />
-
       <div className="content-wrapper">
         <div className="logo-container">
+          <span className="landing-eyebrow">Relational practice</span>
           <img src={mandala} alt="Company Logo" className="logo-icon" />
           <div className="logo-text">GrowHub</div>
         </div>

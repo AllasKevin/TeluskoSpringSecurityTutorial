@@ -95,9 +95,11 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
     }));
 */
 
+    const videoDomId = `intro-video-${practice.name}`;
+
     const openIntroVideo = () => {
       const videoEl = document.getElementById(
-        "intro-video"
+        videoDomId
       ) as HTMLVideoElement | null;
       if (!videoEl) return;
 
@@ -138,7 +140,7 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
     useEffect(() => {
       const handleFullscreenChange = () => {
         const videoEl = document.getElementById(
-          "intro-video"
+          videoDomId
         ) as HTMLVideoElement | null;
         if (!videoEl) return;
 
@@ -181,7 +183,7 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
           handleFullscreenChange
         );
       };
-    }, []);
+    }, [videoDomId]);
 
     return (
       <div
@@ -229,7 +231,7 @@ export const PracticeCard = forwardRef<PracticeCardHandle, PracticeCardProps>(
                 onClick={(e) => e.stopPropagation()}
               >
                 <video
-                  id="intro-video"
+                  id={videoDomId}
                   controls
                   className="intro-video-element-hidden"
                   playsInline

@@ -1,129 +1,166 @@
 .register-container {
   width: 100%;
-  min-height: 100vh;
-  background-color: #6515c6;
+  min-height: 100dvh;
   position: relative;
   overflow: hidden;
+  background: var(--surface);
+}
+
+.register-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 100%,
+    rgba(214, 224, 243, 0.65) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
 }
 
 .register-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
+  z-index: 1;
+  padding: 2rem 1.25rem 3rem;
 }
 
+.register-content .logo-container {
+  margin-bottom: 1.5rem;
+}
 
+.register-content .logo-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+}
+
+.register-content .logo-text {
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  color: var(--on-surface);
+}
+
+.form-container {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-2xl);
+  padding: 1.75rem 1.5rem 2rem;
+  box-shadow: var(--shadow-ambient);
+}
 
 .register-title {
-  font-size: 20px;
-  color: #191919;
-  font-weight: 500;
-  line-height: 30px;
-  margin-bottom: 6px;
+  font-size: 1.35rem;
+  color: var(--on-surface);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin: 0 0 0.5rem;
 }
 
 .register-subtitle {
-  color: #777e8e;
-  font-size: 16px;
-  line-height: 24px;
-  margin-bottom: 18px;
+  color: var(--secondary);
+  font-size: 0.9375rem;
+  margin: 0 0 1.25rem;
+  font-weight: 500;
 }
 
 .register-form-group {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .register-label {
-  color: #154dc6;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 21px;
-  margin-bottom: 3px;
+  display: block;
+  color: var(--on-secondary-container);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
 }
 
 .register-input-wrapper {
   width: 100%;
-  height: 48px;
-  border-radius: 8px;
-  border: 2px solid #e5e5e5;
-  padding: 0 11px;
+  min-height: 48px;
+  border-radius: 0;
+  padding: 0.5rem 0.25rem;
   display: flex;
   align-items: center;
+  background: var(--surface-container-low);
+  border-bottom: 1px solid rgba(228, 190, 187, 0.2);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.register-input-wrapper:focus-within {
+  background: var(--surface-container-lowest);
+  border-bottom: 2px solid var(--primary);
 }
 
 .register-input {
   width: 100%;
-  height: 100%;
-  font-size: 16px;
-  color: #b2b2b2;
+  min-height: 44px;
+  font-size: 1rem;
+  color: var(--on-surface);
   border: none;
   outline: none;
   background: transparent;
+  font-family: inherit;
 }
 
 .register-input::placeholder {
-  color: #b2b2b2;
+  color: var(--secondary);
+  opacity: 0.65;
 }
 
-.register-button {
-  width: 100%;
-  height: 48px;
-  background-color: #154dc6;
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 16px;
+.error-message {
+  color: var(--error);
+  font-size: 0.8125rem;
+  margin-top: 0.35rem;
+  display: block;
+}
+
+.register-success-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
   font-weight: 600;
-  margin-bottom: 16px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--on-surface);
 }
 
-.register-button:hover {
-  background-color: #1242b0;
+.login-server-error-message {
+  color: var(--error);
+  font-size: 0.9375rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 .register-signin-text {
   text-align: center;
-  color: #154dc6;
-  font-size: 15px;
-  line-height: 21px;
-  margin-top: 16px;
+  color: var(--secondary);
+  font-size: 0.9375rem;
+  margin-top: 1rem;
 }
 
 .register-signin-link {
-  all: unset; /* resets default button styles */
-  color: #154dc6;
-  font-size: 15px;
+  all: unset;
+  color: var(--primary);
+  font-size: 0.9375rem;
   font-weight: 700;
-  line-height: 21px;
   cursor: pointer;
-  text-align: right;
-  white-space: nowrap;
 }
 
 .register-signin-link:hover {
   text-decoration: underline;
-}
-
-.error-message {
-  color: #dc3545;
-  font-size: 14px;
-  margin-top: 4px;
-}
-.register-success-message {
-  display: flex;
-  flex-direction: column;   /* stack children vertically */
-  align-items: center;      /* center horizontally */
-  justify-content: center;  /* center vertically */
-  font-size: 20px;
-  font-weight: 700;
-  height: 100%;             /* or desired height */
-  text-align: center;       /* center text inside <p> */
-  margin-top: 0px; /* adjust as needed */
-  margin-bottom: 1rem;
 }

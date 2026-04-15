@@ -102,10 +102,16 @@ export const CallModal: React.FC<CallModalProps> = ({
 
   return (
     <div className="call-modal-overlay" onClick={handleOverlayClick}>
-      <div className="call-modal-content">
+      <div className="call-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="call-modal-header">
-          <h2 className="call-modal-title">{practice} - Call Options</h2>
-          <button className="call-modal-close" onClick={onClose}>
+          <div>
+            <span className="call-modal-eyebrow">Relational practice</span>
+            <h2 className="call-modal-title">{practice}</h2>
+            <p className="call-modal-lead">
+              Join live, schedule a slot, or manage bookings
+            </p>
+          </div>
+          <button type="button" className="call-modal-close" onClick={onClose} aria-label="Close">
             ✕
           </button>
         </div>

@@ -116,12 +116,6 @@ export function RegisterPage() {
 
   return (
     <div className="register-container">
-      <div className="shape-1" />
-      <div className="shape-2" />
-      <div className="shape-3" />
-      <div className="shape-4" />
-      <div className="shape-5" />
-
       <div className="register-content">
         <div className="logo-container">
           <img src={mandala} alt="Company Logo" className="logo-icon" />
