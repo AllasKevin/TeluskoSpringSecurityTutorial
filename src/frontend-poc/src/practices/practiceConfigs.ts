@@ -10,51 +10,20 @@ export const practiceConfigs = {
     ],
   },
   noticinggame: {
-    duration: 60000,
-    endingDuration: 10000, // 10 seconds countdown
+    duration: 561000,
+    endingDuration: 60000, // 60 seconds countdown
     audioCues: [
-      { time: 1_000, src: "/audio/vocal-shot-two.wav" },
-      { time: 10_000, src: "/audio/vocal-three.wav" },
+      { time: 2_000, src: "/audio/noticing_game_instructions_1.mp3" },
+      { time: 152_000, src: "/audio/noticing_game_instructions_2.mp3" },
+      { time: 267_000, src: "/audio/noticing_game_instructions_3.mp3" },
+      { time: 453_000, src: "/audio/noticing_game_instructions_4.mp3" },
     ],
   },
-  assertandprotect: {
-    duration: 60000,
-    endingDuration: 10000, // 10 seconds countdown
+  ifspartssharing: {
+    duration: 3600000,
+    endingDuration: 420000, // 420 seconds countdown
     audioCues: [
-      { time: 1_000, src: "/audio/vocal-shot-two.wav" },
-      { time: 10_000, src: "/audio/vocal-three.wav" },
-    ],
-  },
-  gratitudepractice: {
-    duration: 60000,
-    endingDuration: 10000, // 10 seconds countdown
-    audioCues: [
-      { time: 1_000, src: "/audio/vocal-shot-two.wav" },
-      { time: 10_000, src: "/audio/vocal-three.wav" },
-    ],
-  },
-  kirtan: {
-    duration: 60000,
-    endingDuration: 10000, // 10 seconds countdown
-    audioCues: [
-      { time: 1_000, src: "/audio/vocal-shot-two.wav" },
-      { time: 10_000, src: "/audio/vocal-three.wav" },
-    ],
-  },
-  noncontactimprov: {
-    duration: 60000,
-    endingDuration: 10000, // 10 seconds countdown
-    audioCues: [
-      { time: 1_000, src: "/audio/vocal-shot-two.wav" },
-      { time: 10_000, src: "/audio/vocal-three.wav" },
-    ],
-  },
-  echooftrueself: {
-    duration: 60000,
-    endingDuration: 10000, // 10 seconds countdown
-    audioCues: [
-      { time: 1_000, src: "/audio/vocal-shot-two.wav" },
-      { time: 10_000, src: "/audio/vocal-three.wav" },
+      { time: 2_000, src: "/audio/ifs_parts_sharing_instructions.mp3" },
     ],
   },
 } as const;

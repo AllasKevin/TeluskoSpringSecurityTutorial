@@ -1,10 +1,8 @@
-import create from "./HttpService"
+import create from './HttpService';
 
 export interface User {
-    id: number;
-    name: string;
-  }
+  id: number;
+  name: string;
+}
 
-
-
-export default create("/users");
+export default create('/users');

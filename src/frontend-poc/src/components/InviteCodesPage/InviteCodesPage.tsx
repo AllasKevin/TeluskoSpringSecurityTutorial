@@ -1,48 +1,28 @@
-/**
- * @module InviteCodesPage
- * @description A registration page component that allows users to create a new account.
- * Features form validation, error handling, and integration with authentication system.
- */
+import { useNavigate } from 'react-router-dom';
+import './InviteCodesPage.css';
+import mandala from '../../assets/mandala.png';
+import { useEffect, useState } from 'react';
+import InviteCodeService from '../../services/InviteCodeService';
+import { FilterHeader } from '../PracticesPage/components/FilterHeader';
 
-import { FieldValues, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useNavigate } from "react-router-dom";
-import "./InviteCodesPage.css";
-import mandala from "../../assets/mandala.png";
-import RegisterService, {
-  RegisterRequest,
-} from "../../services/RegisterService";
-import { useEffect, useState } from "react";
-import InviteCodeService from "../../services/InviteCodeService";
-import { FilterHeader } from "../PracticesPage/components/FilterHeader";
+interface InviteCode {
+  inviteCode: string;
+  available: boolean;
+  belongsTo: string;
+}
 
-/**
- * InviteCodesPage component for user registration
- * @component
- * @description
- * @example
- * ```tsx
- * <InviteCodesPage />
- * ```
- */
 export function InviteCodesPage() {
-  const [inviteCodes, setInviteCodes] = useState<
-    { inviteCode: string; available: boolean; belongsTo: string }[]
-  >([]);
+  const [inviteCodes, setInviteCodes] = useState<InviteCode[]>([]);
   const navigate = useNavigate();
 
   const onGoBackClick = () => {
-    navigate("/app");
+    navigate('/app');
   };
 
   useEffect(() => {
     InviteCodeService.getMyInviteCodes()
-      .then((res) => {
-        setInviteCodes(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => console.error(err));
+      .then((res) => setInviteCodes(res.data))
+      .catch(() => {});
   }, []);
 
   return (
@@ -61,19 +41,19 @@ export function InviteCodesPage() {
         </div>
 
         <div className="form-container">
-          <form>
-            Invite Codes
-            {inviteCodes.map((inviteCode, index) => (
-              <li key={index}>{inviteCode.inviteCode}</li>
+          <h2>Invite Codes</h2>
+          <ul>
+            {inviteCodes.map((inviteCode) => (
+              <li key={inviteCode.inviteCode}>{inviteCode.inviteCode}</li>
             ))}
-            <button
-              className="register-signin-link"
-              onClick={onGoBackClick}
-              type="submit"
-            >
-              Go Back
-            </button>
-          </form>
+          </ul>
+          <button
+            className="register-signin-link"
+            onClick={onGoBackClick}
+            type="button"
+          >
+            Go Back
+          </button>
         </div>
       </div>
     </div>

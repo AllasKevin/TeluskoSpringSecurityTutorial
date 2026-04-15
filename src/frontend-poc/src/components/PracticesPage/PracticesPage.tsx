@@ -18,7 +18,7 @@ import {
 import clientSocketForServerUpdatesListeners from "../../webrtc/webrtcUtilities/clientSocketForServerUpdatesListeners";
 import { BookingReminderNewHandle } from "../BookingReminder";
 import { useBookings } from "../../hooks/useBookings";
-import { UsersOnlineCounter } from "./components/UsersOnlineCounter/UsersOnlineCounter";
+import { UsersOnlineCounter } from "./components/UsersOnlineCounter";
 
 interface PracticesPageProps {
   callStatus: CallStatus | undefined;
@@ -105,21 +105,15 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
   const myBookingsRef = useRef<Booking[]>(myBookings);
 
   useEffect(() => {
-    console.log(
-      "myBookings updated and setting myBookingsRef: " +
-        JSON.stringify(myBookings)
-    );
     myBookingsRef.current = myBookings;
   }, [myBookings]);
 
   const handleCardClick = (index: number, practice: string) => {
-    console.log("Card clicked, index: " + index);
     setExpandedCardIndex((prev) => (prev === index ? null : index));
     setChosenPractice(practice);
   };
 
   const handleClickOutsideCard = () => {
-    console.log("Clicked outside card, minimizing all cards");
     setExpandedCardIndex(null);
   };
 
@@ -128,7 +122,6 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
 
     const socket = socketConnectionServerUpdates(username);
     socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
       clientSocketForServerUpdatesListeners(
         socket,
         bookingReminderRef,
@@ -144,7 +137,6 @@ export const PracticesPage: React.FC<PracticesPageProps> = ({
     loadMyBookings();
 
     return () => {
-      console.log("PracticesPage-Component unmounted → disconnecting socket");
       disconnectSocket;
     };
   }, []);

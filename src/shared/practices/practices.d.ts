@@ -17,6 +17,7 @@ export interface Practice {
       youtube?: string;
     };
   };
+  length?: string;
 }
 
 export const practices: Practice[];

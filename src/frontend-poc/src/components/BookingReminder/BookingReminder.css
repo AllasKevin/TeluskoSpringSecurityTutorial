@@ -1,0 +1,124 @@
+.booking-reminder-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.booking-reminder-dialog {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.booking-reminder-header {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 15px;
+}
+
+.booking-reminder-title {
+  color: #007bff;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.booking-reminder-subtitle {
+  color: #6c757d;
+  margin: 8px 0 0 0;
+  font-size: 1rem;
+}
+
+.booking-reminder-card {
+  border: 2px solid #28a745;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+}
+
+.booking-reminder-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.booking-reminder-card-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.booking-reminder-status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.booking-reminder-detail {
+  margin-bottom: 8px;
+}
+
+.booking-reminder-confirmed-banner {
+  text-align: center;
+  padding: 12px;
+  background-color: #d4edda;
+  border-radius: 6px;
+  color: #155724;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.booking-reminder-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.booking-reminder-join-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.booking-reminder-join-btn:hover {
+  background-color: #218838;
+}
+
+.booking-reminder-dismiss-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.booking-reminder-dismiss-btn:hover {
+  background-color: #5a6268;
+}

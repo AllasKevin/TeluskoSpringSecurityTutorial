@@ -1,10 +1,8 @@
-import create from "./HttpService"
+import create from './HttpService';
 
 export interface LoginCredentials {
-    username: string;
-    password: string;
-  }
+  username: string;
+  password: string;
+}
 
-
-
-export default create("/login");
+export default create('/login');

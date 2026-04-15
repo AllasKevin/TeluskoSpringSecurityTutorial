@@ -19,8 +19,8 @@ const prepForCall = ({callStatus,updateCallStatus,setLocalStream, foundMatch}: P
         const constraints = {
             video: true, //must have one constraint, dont have to show it yet
             audio: {
-                sampleRate: 48000,         // match WebRTC's preferred rate
-                channelCount: 2,           // stereo
+                //sampleRate: 48000,         // match WebRTC's preferred rate
+                channelCount: 1,           // stereo
                 echoCancellation: true,    // good for calls
                 noiseSuppression: true,    // good for calls
                 autoGainControl: true,     // helps normalize volume

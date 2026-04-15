@@ -44,8 +44,6 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   const handleGoogleSignIn = () => {
-    // Implement Google Sign In logic
-    console.log("Google Sign In clicked");
     setAttemptedGoogleSign(true);
   };
 

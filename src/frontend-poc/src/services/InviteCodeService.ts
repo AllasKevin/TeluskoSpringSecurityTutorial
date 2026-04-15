@@ -1,11 +1,13 @@
-import http from "./api-client";
+import apiClient from './api-client';
 
-const myinvitecodesendpoint = "/myinvitecodes";
-const availableinvitecodeendpoint = "/availableinvitecode";
+const ENDPOINTS = {
+  MY_INVITE_CODES: '/myinvitecodes',
+  AVAILABLE_INVITE_CODE: '/availableinvitecode',
+} as const;
 
 const InviteCodeService = {
-  getMyInviteCodes: () => http.get(myinvitecodesendpoint),
-  getAvailableInviteCode: () => http.get(availableinvitecodeendpoint),
+  getMyInviteCodes: () => apiClient.get(ENDPOINTS.MY_INVITE_CODES),
+  getAvailableInviteCode: () => apiClient.get(ENDPOINTS.AVAILABLE_INVITE_CODE),
 };
 
 export default InviteCodeService;

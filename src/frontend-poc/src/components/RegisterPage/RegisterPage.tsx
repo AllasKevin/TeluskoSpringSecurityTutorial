@@ -73,9 +73,8 @@ export function RegisterPage() {
     InviteCodeService.getAvailableInviteCode()
       .then((res) => {
         setInviteCode(res.data);
-        setValue("inviteCode", res.data); // <--- THIS updates the field
+        setValue("inviteCode", res.data);
         setNoInviteCodeError(null);
-        console.log(res.data);
       })
       .catch((err) => {
         const message =
@@ -98,16 +97,10 @@ export function RegisterPage() {
   const registerUser = (registerRequest: RegisterRequest) => {
     RegisterService.post(registerRequest)
       .then(() => {
-        console.log("Registration successful");
-        //sessionStorage.setItem("username", registerRequest.username);
-        //login();
         setRegistered(true);
         setServerError(null);
-        //navigate("/app");
       })
       .catch((err) => {
-        console.log("Registration failed");
-        console.log(err);
         if (err.response && err.response.data) {
           // Backend error message (string or JSON)
           setServerError(err.response.data);
@@ -252,7 +245,7 @@ export function RegisterPage() {
                   <button
                     className="register-signin-link"
                     onClick={onSignInClick}
-                    type="submit"
+                    type="button"
                   >
                     Sign In
                   </button>
