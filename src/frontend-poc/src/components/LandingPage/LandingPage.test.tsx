@@ -10,8 +10,6 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
-vi.mock('../../assets/mandala.png', () => ({ default: 'mandala.png' }));
-
 describe('LandingPage', () => {
   const renderComponent = () =>
     render(
@@ -20,10 +18,11 @@ describe('LandingPage', () => {
       </MemoryRouter>,
     );
 
-  it('renders the logo and brand name', () => {
+  it('renders the brand name as the main heading', () => {
     renderComponent();
-    expect(screen.getByText('GrowHub')).toBeInTheDocument();
-    expect(screen.getByAltText('Company Logo')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Tuff Anytime' }),
+    ).toBeInTheDocument();
   });
 
   it('renders Google sign-in button', () => {

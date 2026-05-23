@@ -1,2 +1,1 @@
-export { PracticeCard } from './PracticeCard';
-export type { PracticeCardHandle } from './PracticeCard';
+export { PracticeCard } from "./PracticeCard";

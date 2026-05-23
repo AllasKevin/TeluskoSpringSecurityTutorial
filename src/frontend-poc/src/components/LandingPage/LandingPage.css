@@ -59,19 +59,6 @@
   text-align: center;
 }
 
-.landing-eyebrow {
-  display: inline-block;
-  padding: 0.35rem 0.85rem;
-  margin-bottom: 1rem;
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--on-secondary-container);
-  background: var(--secondary-container);
-  border-radius: var(--radius-pill);
-}
-
 @keyframes landing-pulse {
   0% {
     transform: scale(1);
@@ -87,21 +74,14 @@
   }
 }
 
-.logo-icon {
-  width: 120px;
-  height: 120px;
-  margin-bottom: 1rem;
-  border-radius: 50%;
-  animation: landing-pulse 6s ease-in-out infinite;
-  box-shadow: var(--shadow-ambient);
-}
-
-.logo-text {
+.landing-container .logo-text {
+  margin: 0;
   font-family: var(--font-sans);
-  font-weight: 800;
-  font-size: 1.75rem;
-  letter-spacing: -0.02em;
-  color: var(--on-surface);
+  font-weight: 900;
+  font-size: clamp(2.75rem, 10vw, 4.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--primary);
 }
 
 .practice-logo-icon {
@@ -203,4 +183,35 @@
   font-size: 0.875rem;
   margin: 0;
   text-align: center;
+}
+
+@media (min-width: 64rem) {
+  .landing-container .content-wrapper {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(2rem, 5vw, 4rem);
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 3rem clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .landing-container .logo-container {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 28rem;
+    margin-bottom: 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .landing-container .auth-container {
+    flex: 0 1 26rem;
+    max-width: 26rem;
+  }
+
+  .landing-container .logo-text {
+    font-size: clamp(3.25rem, 5.5vw, 5rem);
+    max-width: 14ch;
+  }
 }

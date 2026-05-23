@@ -368,8 +368,8 @@
   cursor: not-allowed !important;
 }
 
-/* Booking card mobile styles */
-.booking-card {
+/* Booking card mobile styles (skip editorial call-section — schedule + my-bookings) */
+.call-section:not(.call-section--editorial) .booking-card {
   padding: 15px !important;
   border: 1px solid #ddd !important;
   border-radius: 8px !important;
@@ -378,7 +378,7 @@
   margin-bottom: 12px !important;
 }
 
-.booking-card:last-child {
+.call-section:not(.call-section--editorial) .booking-card:last-child {
   margin-bottom: 0 !important;
 }
 
@@ -432,7 +432,7 @@
   text-align: center !important;
 }
 
-.action-button {
+.call-section:not(.call-section--editorial) .action-button {
   padding: 8px 16px !important;
   border: none !important;
   border-radius: 6px !important;
@@ -444,21 +444,21 @@
   transition: all 0.2s ease !important;
 }
 
-.action-button:active {
+.call-section:not(.call-section--editorial) .action-button:active {
   transform: scale(0.98) !important;
 }
 
-.action-button.accept {
+.call-section:not(.call-section--editorial) .action-button.accept {
   background-color: #28a745 !important;
   color: white !important;
 }
 
-.action-button.decline {
+.call-section:not(.call-section--editorial) .action-button.decline {
   background-color: #dc3545 !important;
   color: white !important;
 }
 
-.action-button.respond {
+.call-section:not(.call-section--editorial) .action-button.respond {
   background-color: #007bff !important;
   color: white !important;
 }
@@ -491,7 +491,7 @@
     font-size: 16px !important; /* Prevents zoom on iOS */
   }
   
-  .booking-card {
+  .call-section:not(.call-section--editorial) .booking-card {
     padding: 12px !important;
   }
   
@@ -500,12 +500,12 @@
     align-items: stretch !important;
   }
   
-  .action-button {
+  .call-section:not(.call-section--editorial) .action-button {
     width: 100% !important;
     margin-bottom: 8px !important;
   }
   
-  .action-button:last-child {
+  .call-section:not(.call-section--editorial) .action-button:last-child {
     margin-bottom: 0 !important;
   }
 }
@@ -519,7 +519,7 @@
     padding: 10px !important;
   }
   
-  .booking-card {
+  .call-section:not(.call-section--editorial) .booking-card {
     padding: 10px !important;
   }
   

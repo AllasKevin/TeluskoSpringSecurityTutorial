@@ -88,7 +88,7 @@
       min-height: max(884px, 100dvh);
     }
   </style>
-  </head>
+</head>
 <body class="bg-background text-on-background min-h-screen pb-32">
 <!-- TopAppBar -->
 <header class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl fixed top-0 z-50 w-full flex justify-between items-center px-6 py-4 shadow-[0_4px_30px_rgba(0,0,0,0.05)]">
@@ -142,52 +142,110 @@
 </section>
 <!-- Time Slots (Bento Grid Style) -->
 <section class="mb-10">
-<h3 class="text-sm font-bold uppercase tracking-wider text-on-surface mb-4">Available Slots</h3>
-<div class="grid grid-cols-2 gap-3">
-<button class="py-4 px-4 rounded-xl bg-surface-container-lowest border-2 border-primary text-primary font-bold text-center shadow-sm">
-                    09:00 AM
-                </button>
-<button class="py-4 px-4 rounded-xl bg-surface-container-lowest text-on-surface-variant font-medium text-center hover:bg-surface-container transition-colors">
-                    11:30 AM
-                </button>
-<button class="py-4 px-4 rounded-xl bg-surface-container-lowest text-on-surface-variant font-medium text-center hover:bg-surface-container transition-colors">
-                    02:15 PM
-                </button>
-<button class="py-4 px-4 rounded-xl bg-surface-container-lowest text-on-surface-variant font-medium text-center hover:bg-surface-container transition-colors">
-                    04:00 PM
-                </button>
+<h3 class="text-sm font-bold uppercase tracking-wider text-on-surface mb-4">SELECT TIME</h3>
+<div class="bg-surface-container-lowest rounded-2xl p-6 flex flex-col items-center justify-center border border-outline-variant/30 shadow-sm">
+<div class="flex items-center gap-4">
+<!-- Hours -->
+<div class="flex flex-col items-center">
+<button class="text-secondary hover:text-primary transition-colors mb-1">
+<span class="material-symbols-outlined">expand_less</span>
+</button>
+<span class="text-4xl font-black text-on-background tabular-nums tracking-tighter">09</span>
+<button class="text-secondary hover:text-primary transition-colors mt-1">
+<span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+<span class="text-4xl font-black text-primary/30 mb-2">:</span>
+<!-- Minutes -->
+<div class="flex flex-col items-center">
+<button class="text-secondary hover:text-primary transition-colors mb-1">
+<span class="material-symbols-outlined">expand_less</span>
+</button>
+<span class="text-4xl font-black text-on-background tabular-nums tracking-tighter">00</span>
+<button class="text-secondary hover:text-primary transition-colors mt-1">
+<span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+<!-- AM/PM Toggle -->
+<div class="ml-4 flex flex-col gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold shadow-sm">AM</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant text-xs font-bold">PM</button>
+</div>
+</div>
+<p class="text-[11px] font-bold text-secondary uppercase tracking-widest mt-4 opacity-60">Drag to adjust time</p>
 </div>
 </section>
-<!-- Partner Selection (Tonal Layering) -->
+<!-- Other Users' Bookings -->
 <section class="mb-10">
-<h3 class="text-sm font-bold uppercase tracking-wider text-on-surface mb-4">Choose Partner</h3>
-<div class="space-y-4">
-<!-- Partner Card 1 -->
-<div class="relative group p-4 rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex items-center gap-4 overflow-hidden">
-<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-8 -mt-8"></div>
-<div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary-fixed z-10">
-<img alt="Sarah Chen" class="w-full h-full object-cover" data-alt="Close-up portrait of Sarah Chen, a professional woman with a friendly smile, outdoor daylight lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3dQ30U97j1vxuXhHxkmTATYUU1OAf8LFJT6eiJbCLGcLv8a4ivXnKIFTg8bCq4RMaTLzNb87zdj4Bq-vnDHC1b9DiJUktjj499MWeFWvK3MceZVJPJeVI6YmmGmB9i_RCpeuDQoGK-1P_HEPZD-h_xPwDxAgQy0T9ltu-Q0Qv3EKGOXaOgSUbQWMscpeDoqf3_RuamfhbFfNeSnzFA5G3mZKqhcQAsCVyjjthDVdDaD4b54fvvcBPUtbhSMyz8MxhzZXe-9R576GP"/>
+<h3 class="text-sm font-bold uppercase tracking-wider text-on-surface mb-4">OTHER USERS' BOOKINGS</h3>
+<div class="space-y-6">
+<!-- Booking Card 1 (Styled from SCREEN_2) -->
+<div class="relative group">
+<div class="absolute -inset-0.5 bg-gradient-to-br from-primary to-primary-container rounded-[2rem] opacity-5 blur-xl group-hover:opacity-10 transition-opacity"></div>
+<div class="relative bg-surface-container-lowest p-6 rounded-[1.5rem] shadow-[0_8px_30px_rgba(0,0,0,0.02)] space-y-5">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-2xl overflow-hidden shadow-inner">
+<img alt="Facilitator" class="w-full h-full object-cover" data-alt="Professional woman facilitator smiling warmly, outdoor setting with soft sunlight and greenery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiikUpD2N8873_dM1CZ0Pwh0BkzEQTlm9agkbVHSRylIJG0RWHRjqorgRQ0S9_aCi73zBCaBOVzQiH9hwNp_YD21l8z64Uw6iMUWn7NNw5Rreq0xhyePg1N1u2k6bceYjC7Yy_mDb9CYQfNBtjd9EjdJLQD2vT_yxEvjbDUADP_PO25lPCfpd3teuzDoOzK_ECEQNQYZwvPvShqz49CNE3kC090mhuEHt2MD4NpkuKO4ZEKekcaKLq6ByehVsHBgJsYr_a-yGzklI7"/>
 </div>
-<div class="flex-1 z-10">
-<h4 class="font-bold text-on-background">Sarah Chen</h4>
-<p class="text-xs text-secondary font-medium">Leadership Coach • 4.9 ★</p>
-</div>
-<div class="z-10">
-<div class="w-6 h-6 rounded-full border-2 border-primary-container bg-primary flex items-center justify-center">
-<span class="material-symbols-outlined text-[14px] text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-primary/70">Relational Practice</p>
+<h3 class="text-lg font-bold text-on-background leading-tight">Advanced Active Listening</h3>
+<p class="text-sm text-secondary font-medium">with Sarah Jenkins</p>
 </div>
 </div>
+<span class="px-3 py-1 bg-tertiary-container/10 text-tertiary text-[10px] font-bold uppercase tracking-wider rounded-full">Available</span>
 </div>
-<!-- Partner Card 2 -->
-<div class="relative p-4 rounded-2xl bg-surface-container-low flex items-center gap-4 overflow-hidden opacity-70">
-<div class="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent">
-<img alt="David Kim" class="w-full h-full object-cover" data-alt="Portrait of David Kim, professional man in business casual attire, soft office background lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8SjkDiG0nMiJ0h8BKv-B-5VkxHedSYRiVFjFKJBq_78ioFUHMXSlhlCCNOaMLNyalMRUrRjzr6beae7BRFkC0kWvsgoBFyb32mMcVX_z5wGK9Q4bvalO79TUNcHNQLAw9FBCUIHrJdp-jpNYwSLVujZOulWstoovD8-xklmsO9CuZ-q9YIn9IJya67f2nc_dPkusnq5G_VxtRLu7m47Fk95ArOZk7936Cc87yJp9AKpE1fwc1JSKwDfajIJxLHzXT_cblpqUBvKBa"/>
+<div class="flex items-center gap-6 py-4 border-y border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">calendar_month</span>
+<span class="text-sm font-semibold text-on-surface">Oct 24, 2023</span>
 </div>
-<div class="flex-1">
-<h4 class="font-bold text-on-background">David Kim</h4>
-<p class="text-xs text-secondary font-medium">Communication Specialist • 4.8 ★</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">schedule</span>
+<span class="text-sm font-semibold text-on-surface">09:00 - 10:30 AM</span>
 </div>
-<div class="w-6 h-6 rounded-full border-2 border-outline-variant"></div>
+</div>
+<div class="flex gap-3 pt-2">
+<button class="flex-1 bg-gradient-to-br from-primary to-primary-container text-on-primary py-4 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all">
+                            Join Practice
+                        </button>
+<button class="px-4 py-4 rounded-xl bg-surface-container-low text-secondary hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Booking Card 2 (Styled from SCREEN_2) -->
+<div class="bg-surface-container-low/50 p-6 rounded-[1.5rem] border border-outline-variant/5 space-y-5">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-2xl overflow-hidden grayscale-[20%]">
+<img alt="Facilitator" class="w-full h-full object-cover" data-alt="Candid portrait of a male professional facilitator in a bright modern studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAq2I4LoyolBSu7PIAFTn5XMVTeIn-iF4RnegH1WjEurV3egjKID0g6dTNzXgtp3RG2NLBGmBgrv_dzydpqR95YfLIWuD8p8yhaBoSg73VYqmUHjwKwYPWvPyDJDhGI0cEplyXRWWXrIqfwiw-VmFbIkF0pzwWpxxS1eDNvNKAPL3zSKsUxNJ25zN3wc3ekNPXJNmKj9KaP7of1pZaU2rGq-WAWRBo_YTWRGB25SO6Y6IosmHjZCvU-ewiguVBT43n858TRj2xhB5ke"/>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Leadership Lab</p>
+<h3 class="text-lg font-bold text-on-background leading-tight">Navigating Conflict</h3>
+<p class="text-sm text-secondary font-medium">with Marcus Thorne</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-secondary-container/30 text-secondary text-[10px] font-bold uppercase tracking-wider rounded-full">Available</span>
+</div>
+<div class="flex items-center gap-6 py-4 opacity-70">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-xl">calendar_month</span>
+<span class="text-sm font-semibold">Oct 28, 2023</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-xl">schedule</span>
+<span class="text-sm font-semibold">02:00 PM</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-surface-container-highest text-on-surface py-4 rounded-xl font-bold text-sm hover:bg-primary hover:text-on-primary transition-all active:scale-[0.98]">
+                        Match
+                    </button>
+</div>
 </div>
 </div>
 </section>

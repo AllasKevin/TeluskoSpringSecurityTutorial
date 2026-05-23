@@ -23,6 +23,8 @@ export interface BookingActionProps {
 export interface BookingCardProps extends BaseBookingProps, BookingActionProps {
   booking: Booking;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  /** Editorial layout for practice schedule session list (matches phone mock + Relational Architect). */
+  cardLayout?: 'default' | 'schedule';
 }
 
 export interface TabProps extends BaseBookingProps {
@@ -40,6 +42,8 @@ export interface ScheduleCallTabProps extends TabProps, BookingActionProps {
   onCreateBooking: () => void;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
   allBookings: Booking[];
+  /** Full-page schedule route uses fixed CTA above BottomNav; modal uses inline CTA. */
+  layout?: 'page' | 'embedded';
 }
 
 export interface AvailableBookingsTabProps extends TabProps, BookingActionProps {
@@ -51,4 +55,6 @@ export interface MyBookingsTabProps extends TabProps, BookingActionProps {
   myBookings: Booking[];
   onAcceptBookingResponse: (bookingId: string, responderUsername: string) => void;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  /** Full-page /app/my-bookings: no inner title; tabs + editorial cards + explore CTA. */
+  pageLayout?: boolean;
 }

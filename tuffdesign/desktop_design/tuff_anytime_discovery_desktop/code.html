@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#ffb3af",
+                    "on-tertiary-fixed": "#002109",
+                    "inverse-primary": "#ffb3af",
+                    "surface-container-high": "#dee9fc",
+                    "secondary": "#555f6f",
+                    "background": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#3d4756",
+                    "on-primary-fixed-variant": "#930017",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#c3212d",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#121c2a",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "inverse-surface": "#27313f",
+                    "tertiary-fixed-dim": "#62df7d",
+                    "outline-variant": "#e4bebb",
+                    "on-primary-fixed": "#410005",
+                    "tertiary-container": "#007531",
+                    "surface": "#f8f9ff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#bdc7d9",
+                    "on-primary-container": "#ffdad7",
+                    "on-tertiary-fixed-variant": "#005320",
+                    "on-background": "#121c2a",
+                    "secondary-fixed": "#d9e3f6",
+                    "on-surface": "#121c2a",
+                    "tertiary": "#005a24",
+                    "on-surface-variant": "#5b403e",
+                    "surface-dim": "#d0dbed",
+                    "secondary-container": "#d6e0f3",
+                    "on-tertiary-container": "#7ffc97",
+                    "inverse-on-surface": "#eaf1ff",
+                    "primary-fixed": "#ffdad7",
+                    "surface-tint": "#ba1928",
+                    "surface-variant": "#d9e3f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#596373",
+                    "primary": "#9e001a",
+                    "error-container": "#ffdad6",
+                    "outline": "#8f6f6d",
+                    "surface-container-low": "#eff4ff",
+                    "surface-container-highest": "#d9e3f6",
+                    "surface-container": "#e6eeff",
+                    "tertiary-fixed": "#7ffc97",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-layering { transition: background-color 0.3s ease; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-[#f8f9ff]/80 backdrop-blur-xl shadow-sm flex justify-between items-center h-16 px-8 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black text-red-800 tracking-tighter">Tuff Anytime</span>
+<div class="hidden md:flex items-center space-x-6 text-sm font-medium">
+<a class="text-red-800 font-bold border-b-2 border-red-800 pb-1" href="#">Discovery</a>
+<a class="text-slate-600 hover:text-red-800 transition-colors" href="#">Schedule</a>
+<a class="text-slate-600 hover:text-red-800 transition-colors" href="#">Bookings</a>
+<a class="text-slate-600 hover:text-red-800 transition-colors" href="#">Resources</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary hover:bg-primary-container text-on-primary px-5 py-2 rounded-xl text-sm font-bold transition-all duration-300">
+                Start Practice
+            </button>
+<div class="flex gap-2">
+<span class="material-symbols-outlined p-2 text-slate-600 hover:bg-[#eff4ff] rounded-full transition-all cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined p-2 text-slate-600 hover:bg-[#eff4ff] rounded-full transition-all cursor-pointer" data-icon="settings">settings</span>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high ml-2">
+<img alt="User profile" data-alt="Close up portrait of a confident professional coach with a warm smile in high-key studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1ukubF0JTmlXO4nmblZzOQ_NFWCrMkQrHs7ldHG93cBQP-RoRFYgIa4gGDhhYIlsoRsm-QE8RcSmdd2nldUw67HA60FpwiI_hJLo-yeuGxhzLlLdBpo9zfOak_2e_eml-dICpbuknOewUpSXYN6KkQ-Xn13qlfWnlslHCEoaRTiXZ4wTeoCkPI3UOTiHsHRe8HqqjsRqmi87PBs58e7ILPIbYKqyrYynV9xGE5EMmKlUuWomAIcN4fe0Mi1WNEk59h0DBgbhfGxF5"/>
+</div>
+</div>
+</nav>
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-[#f8f9ff] flex flex-col py-8 px-4 space-y-6 pt-24 hidden md:flex">
+<div class="px-4 mb-4">
+<h2 class="text-lg font-black text-red-800">Relational Architect</h2>
+<p class="text-xs text-slate-500 font-medium uppercase tracking-widest">Growth Tier</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 py-3 px-4 text-slate-500 hover:text-slate-900 hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-medium text-sm">Home</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 bg-red-50 text-red-800 rounded-lg font-semibold hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="font-medium text-sm">Discovery</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-slate-500 hover:text-slate-900 hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="video_library">video_library</span>
+<span class="font-medium text-sm">Library</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-slate-500 hover:text-slate-900 hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="font-medium text-sm">Practice</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-slate-500 hover:text-slate-900 hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-medium text-sm">History</span>
+</a>
+</nav>
+<div class="px-4 py-4 space-y-4">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold text-sm shadow-md hover:opacity-90 transition-opacity">
+                Book Session
+            </button>
+<div class="space-y-2 pt-4 border-t border-slate-100">
+<a class="flex items-center gap-3 text-slate-500 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="help">help</span>
+<span class="text-sm">Help</span>
+</a>
+<a class="flex items-center gap-3 text-slate-500 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+<span class="text-sm">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-24 pb-12 px-8">
+<div class="max-w-7xl mx-auto space-y-12">
+<!-- Hero Live Practice Section -->
+<section class="relative rounded-3xl overflow-hidden min-h-[480px] flex items-end p-12 bg-slate-900">
+<div class="absolute inset-0 z-0">
+<img alt="Live Practice Background" class="w-full h-full object-cover opacity-60" data-alt="Modern high-end office meeting room with diverse professionals engaged in active, empathetic conversation, warm cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlid7cVYqzIlh7w43Z3VWRe5DCqrKbstsjU4KTVABCLKIyglG1jhZ755Yishhzdl3UU3BLBfy-X21DaIU2nNYU83WjG0V_n-8aEX8v7FwrduzK6k65evNaDMmJSc0w8coDF5heM-KFoUpT7RumL7SLHrfIZGXK1pZ_dMpE4QKy4PxUESy8qzt1SP9zCocil4wKqMQRHXj6HMbNd_KJUqv_nYKvp7lfoqljTHZqAkR2f8cXMQA-kZ6E3OtMtwi6s6FcM_tU0KgFPDCe"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-2xl space-y-6">
+<div class="inline-flex items-center gap-2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest animate-pulse">
+<span class="w-2 h-2 bg-white rounded-full"></span>
+                        Live Now
+                    </div>
+<h1 class="text-5xl font-black text-white tracking-tighter leading-tight">Mastering Critical Feedback in High-Stakes Teams</h1>
+<p class="text-slate-200 text-lg font-medium leading-relaxed">Join Coach Marcus for an immersive session on navigating tension and building relational safety during quarterly reviews.</p>
+<div class="flex items-center gap-6 pt-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-xl font-black text-lg hover:bg-primary-container transition-all flex items-center gap-3">
+                            Join Now
+                            <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="flex -space-x-3">
+<img alt="Attendee 1" class="w-10 h-10 rounded-full border-2 border-slate-900" data-alt="Close up face of a smiling young businessman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtJpzYDtZP1rDg-pdMJLJNiatUDQIKsvJgaEULP9s0PyFm8M2vJe90Rh68XKNL7SSkR5LYdfQGNWxXIC8GMqHiBiWV1YUu52DlH_Z0CPqQShuIptA3yxbfPw9LJ8D-Nx342zPLMx6kkVAYkvHsq1oqdaEMjz3LeR2lWn7l9EqxUnIgL0KFYyfD7DFBDGDX0WE1Iq9XAgVdJD0yVAxZOgo7kqgsBDfh5pJMnP8AjtWA34JsJqL0woBRrNM-m8ymIHkhIA6mE1vXMKBm"/>
+<img alt="Attendee 2" class="w-10 h-10 rounded-full border-2 border-slate-900" data-alt="Professional woman with glasses looking thoughtful" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMfDM39Oy7pGjkOnGXR53wEhPYhR97Qfx0rI6h0czNL2ejPjaiIc0pnE6pNL2vG3HK7CrjttpKbMRB4CBaBVetq2kinWD2aeD1pCVZZWXHhhiSSXYOpRBieefQSOmSzK2zJfuOtsExHhQg4oL8GXByGHXArJSHZdX1KSqgeWbepOJ5C6O0bd-9DQnjbJME2Az6k-i6zoWQU_pxEyumtGeecMjPZANjUAEZ5ATw2syRfpmETkTOmHhZZZbjqACqlqwgUyf7h9Liom4u"/>
+<img alt="Attendee 3" class="w-10 h-10 rounded-full border-2 border-slate-900" data-alt="Mid-adult man with beard in creative office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqNG8QlF1kjOFI4FQxa4xOJ_PPh4rl-6C6IbcqTrh2dsdkU1Or7umj3D-UABWcDInd3b7Sf_cYquaPTa9iBF_2bjgt_oVbv9OqqwM03zzRsG7OMpWVXFrob5HV3p0C-n39P_GlMPdTwi3eFw3JYKOwngkGA7wZwu-ZqldDKVHWIJ3aMCgO7SpwXIeHcrnyaebVpwr3iiL7bcqHkHVj5Qi9e9xYc0QY6HLLKZ91lYkN9O__64w0s_o6rPPENPnGGhwuHg4Mpcucpq3b"/>
+<div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] text-white font-bold">+142</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Navigation & Filtering -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div>
+<h2 class="text-3xl font-black text-on-surface tracking-tight">Explore Practices</h2>
+<p class="text-on-secondary-container font-medium">Curated relational training sessions</p>
+</div>
+<div class="flex items-center gap-2 p-1 bg-surface-container-low rounded-full">
+<button class="px-6 py-2 rounded-full bg-surface-container-lowest shadow-sm text-primary font-bold text-sm transition-all">
+                        Live Now
+                    </button>
+<button class="px-6 py-2 rounded-full text-slate-500 font-bold text-sm hover:text-slate-900 transition-all">
+                        Scheduled
+                    </button>
+</div>
+</div>
+<!-- Bento Grid of Upcoming Practices -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-3xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300 group">
+<div class="h-48 relative">
+<img alt="Practice 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Group of diverse co-workers sitting together in a modern workspace brainstorming and laughing, soft daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFbEfCeGjQlU8-m04u8X9W76dBQrjarxIo5oRRXuUAYibeFreEix8jg02A43iEPcMn50LwiJIMVKlaET1nLAWHDgZdCtSLHQwW8Vukz9CDd9ZOoEj_vbi2WiWj0dR-tphv3fQW0Jlyl8MQsMDIFAzV6Tszx7AbtPp9QAdJDLYv52bjCqEaa1z2P3S8LTkFI1jE9NGfPwdK9UV3VZbqU3Godkb55937MAqysBlq97_xEdCgUE1nQF_UGU63zJziXHAkjBeL8be6YBUX"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase text-primary tracking-widest">Leadership</div>
+</div>
+<div class="p-8 space-y-6">
+<div class="flex items-center gap-3">
+<img alt="Coach Sarah" class="w-10 h-10 rounded-full bg-slate-100" data-alt="Portrait of a female leader with a friendly expression, professional background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRrYm6_kBmmubi7-zcUmWhCVmhVimGDIVK90ay1YGGLeXZiPAP8wrgpBp8w1VyDZwvG7i5ECV6-Yfcv2DAw5NWzrV7U9-plM2THDR5WHsmtdNp6Lfcc-ypGMMb4DveBDQGo0dMBYhkmiZlaTaqqxNBcB6F0rZbw-spEOKc7rpFii4F02w44bALlFud66ERuELATRwLoZkq8yqDRgDFkLgaWzSaI8WQ1tPpsXJAlC9sc5rMulfeZhqqL05c9SJelKxoeD8ocd5AIfMS"/>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Facilitator</p>
+<p class="text-sm font-black text-on-surface">Coach Sarah Chen</p>
+</div>
+</div>
+<h3 class="text-xl font-bold text-on-surface leading-tight">The Art of Radical Empathy in Management</h3>
+<div class="flex items-center justify-between pt-4">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-400">STARTS IN</span>
+<span class="text-sm font-black text-primary">14 Mins</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-xl font-bold text-sm hover:bg-primary-container transition-all">
+                                Join
+                            </button>
+</div>
+</div>
+</div>
+<!-- Card 2 (Asymmetric Span/Variation) -->
+<div class="bg-surface-container-low border border-outline-variant/10 rounded-3xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300 group flex flex-col">
+<div class="p-8 space-y-6 flex-1">
+<div class="flex items-center gap-3">
+<img alt="Coach David" class="w-10 h-10 rounded-full bg-slate-100" data-alt="Middle aged male professional coach with graying hair and a kind face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBixuAXu130FMKJkgsEVraIlTddn3uy6tGnmzIkJXmBWAfyiPThVmjtS2xHZPZ9X23-_cjr6BjytqjGDRBHPKhDLLY-VS9nja3qczmd0vM1-JwRMuxZ56efOdKnAPtjq1OtKw_YYB6JnqFWq90sA0N8hPrSQsZlDA9WqfoNNTpTtCp0NXS5ppVtXEgX1jkiHUXszXrXFO4KhOuNzE1pWB83RO1CqD5G-8exQJeS_ffajTKRhBmHJzcYXsjZeAOOWS5PaHSYX_xpGegn"/>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Facilitator</p>
+<p class="text-sm font-black text-on-surface">Dr. David Miller</p>
+</div>
+</div>
+<h3 class="text-xl font-bold text-on-surface leading-tight">Navigating Power Dynamics in Remote Teams</h3>
+<p class="text-sm text-slate-500 font-medium leading-relaxed">A workshop on identifying and addressing unseen hierarchies in virtual collaboration spaces.</p>
+<div class="pt-4">
+<div class="flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest mb-4">
+<span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
+                                Tomorrow • 10:00 AM
+                            </div>
+</div>
+</div>
+<div class="p-8 bg-surface-container-lowest/50 border-t border-slate-100 mt-auto">
+<button class="w-full flex items-center justify-center gap-2 text-primary font-black text-sm uppercase tracking-widest hover:bg-primary/5 py-3 rounded-xl transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="notifications">notifications</span>
+                            Remind Me
+                        </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-3xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300 group">
+<div class="h-48 relative">
+<img alt="Practice 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Top view of hands of team members working together over a table with charts and coffee, modern professional aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKs2Nu-NZUzHCzI2FIZDLDbg4RlzBMKyVTR2_fzdlCCOubnWpFik-LDR8kTefaBV2Rm9mDJoy9bUOdD3a4V4AyGS_Gc9s8RsUXOudO59-tHHuVrsxPEgFRm17qvEKfhRwul0F64w-L6hzJzNfYe3yR2Qzl94VSv6jUthtLAhKMw9zvpxYFweke-e05u2zNFxepZR5iBxBCryQpbau1gHccPU8bPJcsgmfpMoAPGE7KFHudmBzWHCx3xzH0uaQWJZtIJh2UvCTIvzw9"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase text-primary tracking-widest">Conflict</div>
+</div>
+<div class="p-8 space-y-6">
+<div class="flex items-center gap-3">
+<img alt="Coach Elena" class="w-10 h-10 rounded-full bg-slate-100" data-alt="Confident woman with striking eyes and professional attire in a bright office environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvylxm-O4zv7rNEBBQXhzD9nAPZb_6n4FvK2U_LlL7xj73FRVstUY1wSx6ZgonxIn_60TYzJPiTtmLRg_mY9jn3zmvOakilqVZBu9jjE8giCoyNELNqK6mKIYNHpgW8oiBKXi3ec3UiwtrFtyQPEwXZ54GZgQ2DYsJyeNrg68vJ_041MHNdFdJl4oXPHHckynmjfSTy_xfjt7AuY4bvqR2yrhM4a07FKmz05CvPVBXddgulsObdLuZ4hiNmy7baKco7Kp7W3gsu1-c"/>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Facilitator</p>
+<p class="text-sm font-black text-on-surface">Elena Rodriguez</p>
+</div>
+</div>
+<h3 class="text-xl font-bold text-on-surface leading-tight">De-escalating Friction: Real-time Simulation</h3>
+<div class="flex items-center justify-between pt-4">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-400">STARTS IN</span>
+<span class="text-sm font-black text-primary">32 Mins</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-xl font-bold text-sm hover:bg-primary-container transition-all">
+                                Join
+                            </button>
+</div>
+</div>
+</div>
+<!-- Card 4 (Hero Variation) -->
+<div class="lg:col-span-2 bg-gradient-to-br from-red-900 to-red-800 rounded-3xl p-10 flex flex-col md:flex-row gap-8 items-center group">
+<div class="md:w-1/2 space-y-6">
+<span class="text-red-200 text-xs font-black uppercase tracking-widest bg-red-800/50 px-4 py-1 rounded-full inline-block">Premium Workshop</span>
+<h3 class="text-3xl font-black text-white leading-tight">Architecting Trust: A 2-Hour Mastery Intensive</h3>
+<p class="text-red-100 font-medium opacity-80">Our most requested deep-dive session. Limited seats available for live interactive feedback.</p>
+<button class="bg-white text-red-900 px-8 py-3 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-50 transition-all flex items-center gap-2">
+                            Secure Spot
+                            <span class="material-symbols-outlined" data-icon="confirmation_number">confirmation_number</span>
+</button>
+</div>
+<div class="md:w-1/2 relative">
+<img alt="Workshop Preview" class="rounded-2xl shadow-2xl group-hover:rotate-1 transition-transform duration-500" data-alt="Candid shot of people in a workshop setting, blurred background of a white board with colorful post-it notes, professional atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaZ6oziuBduXb_oseJhn2yagzB4AfDIb4A30lq-JzSKSaLSwOhdoLUG2QUkwi_tbGB4p_sqxW7e4_kSY7PKBSewzH_DzvdmwI0nhq9k7GW2W-0zZlMtHjOXD9X5ul-rpk2eAKqkiqWQ66WEPz_o2mik2dYM1sK88YoEOiK_OwzKg2fZbbm8aGMlAxd9zH-gIOGpw9rRbRNrZyz6uIePi0AMlrpKxoHlxPgg6S5ZKxDGW1KdGI7yYS0elxSFOP79BsFuT2U8uXGh3tm"/>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest rounded-3xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300 group">
+<div class="h-48 relative">
+<img alt="Practice 5" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Creative agency team discussing ideas around a table with laptops, modern and energetic vibe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRfwYCp_7Rr2AIMIh6noSkC9R0WofGXaCIzqY_JqEFV21uIa9gQewDibwpXXFaligO1wq41gzikDNlAD685bPUHa7Mm0zpJOTNi1-_NELz0l17vSu7-pHaqOyskoS1mdN2vKPSJvq1Rw6oqN8Hmki0gdXHe-tLtyZKxIXTxxSqTGIbPc40VkkjqLkW-RgZKbM_sjmWuEKjHIl6Pzv06jE89SfpF2_qibv-AUYcG2eQjEMjkGNsSsk9JR5IQzryCcjTsQJQUtpNmrA7"/>
+</div>
+<div class="p-8 space-y-6">
+<div class="flex items-center gap-3">
+<img alt="Coach Jordan" class="w-10 h-10 rounded-full bg-slate-100" data-alt="Young professional man with energetic expression in urban setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgGrl67jWgU2SNzq7mz-m4yZTXZJSbKKjPTX-9Y6fUhwpQPznY1XPm05__kn9htA5t9vGDQxdoFqf3BgjYX62LXa8r-i6JbSvW1eAjfSnG4hlL8pTroAZ1cKh6UrTT10_Ih7Cm9WxpAKb8pxxUho8o-559p1gTV7OeVPSTnYIxnggbXL6seRuE7mwvbzNKUtCBPHFLQsxvSSg8y6X66mVUcooODBsSDG8eTx62c94akQjsk88UJm2RjN_IzASBQKXGRS74Vag15Ncb"/>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Facilitator</p>
+<p class="text-sm font-black text-on-surface">Jordan Blake</p>
+</div>
+</div>
+<h3 class="text-xl font-bold text-on-surface leading-tight">Authentic Networking for Introverted Leaders</h3>
+<div class="flex items-center justify-between pt-4">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-400">STARTS IN</span>
+<span class="text-sm font-black text-primary">55 Mins</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-xl font-bold text-sm hover:bg-primary-container transition-all">
+                                Join
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Only on Home/Discovery) -->
+<button class="fixed bottom-8 right-8 bg-red-800 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined" data-icon="add" style="font-variation-settings: 'wght' 600;">add</span>
+</button>
+</body></html>

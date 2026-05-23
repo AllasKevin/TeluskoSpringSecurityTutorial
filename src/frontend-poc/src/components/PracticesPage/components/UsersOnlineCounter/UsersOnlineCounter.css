@@ -29,3 +29,10 @@
     transform: translateX(-50%);
   }
 }
+
+@media (min-width: 64rem) {
+  .users-online-counter {
+    top: calc(var(--practice-desktop-header-height) + 0.35rem);
+    right: clamp(0.75rem, 2vw, 1.5rem);
+  }
+}

@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import "./InviteCodesPage.css";
-import mandala from "../../assets/mandala.png";
+import brandWordmark from "../../assets/tuff-ledarskap-wordmark.png";
 import { useEffect, useState } from "react";
 import InviteCodeService from "../../services/InviteCodeService";
 import { FilterHeader } from "../PracticesPage/components/FilterHeader";
+import { BottomNav } from "../BottomNav";
+import { DesktopAppChrome } from "../DesktopAppChrome/DesktopAppChrome";
+import { appDiscoveryPage } from "../../../../shared/practices/practices";
 
 interface InviteCode {
   inviteCode: string;
@@ -27,11 +30,17 @@ export function InviteCodesPage() {
 
   return (
     <div className="invite-page">
+      <DesktopAppChrome />
       <div className="invite-page__inner">
         <FilterHeader />
         <div className="logo-container">
-          <img src={mandala} alt="Company logo" className="logo-icon" />
-          <div className="logo-text">GrowHub</div>
+          <img
+            src={brandWordmark}
+            alt=""
+            className="brand-wordmark-img"
+            aria-hidden
+          />
+          <div className="logo-text">{appDiscoveryPage.brand}</div>
         </div>
         <header className="invite-page__header-block">
           <p className="invite-page__eyebrow">Administration</p>
@@ -61,6 +70,7 @@ export function InviteCodesPage() {
           </button>
         </div>
       </div>
+      <BottomNav />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import './LoginPage.css';
 import LoginService, { LoginCredentials } from '../../services/LoginService';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import mandala from '../../assets/mandala.png';
+import { appDiscoveryPage } from '../../../../shared/practices/practices';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -52,8 +52,7 @@ const LoginPage: React.FC = () => {
     <div className="login-container">
       <div className="content-wrapper">
         <div className="logo-container">
-          <img src={mandala} alt="Company Logo" className="logo-icon" />
-          <div className="logo-text">GrowHub</div>
+          <div className="logo-text">{appDiscoveryPage.brand}</div>
         </div>
 
         <div className="form-container">

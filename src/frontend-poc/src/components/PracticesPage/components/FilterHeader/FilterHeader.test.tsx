@@ -26,12 +26,12 @@ describe('FilterHeader', () => {
     expect(screen.getByText('Invitation Codes')).toBeInTheDocument();
   });
 
-  it('navigates to /app when Practices is clicked', async () => {
+  it('navigates to /app/discover when Practices is clicked', async () => {
     const user = userEvent.setup();
     renderComponent();
 
     await user.click(screen.getByText('Practices'));
-    expect(mockNavigate).toHaveBeenCalledWith('/app');
+    expect(mockNavigate).toHaveBeenCalledWith('/app/discover');
   });
 
   it('navigates to /invitecodes when Invitation Codes is clicked', async () => {

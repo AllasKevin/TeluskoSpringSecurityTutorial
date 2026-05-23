@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 import { useState } from "react";
-import mandala from "../../assets/mandala.png";
+import { appDiscoveryPage } from "../../../../shared/practices/practices";
 
 const GoogleIcon = () => (
   <svg
@@ -59,9 +59,7 @@ const LandingPage = () => {
     <div className="landing-container">
       <div className="content-wrapper">
         <div className="logo-container">
-          <span className="landing-eyebrow">Relational practice</span>
-          <img src={mandala} alt="Company Logo" className="logo-icon" />
-          <div className="logo-text">GrowHub</div>
+          <h1 className="logo-text">{appDiscoveryPage.brand}</h1>
         </div>
 
         <div className="auth-container">

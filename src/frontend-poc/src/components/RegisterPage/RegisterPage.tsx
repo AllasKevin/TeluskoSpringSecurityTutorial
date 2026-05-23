@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import "./RegisterPage.css";
-import mandala from "../../assets/mandala.png";
+import { appDiscoveryPage } from "../../../../shared/practices/practices";
 import RegisterService, {
   RegisterRequest,
 } from "../../services/RegisterService";
@@ -118,8 +118,7 @@ export function RegisterPage() {
     <div className="register-container">
       <div className="register-content">
         <div className="logo-container">
-          <img src={mandala} alt="Company Logo" className="logo-icon" />
-          <div className="logo-text">GrowHub</div>
+          <div className="logo-text">{appDiscoveryPage.brand}</div>
         </div>
 
         <div className="form-container">

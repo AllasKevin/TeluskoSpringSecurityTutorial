@@ -11,8 +11,6 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
-vi.mock('../../assets/mandala.png', () => ({ default: 'mandala.png' }));
-
 const mockPost = vi.fn();
 vi.mock('../../services/LoginService', () => ({
   default: { post: (...args: unknown[]) => mockPost(...args) },
@@ -42,7 +40,7 @@ describe('LoginPage', () => {
 
   it('renders the brand name', () => {
     renderComponent();
-    expect(screen.getByText('GrowHub')).toBeInTheDocument();
+    expect(screen.getByText('Tuff Anytime')).toBeInTheDocument();
   });
 
   it('shows validation error for empty username', async () => {

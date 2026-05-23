@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import MyBookingsTab from './MyBookingsTab';
 import { Booking } from '../../../../types/booking';
 import { formatDateTime, getStatusColor, isUserBooking, hasUserResponded } from '../../../../utils/bookingUtils';
@@ -37,20 +38,21 @@ describe('MyBookingsTab', () => {
     setCurrentBooking: vi.fn(),
   };
 
-  it('renders the heading', () => {
+  it('renders embedded heading and upcoming tab', () => {
     render(<MyBookingsTab {...defaultProps} myBookings={[]} />);
     expect(screen.getByText('My Bookings')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /upcoming/i })).toBeInTheDocument();
   });
 
-  it('shows empty message when no active bookings', () => {
+  it('shows empty message for upcoming when no bookings', () => {
     render(<MyBookingsTab {...defaultProps} myBookings={[]} />);
-    expect(screen.getByText('No active bookings found')).toBeInTheDocument();
+    expect(screen.getByText('No upcoming sessions.')).toBeInTheDocument();
   });
 
-  it('shows bookings created by the user', () => {
+  it('shows bookings created by the user in upcoming', () => {
     const bookings = [createBooking({ userName: 'bob' })];
     render(<MyBookingsTab {...defaultProps} myBookings={bookings} />);
-    expect(screen.getByText('bob')).toBeInTheDocument();
+    expect(screen.getByText(/with\s+bob/i)).toBeInTheDocument();
   });
 
   it('shows bookings where user has responded', () => {
@@ -62,17 +64,39 @@ describe('MyBookingsTab', () => {
       }),
     ];
     render(<MyBookingsTab {...defaultProps} myBookings={bookings} />);
-    expect(screen.getByText('alice')).toBeInTheDocument();
+    expect(screen.getByText(/with\s+alice/i)).toBeInTheDocument();
   });
 
-  it('sorts bookings by date ascending', () => {
+  it('sorts upcoming bookings by date ascending', () => {
     const bookings = [
       createBooking({ id: '1', userName: 'bob', dateTime: new Date('2026-03-02T10:00:00') }),
       createBooking({ id: '2', userName: 'bob', dateTime: new Date('2026-03-01T10:00:00') }),
     ];
     render(<MyBookingsTab {...defaultProps} myBookings={bookings} />);
 
-    const titles = screen.getAllByText('bob');
-    expect(titles).toHaveLength(2);
+    expect(screen.getAllByText(/with\s+bob/i)).toHaveLength(2);
+  });
+
+  it('shows past bookings in Past sessions tab', () => {
+    const bookings = [
+      createBooking({
+        id: 'past1',
+        userName: 'bob',
+        dateTime: new Date('2026-02-01T10:00:00'),
+      }),
+    ];
+    render(<MyBookingsTab {...defaultProps} myBookings={bookings} />);
+    fireEvent.click(screen.getByRole('tab', { name: /past sessions/i }));
+    expect(screen.getByText(/with\s+bob/i)).toBeInTheDocument();
+  });
+
+  it('page layout shows explore link to schedule', () => {
+    render(
+      <MemoryRouter>
+        <MyBookingsTab {...defaultProps} myBookings={[]} pageLayout />
+      </MemoryRouter>,
+    );
+    const link = screen.getByRole('link', { name: /explore schedule/i });
+    expect(link).toHaveAttribute('href', '/app/practice/anypractice/schedule');
   });
 });

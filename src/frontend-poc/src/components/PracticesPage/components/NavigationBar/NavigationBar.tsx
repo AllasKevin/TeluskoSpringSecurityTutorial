@@ -2,15 +2,16 @@ import React from "react";
 import AccountImage from "../../../../assets/account.png";
 import PlannerImage from "../../../../assets/planner.png";
 import ChatImage from "../../../../assets/chat-bubble.png";
-import MandalaImage from "../../../../assets/mandala.png";
+import brandWordmark from "../../../../assets/tuff-ledarskap-wordmark.png";
 
 export const NavigationBar: React.FC = () => {
   return (
     <div className="navigation-bar">
       <img
-        src={MandalaImage}
-        alt={MandalaImage}
-        className="navigation-bar-item navigation-bar-logo-item"
+        src={brandWordmark}
+        alt=""
+        aria-hidden
+        className="navigation-bar-item navigation-bar-logo-item navigation-bar-brand-wordmark"
       />
       <img
         src={PlannerImage}

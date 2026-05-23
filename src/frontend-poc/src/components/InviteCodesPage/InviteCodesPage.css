@@ -3,6 +3,7 @@
   background: var(--surface);
   position: relative;
   overflow-x: hidden;
+  padding-bottom: 5.5rem;
 }
 
 .invite-page::before {
@@ -115,11 +116,10 @@
   align-items: center;
 }
 
-.invite-page .logo-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  margin-bottom: 0.5rem;
+.invite-page .brand-wordmark-img {
+  width: min(100%, 14rem);
+  height: auto;
+  margin-bottom: 0.75rem;
 }
 
 .invite-page .logo-text {
@@ -127,4 +127,26 @@
   font-size: 1.25rem;
   letter-spacing: -0.02em;
   color: var(--primary);
+}
+
+@media (min-width: 64rem) {
+  .invite-page {
+    padding-bottom: 2.5rem;
+  }
+
+  .invite-page .filter-header {
+    display: none;
+  }
+
+  .invite-page__inner {
+    max-width: min(56rem, 100%);
+    margin: 0 auto;
+    padding: 1.5rem clamp(1rem, 2vw, 2rem) 3rem;
+    padding-top: calc(
+      var(--practice-desktop-header-height) + 1.5rem
+    );
+    padding-left: calc(
+      var(--practice-desktop-sidebar-width) + clamp(1rem, 2vw, 2rem)
+    );
+  }
 }

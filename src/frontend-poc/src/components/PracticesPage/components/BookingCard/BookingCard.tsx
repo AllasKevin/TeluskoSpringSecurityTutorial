@@ -10,10 +10,22 @@ import {
   isBookingReady,
   getTimeUntilBooking,
 } from '../../../../utils/bookingUtils';
+import {
+  appDiscoveryPage,
+  practices,
+} from '../../../../../../shared/practices/practices';
 import './BookingCard.css';
+
+function scheduleStatusLabel(status: string): string {
+  if (status === 'PENDING') return 'Available';
+  if (status === 'CONFIRMED') return 'Confirmed';
+  if (status === 'CANCELLED') return 'Cancelled';
+  return status;
+}
 
 const BookingCard: React.FC<BookingCardProps> = ({
   booking,
+  cardLayout = 'default',
   currentUsername,
   onBookingAction,
   onRespondToBooking,
@@ -220,26 +232,100 @@ const BookingCard: React.FC<BookingCardProps> = ({
     );
   };
 
-  return (
-    <div className="booking-card">
-      <div className="booking-header">
-        <div>
-          <h3 className="booking-title">{booking.userName}</h3>
-          <p className="booking-details">
-            <span className="booking-detail-label">Practice:</span>
-            <span className="booking-detail-value">{booking.practice}</span>
-          </p>
-          <p className="booking-details">
-            <span className="booking-detail-label">Time:</span>
-            <span className="booking-detail-value">{formatDateTime(booking.dateTime)}</span>
-          </p>
-          {renderUserInfo()}
+  const practiceMeta = practices.find((p) => p.name === booking.practice);
+  const practiceTitle = practiceMeta?.title ?? booking.practice;
+  const practiceImage =
+    practiceMeta?.imageUrl ?? "/brand/tuff-ledarskap-wordmark.png";
+  const scheduleDateStr = booking.dateTime.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  const scheduleTimeStr = booking.dateTime.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  const renderScheduleShell = () => (
+    <>
+      <div className="booking-card__schedule-top">
+        <div className="booking-card__schedule-lead">
+          <div className="booking-card__schedule-avatar">
+            <img src={practiceImage} alt="" className="booking-card__schedule-avatar-img" />
+          </div>
+          <div className="booking-card__schedule-copy">
+            <p className="booking-card__schedule-eyebrow">{appDiscoveryPage.scheduleEyebrow}</p>
+            <h3 className="booking-card__schedule-title">{practiceTitle}</h3>
+            <p className="booking-card__schedule-with">
+              {appDiscoveryPage.cardInstructorPrefix} {booking.userName}
+            </p>
+          </div>
         </div>
-        <div className="booking-status" style={{ backgroundColor: getStatusColor(booking.status) }}>
-          {booking.status}
+        <span
+          className={
+            'booking-card__schedule-chip booking-card__schedule-chip--' +
+            booking.status.toLowerCase()
+          }
+        >
+          {scheduleStatusLabel(booking.status)}
+        </span>
+      </div>
+      <div
+        className="booking-card__schedule-meta"
+        role="group"
+        aria-label="Session date and time"
+      >
+        <div className="booking-card__schedule-meta-item">
+          <span className="material-symbols-outlined booking-card__schedule-meta-icon" aria-hidden>
+            calendar_month
+          </span>
+          <span className="booking-card__schedule-meta-text">{scheduleDateStr}</span>
+        </div>
+        <div className="booking-card__schedule-meta-item">
+          <span className="material-symbols-outlined booking-card__schedule-meta-icon" aria-hidden>
+            schedule
+          </span>
+          <span className="booking-card__schedule-meta-text">{scheduleTimeStr}</span>
         </div>
       </div>
-      {renderActionButtons()}
+      <div className="booking-card__schedule-actions">{renderActionButtons()}</div>
+    </>
+  );
+
+  return (
+    <div
+      className={
+        'booking-card' + (cardLayout === 'schedule' ? ' booking-card--schedule' : '')
+      }
+    >
+      {cardLayout === 'schedule' ? (
+        renderScheduleShell()
+      ) : (
+        <>
+          <div className="booking-header">
+            <div>
+              <h3 className="booking-title">{booking.userName}</h3>
+              <p className="booking-details">
+                <span className="booking-detail-label">Practice:</span>
+                <span className="booking-detail-value">{booking.practice}</span>
+              </p>
+              <p className="booking-details">
+                <span className="booking-detail-label">Time:</span>
+                <span className="booking-detail-value">{formatDateTime(booking.dateTime)}</span>
+              </p>
+              {renderUserInfo()}
+            </div>
+            <div
+              className="booking-status"
+              style={{ backgroundColor: getStatusColor(booking.status) }}
+            >
+              {booking.status}
+            </div>
+          </div>
+          {renderActionButtons()}
+        </>
+      )}
     </div>
   );
 };

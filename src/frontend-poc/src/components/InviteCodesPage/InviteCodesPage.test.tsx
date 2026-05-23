@@ -10,7 +10,9 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
-vi.mock('../../assets/mandala.png', () => ({ default: 'mandala.png' }));
+vi.mock('../../assets/tuff-ledarskap-wordmark.png', () => ({
+  default: 'tuff-ledarskap-wordmark.png',
+}));
 vi.mock('../../assets/filter.png', () => ({ default: 'filter.png' }));
 
 const mockGetMyInviteCodes = vi.fn();

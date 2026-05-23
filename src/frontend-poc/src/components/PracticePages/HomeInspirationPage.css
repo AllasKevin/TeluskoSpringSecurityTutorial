@@ -1,0 +1,592 @@
+/* Home / inspiration — Relational Architect tokens; mobile + desktop (tuffdesign) */
+
+.home-inspiration {
+  min-height: 100dvh;
+  background: var(--surface);
+  position: relative;
+}
+
+.home-inspiration__topbar {
+  position: sticky;
+  top: 0;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem clamp(1rem, 4vw, 2rem);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(18, 28, 42, 0.05);
+}
+
+.home-inspiration__brand {
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: -0.03em;
+  color: var(--primary);
+}
+
+.home-inspiration__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.home-inspiration__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--secondary);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.home-inspiration__icon-btn:hover {
+  background: var(--surface-container-low);
+  color: var(--primary);
+}
+
+.home-inspiration__main {
+  width: 100%;
+  max-width: min(28rem, 100%);
+  margin: 0 auto;
+  padding: 1.25rem clamp(1rem, 4vw, 1.5rem)
+    calc(6rem + var(--practice-bottom-nav-height, 4.5rem));
+  box-sizing: border-box;
+}
+
+.home-inspiration__media-fill {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.home-inspiration__hero {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-2xl);
+  margin-bottom: 2rem;
+  box-shadow: 0 24px 48px rgba(158, 0, 26, 0.18);
+}
+
+.home-inspiration__hero-media {
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--surface-container-high);
+}
+
+.home-inspiration__hero-copy {
+  background: var(--gradient-primary);
+  padding: 1.5rem 1.35rem 1.75rem;
+}
+
+.home-inspiration__hero-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--on-primary) 75%, transparent);
+}
+
+.home-inspiration__hero-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.35rem, 4vw, 1.65rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--on-primary);
+}
+
+.home-inspiration__hero-lead {
+  margin: 0 0 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--on-primary) 92%, transparent);
+}
+
+.home-inspiration__hero-cta {
+  display: flex;
+  justify-content: center;
+}
+
+.home-inspiration__hero-cta button {
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.5rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--surface-container-lowest);
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+
+.home-inspiration__hero-cta button:hover {
+  filter: brightness(1.03);
+}
+
+.home-inspiration__section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.home-inspiration__section-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--on-background);
+}
+
+.home-inspiration__section-link {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.home-inspiration__section-link:hover {
+  text-decoration: underline;
+}
+
+.home-inspiration__pillars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 2.25rem;
+}
+
+.home-inspiration__pillar-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.home-inspiration__pillar-card {
+  background: var(--surface-container-low);
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  box-shadow: 0 8px 24px rgba(18, 28, 42, 0.05);
+}
+
+.home-inspiration__pillar-card--tall {
+  grid-row: span 2;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.home-inspiration__pillar-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--surface-container-high);
+}
+
+.home-inspiration__pillar-body {
+  padding: 1rem;
+  background: var(--surface-container-low);
+}
+
+.home-inspiration__pillar-tag {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.home-inspiration__pillar-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--on-surface);
+}
+
+.home-inspiration__pillar-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--surface-container-lowest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.65rem;
+  color: var(--primary);
+  font-size: 1.25rem;
+}
+
+.home-inspiration__narratives-title {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--on-background);
+}
+
+.home-inspiration__article {
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-ambient);
+}
+
+.home-inspiration__article-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--surface-container-high);
+}
+
+.home-inspiration__article-body {
+  padding: 1.15rem 1.25rem 1.35rem;
+}
+
+.home-inspiration__article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.home-inspiration__tag {
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+
+.home-inspiration__article-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--on-surface);
+}
+
+.home-inspiration__article-summary {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--secondary);
+  font-weight: 500;
+}
+
+/* —— Desktop (tuffdesign/home_inspiration_desktop) —— */
+@media (min-width: 64rem) {
+  .home-inspiration__topbar {
+    display: none;
+  }
+
+  .home-inspiration__main {
+    max-width: min(72rem, 100%);
+    padding: 1.5rem clamp(1rem, 2vw, 2rem) 3rem;
+  }
+
+  .home-inspiration__lead-desktop {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 1.05fr);
+    gap: clamp(1.5rem, 3vw, 3rem);
+    align-items: center;
+    margin-bottom: 3rem;
+  }
+
+  .home-inspiration__lead-copy {
+    min-width: 0;
+  }
+
+  .home-inspiration__pulse-eyebrow {
+    margin: 0 0 0.65rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+
+  .home-inspiration__pulse-title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--on-background);
+  }
+
+  .home-inspiration__pulse-title em {
+    font-style: normal;
+    color: var(--primary);
+  }
+
+  .home-inspiration__pulse-lead {
+    margin: 0 0 1.5rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--secondary);
+    font-weight: 500;
+    max-width: 42ch;
+  }
+
+  .home-inspiration__pulse-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .home-inspiration__btn-primary {
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 0.85rem 1.5rem;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--on-primary);
+    background: var(--gradient-primary);
+    cursor: pointer;
+    box-shadow: 0 12px 28px rgba(158, 0, 26, 0.2);
+    transition: filter 0.2s ease;
+  }
+
+  .home-inspiration__btn-primary:hover {
+    filter: brightness(1.04);
+  }
+
+  .home-inspiration__btn-secondary {
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 0.85rem 1.5rem;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    background: var(--surface-container-highest);
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .home-inspiration__btn-secondary:hover {
+    background: var(--secondary-container);
+  }
+
+  .home-inspiration__lead-visual {
+    position: relative;
+    min-height: 280px;
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    background: var(--surface-container-high);
+    box-shadow: var(--shadow-ambient);
+  }
+
+  .home-inspiration__lead-visual .home-inspiration__media-fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .home-inspiration__hero {
+    display: none;
+  }
+
+  .home-inspiration__tips-head {
+    margin-bottom: 0.35rem;
+  }
+
+  .home-inspiration__tips-sub {
+    margin: 0 0 1.5rem;
+    font-size: 0.9375rem;
+    color: var(--secondary);
+    font-weight: 500;
+  }
+
+  .home-inspiration__tips-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+    align-items: start;
+  }
+
+  .home-inspiration__tips-feature {
+    background: var(--surface-container-lowest);
+    border-radius: var(--radius-2xl);
+    padding: 1.5rem;
+    box-shadow: 0 20px 48px rgba(18, 28, 42, 0.06);
+    min-height: 100%;
+  }
+
+  .home-inspiration__tips-feature-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    margin: -1.5rem -1.5rem 1rem;
+    border-radius: var(--radius-2xl) var(--radius-2xl) var(--radius-lg)
+      var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface-container-high);
+  }
+
+  .home-inspiration__tips-feature .home-inspiration__pillar-icon {
+    margin-bottom: 1rem;
+  }
+
+  .home-inspiration__tips-feature-title {
+    margin: 0 0 0.65rem;
+    font-size: 1.125rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--on-surface);
+  }
+
+  .home-inspiration__tips-feature-desc {
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--secondary);
+  }
+
+  .home-inspiration__tips-meta {
+    font-size: 0.625rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+
+  .home-inspiration__tips-small-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+  }
+
+  .home-inspiration__tips-small-card {
+    background: var(--surface-container-lowest);
+    border-radius: var(--radius-xl);
+    padding: 1rem;
+    box-shadow: 0 8px 24px rgba(18, 28, 42, 0.05);
+  }
+
+  .home-inspiration__tips-small-thumb {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    margin: -1rem -1rem 0.75rem;
+    border-radius: var(--radius-xl) var(--radius-xl) var(--radius-lg)
+      var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface-container-high);
+  }
+
+  .home-inspiration__tips-small-card .home-inspiration__pillar-title {
+    font-size: 0.8125rem;
+  }
+
+  .home-inspiration__stories-wrap {
+    background: var(--surface-container-low);
+    border-radius: var(--radius-2xl);
+    padding: 2rem clamp(1.25rem, 2vw, 2.5rem);
+    margin-top: 0.5rem;
+  }
+
+  .home-inspiration__stories-title {
+    margin: 0 0 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--on-background);
+  }
+
+  .home-inspiration__stories-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .home-inspiration__story-card {
+    background: var(--surface-container-lowest);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: 0 12px 32px rgba(18, 28, 42, 0.06);
+  }
+
+  .home-inspiration__story-quote {
+    margin: 0 0 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    font-style: italic;
+    color: var(--on-surface-variant);
+  }
+
+  .home-inspiration__story-author {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .home-inspiration__story-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface-container-high);
+    flex-shrink: 0;
+  }
+
+  .home-inspiration__story-name {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--on-surface);
+  }
+
+  .home-inspiration__story-role {
+    margin: 0.15rem 0 0;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--secondary);
+  }
+
+  .home-inspiration__mobile-only {
+    display: none;
+  }
+}
+
+.home-inspiration__desktop-only {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .home-inspiration__desktop-only {
+    display: block;
+  }
+}

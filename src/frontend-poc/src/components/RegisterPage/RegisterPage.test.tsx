@@ -10,8 +10,6 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
-vi.mock('../../assets/mandala.png', () => ({ default: 'mandala.png' }));
-
 const mockRegisterPost = vi.fn();
 vi.mock('../../services/RegisterService', () => ({
   default: { post: (...args: unknown[]) => mockRegisterPost(...args) },

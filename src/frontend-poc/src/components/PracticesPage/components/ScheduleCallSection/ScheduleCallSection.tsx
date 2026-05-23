@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MandalaImage from '../../../../assets/mandala.png';
+import brandWordmark from '../../../../assets/tuff-ledarskap-wordmark.png';
 import PlannerImage from '../../../../assets/planner.png';
 import FilterImage from '../../../../assets/filter.png';
 import DatePicker from 'react-datepicker';
@@ -22,6 +22,14 @@ import MyBookingsTab from '../MyBookingsTab';
 import { RefObject } from 'react';
 
 interface ScheduleCallSectionProps {
+  /** When set, only this panel is shown and the tab bar is hidden. */
+  forcedTab?: 'join' | 'schedule' | 'bookings' | 'mybookings';
+  /** Hide the icon tab row (used with forcedTab on full pages). */
+  hideTabBar?: boolean;
+  /** Practice schedule route: new session UI + fixed primary CTA. */
+  editorialSchedule?: boolean;
+  /** /app/my-bookings: flat call-section + editorial booking cards. */
+  editorialMyBookings?: boolean;
   practice: string;
   callStatus: CallStatus | undefined;
   updateCallStatus: React.Dispatch<React.SetStateAction<CallStatus | undefined>>;
@@ -39,7 +47,7 @@ interface ScheduleCallSectionProps {
   setIceCandidatesReadyTrigger: React.Dispatch<React.SetStateAction<number>>;
   remoteDescAddedForOfferer: boolean;
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowCallModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowCallModal?: React.Dispatch<React.SetStateAction<boolean>>;
   setRemoteDescAddedForOfferer: React.Dispatch<React.SetStateAction<boolean>>;
   setAvailableCalls: React.Dispatch<React.SetStateAction<CallData[]>>;
   currentBooking: Booking | undefined;
@@ -77,6 +85,10 @@ const getNextQuarterHour = (): Date => {
 };
 
 export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
+  forcedTab,
+  hideTabBar,
+  editorialSchedule = false,
+  editorialMyBookings = false,
   practice,
   setShowPopup,
   setShowCallModal,
@@ -93,7 +105,11 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   setMyBookings,
   allBookings,
 }) => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('join');
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => forcedTab ?? 'join');
+
+  useEffect(() => {
+    if (forcedTab) setActiveTab(forcedTab);
+  }, [forcedTab]);
   const [startDate, setStartDate] = useState<Date | null>(() => getNextQuarterHour());
   const [isMobile, setIsMobile] = useState(false);
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
@@ -139,7 +155,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
   }, [activeTab, currentUsername, loadMyBookings]);
 
   const handlePracticeNow = () => {
-    setShowCallModal(false);
+    setShowCallModal?.(false);
     setShowPopup(true);
   };
 
@@ -268,14 +284,27 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
     onWithdrawBookingResponse: handleWithdrawBookingResponse,
   };
 
+  const editorialChrome = editorialSchedule || editorialMyBookings;
+
   return (
-    <div className="call-section" onClick={(e) => e.stopPropagation()}>
+    <div
+      className={
+        'call-section' + (editorialChrome ? ' call-section--editorial' : '')
+      }
+      onClick={(e) => e.stopPropagation()}
+    >
+      {!hideTabBar && (
       <div className="button-row">
         <button
           onClick={() => setActiveTab('join')}
           className={activeTab === 'join' ? 'active-button' : ''}
         >
-          <img className="call-section-item call-section-logo-item" src={MandalaImage} alt="Join" />
+          <img
+            className="call-section-item call-section-logo-item call-section-brand-wordmark"
+            src={brandWordmark}
+            alt=""
+            aria-hidden
+          />
           <span className="tab-label">Join</span>
         </button>
         {practice !== 'anypractice' && (
@@ -302,6 +331,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           <span className="tab-label">My Bookings</span>
         </button>
       </div>
+      )}
 
       {activeTab === 'join' && (
         <div className="join-call-content">
@@ -324,6 +354,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
           onSearchBookings={() => loadBookingsForDate(startDate)}
           onCreateBooking={handleCreateBooking}
           allBookings={allBookings}
+          layout={editorialSchedule ? 'page' : 'embedded'}
           {...commonBookingProps}
           {...commonActionProps}
         />
@@ -342,6 +373,7 @@ export const ScheduleCallSection: React.FC<ScheduleCallSectionProps> = ({
         <MyBookingsTab
           practice={practice}
           myBookings={myBookings}
+          pageLayout={editorialMyBookings}
           {...commonBookingProps}
           {...commonActionProps}
           onAcceptBookingResponse={handleAcceptBookingResponse}

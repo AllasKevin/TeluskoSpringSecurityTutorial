@@ -1,0 +1,119 @@
+/* Schedule session shell — matches editorial top bar + phone mock spacing */
+
+.schedule-shell {
+  min-height: 100dvh;
+  background: var(--surface);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-shell__topbar {
+  position: sticky;
+  top: 0;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem clamp(1rem, 4vw, 2rem);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(18, 28, 42, 0.05);
+}
+
+.schedule-shell__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--primary);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.schedule-shell__back:hover {
+  background: var(--surface-container-low);
+}
+
+.schedule-shell__brand {
+  font-weight: 800;
+  font-size: 1.0625rem;
+  letter-spacing: -0.03em;
+  color: var(--primary);
+  margin-right: auto;
+}
+
+.schedule-shell__main {
+  flex: 1;
+  width: 100%;
+  max-width: min(28rem, 100%);
+  margin: 0 auto;
+  padding: 1.25rem clamp(1rem, 4vw, 1.5rem)
+    calc(10rem + var(--practice-bottom-nav-height, 4.5rem));
+  box-sizing: border-box;
+}
+
+.schedule-shell__eyebrow {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.schedule-shell__title {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.75rem, 2.2vw + 1rem, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--on-background);
+}
+
+.schedule-shell__module {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+}
+
+.schedule-shell__subtitle {
+  margin: 0 0 1.75rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--secondary);
+}
+
+@media (min-width: 40rem) {
+  .schedule-shell__main {
+    max-width: min(40rem, 100%);
+  }
+}
+
+@media (min-width: 56.25rem) {
+  .schedule-shell__main {
+    max-width: min(56rem, 100%);
+  }
+}
+
+@media (min-width: 64rem) {
+  .schedule-shell__topbar {
+    display: none;
+  }
+
+  .schedule-shell__main {
+    max-width: min(80rem, 100%);
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+    padding-left: clamp(1rem, 2vw, 2rem);
+    padding-right: clamp(1rem, 2vw, 2rem);
+  }
+}

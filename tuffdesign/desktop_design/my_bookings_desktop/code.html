@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Bookings - Tuff Anytime</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-shift { background-color: #eff4ff; }
+        .tonal-layering { background-color: #eff4ff; }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#ffb3af",
+                    "on-tertiary-fixed": "#002109",
+                    "inverse-primary": "#ffb3af",
+                    "surface-container-high": "#dee9fc",
+                    "secondary": "#555f6f",
+                    "background": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#3d4756",
+                    "on-primary-fixed-variant": "#930017",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#c3212d",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#121c2a",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "inverse-surface": "#27313f",
+                    "tertiary-fixed-dim": "#62df7d",
+                    "outline-variant": "#e4bebb",
+                    "on-primary-fixed": "#410005",
+                    "tertiary-container": "#007531",
+                    "surface": "#f8f9ff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#bdc7d9",
+                    "on-primary-container": "#ffdad7",
+                    "on-tertiary-fixed-variant": "#005320",
+                    "on-background": "#121c2a",
+                    "secondary-fixed": "#d9e3f6",
+                    "on-surface": "#121c2a",
+                    "tertiary": "#005a24",
+                    "on-surface-variant": "#5b403e",
+                    "surface-dim": "#d0dbed",
+                    "secondary-container": "#d6e0f3",
+                    "on-tertiary-container": "#7ffc97",
+                    "inverse-on-surface": "#eaf1ff",
+                    "primary-fixed": "#ffdad7",
+                    "surface-tint": "#ba1928",
+                    "surface-variant": "#d9e3f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#596373",
+                    "primary": "#9e001a",
+                    "error-container": "#ffdad6",
+                    "outline": "#8f6f6d",
+                    "surface-container-low": "#eff4ff",
+                    "surface-container-highest": "#d9e3f6",
+                    "surface-container": "#e6eeff",
+                    "tertiary-fixed": "#7ffc97",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8f9ff]/80 backdrop-blur-xl shadow-sm font-['Inter'] antialiased tracking-tight">
+<div class="flex justify-between items-center h-16 px-8 max-w-full mx-auto">
+<div class="flex items-center space-x-12">
+<div class="text-xl font-black text-red-800 tracking-tighter">Tuff Anytime</div>
+<nav class="hidden md:flex space-x-8 text-sm">
+<a class="text-slate-600 hover:text-red-800 transition-colors" href="#">Discovery</a>
+<a class="text-slate-600 hover:text-red-800 transition-colors" href="#">Schedule</a>
+<a class="text-red-800 font-bold border-b-2 border-red-800 pb-1" href="#">Bookings</a>
+<a class="text-slate-600 hover:text-red-800 transition-colors" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-[#eff4ff] p-2 rounded-full transition-all" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-[#eff4ff] p-2 rounded-full transition-all" data-icon="settings">settings</button>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-xl font-bold text-sm tracking-tight hover:opacity-90 active:scale-95 transition-all">Start Practice</button>
+<div class="w-10 h-10 rounded-full bg-secondary-container overflow-hidden ring-2 ring-surface">
+<img alt="User profile" data-alt="Close-up professional portrait of a smiling young male architect in a bright modern studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0fp0mpXDgAiXLO-OjxVjp3_GJRUYG4BSlhovuUWtWvnWOAmbPugtRz1TgBAq14OdawClFO7Uj5fOboxOWTSQH9anOpwcM6-LeuGIG7tI4WMYPFcZfxtmKCa6b7DLCymgHaEH0SF53-zRqVdWEITs8zfA1uRzGIIJSfxlsIHAq_EbPcgie-WzfJyxiaOSSYrkkm9q1duHCWaVHrXi6jOqx1kenp_DPGgL9h5_VE2GTI00DE6yFLPIb5MD7A-7gEUE261Ba4ObBiXeg"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex pt-16 min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#f8f9ff] flex flex-col py-8 px-4 space-y-8 font-['Inter'] text-sm font-medium">
+<div class="flex items-center space-x-3 px-2">
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden">
+<img alt="Coach Profile" data-alt="Portrait of a sophisticated senior business mentor with a confident gaze in a neutral grey studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjhVWYJD2bC6uYSPaI1x8LNEmvbyq93IrpIZCXkudiZs8U4WIeqC0uCStsnuZ5LLk3JnrPdvpuZg1V1peuVsYzICQOcLQrPdiIXhcBUmw65F4ZuGzBF9jbLSaSYuGA7K2JjsK3ljRBtsNIim7uhrlZfIX-KBKgEuXkvpaF7QBSrmXL6UybRwNNPb5D0D76psqYk4oYo-H9roKaAEfrDv-mJ_3O_BYJZKqo3BYIwNUZ1rbfKUWO6YPts2vGFI1tFAT0rRhpgiJBPyrw"/>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">Relational Architect</h3>
+<p class="text-xs text-on-surface-variant">Growth Tier</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span>Home</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span>Discovery</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="video_library">video_library</span>
+<span>Library</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 bg-red-50 text-red-800 rounded-lg font-semibold transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span>Practice</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 hover:translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>History</span>
+</a>
+</nav>
+<div class="pt-4 border-t border-surface-container-high flex flex-col space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 p-12 bg-surface">
+<div class="max-w-6xl mx-auto">
+<!-- Header Section -->
+<div class="mb-12">
+<p class="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-2">Manage Session</p>
+<h1 class="text-4xl font-black text-on-surface tracking-tight mb-8">My Bookings</h1>
+<!-- Tabs -->
+<div class="flex space-x-10 items-end border-b border-surface-container-high">
+<button class="pb-4 text-sm font-bold text-on-surface border-b-2 border-primary transition-all">Upcoming</button>
+<button class="pb-4 text-sm font-medium text-on-surface-variant hover:text-on-surface transition-all">Past Sessions</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Main Booking Column -->
+<div class="col-span-8 space-y-8">
+<!-- Booking Card 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl ring-1 ring-black/[0.03] flex items-start space-x-8 hover:translate-y-[-4px] transition-transform duration-300">
+<div class="w-24 h-24 rounded-full bg-surface-container-high overflow-hidden shrink-0">
+<img alt="Facilitator" data-alt="Close-up of a professional female mentor with a warm expression wearing business attire in a bright office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxEebWN6sTLKZJKPthaWlrZdDhtcZa9Oe2aG1VLiwU-zVo7x0yQlxgD4JS3hqw36mAdFLMrcpdKJca0yVIF7kaa_DDLuRiPyK1tHdiW3PBm3QRhKsR3qEkUqv2ijAc9Ump43zNJh4C7KtZUro9yFy-ZKUUpIg0iaGMCsOPJ_pjLFupi7LAG-dYddXQF-CyBpAtWKxwJ0U8JJf1WwiXuStYQiTlI53QKJZXKy_5CNkBZgHmmI8hfsCFzzwLCTygzPEZKk3WnEKgRQ0A"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="text-xl font-bold text-on-surface mb-1">Conflict Resolution Lab</h2>
+<p class="text-on-surface-variant font-medium">with Dr. Helena Vance</p>
+</div>
+<span class="bg-tertiary-container/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Confirmed</span>
+</div>
+<div class="flex items-center space-x-6 mb-8 text-on-surface-variant text-sm">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="calendar_today">calendar_today</span>
+<span>Thursday, Oct 24</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="schedule">schedule</span>
+<span>14:30 - 15:45 (GMT-5)</span>
+</div>
+</div>
+<div class="flex space-x-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-xl font-bold text-sm tracking-tight hover:shadow-lg transition-all">Join Room</button>
+<button class="bg-surface-container-highest text-on-surface px-8 py-3 rounded-xl font-bold text-sm tracking-tight hover:bg-surface-container-high transition-all">Reschedule</button>
+</div>
+</div>
+</div>
+<!-- Booking Card 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl ring-1 ring-black/[0.03] flex items-start space-x-8 hover:translate-y-[-4px] transition-transform duration-300">
+<div class="w-24 h-24 rounded-full bg-surface-container-high overflow-hidden shrink-0">
+<img alt="Facilitator" data-alt="Portrait of a creative male lead in a casual blazer sitting in a modern open-plan workplace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQYIRPkJOGvIuOgvyZ2ebnO_JcY0DI9S79O32Yik-OaON41NwHNecf1oV6n8-T-6DXInoDkHs-8REVZZxElRzcwg9v0KiiZGaaPMlolDjziKzozju5P3dkGVohT53u6DaflqifHWhkNRZSkSgHGPgVMX8yr34mbMtyhrWttDomBUJas5JddQ-fU8oU9Tu1LKav4bdt7hO67-y3sM4hoomPAH8lHDA0ygU2Okjoj-miMfnDInkJ80Y7nQe8GdHJCMDKQrTcJqpwtOrd"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="text-xl font-bold text-on-surface mb-1">Strategic Empathy Intensive</h2>
+<p class="text-on-surface-variant font-medium">with Marcus Thorne</p>
+</div>
+<span class="bg-tertiary-container/10 text-tertiary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Confirmed</span>
+</div>
+<div class="flex items-center space-x-6 mb-8 text-on-surface-variant text-sm">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="calendar_today">calendar_today</span>
+<span>Monday, Oct 28</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="schedule">schedule</span>
+<span>10:00 - 11:30 (GMT-5)</span>
+</div>
+</div>
+<div class="flex space-x-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-xl font-bold text-sm tracking-tight hover:shadow-lg transition-all">Join Room</button>
+<button class="bg-surface-container-highest text-on-surface px-8 py-3 rounded-xl font-bold text-sm tracking-tight hover:bg-surface-container-high transition-all">Reschedule</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Promotional Sidebar Column -->
+<div class="col-span-4 space-y-8">
+<!-- Promotional Section -->
+<div class="relative overflow-hidden bg-primary-container rounded-2xl p-8 text-on-primary-container h-fit">
+<div class="relative z-10">
+<h3 class="text-2xl font-black leading-tight mb-4">Need more practice?</h3>
+<p class="text-on-primary-container/80 text-sm leading-relaxed mb-8">Accelerate your leadership trajectory with our unlimited relational sparring sessions. Connect with elite mentors anytime.</p>
+<button class="w-full bg-on-primary-container text-primary font-bold py-4 rounded-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Upgrade to Pro</button>
+</div>
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-primary rounded-full blur-3xl opacity-50"></div>
+</div>
+<!-- Statistics Card -->
+<div class="bg-surface-container-low p-8 rounded-2xl">
+<h4 class="text-xs font-bold text-primary uppercase tracking-widest mb-6">Your Momentum</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-bold text-on-surface">Practice Hours</span>
+<span class="text-on-surface-variant">12 / 20</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[60%] rounded-full"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface p-4 rounded-xl">
+<p class="text-2xl font-black text-on-surface">04</p>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-tighter">Sessions Scheduled</p>
+</div>
+<div class="bg-surface p-4 rounded-xl">
+<p class="text-2xl font-black text-on-surface">92%</p>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-tighter">Completion Rate</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Resources -->
+<div class="p-4">
+<h4 class="text-sm font-bold text-on-surface mb-4">Preparation Kit</h4>
+<ul class="space-y-4">
+<li class="flex items-center space-x-3 group cursor-pointer">
+<div class="w-8 h-8 bg-secondary-container rounded-lg flex items-center justify-center text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary">
+<span class="material-symbols-outlined text-lg" data-icon="description">description</span>
+</div>
+<span class="text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Session Prep Guide.pdf</span>
+</li>
+<li class="flex items-center space-x-3 group cursor-pointer">
+<div class="w-8 h-8 bg-secondary-container rounded-lg flex items-center justify-center text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary">
+<span class="material-symbols-outlined text-lg" data-icon="videocam">videocam</span>
+</div>
+<span class="text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">How to Practice Relationality</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Floating Action Button - Only for context of adding a new session -->
+<button class="fixed bottom-8 right-8 bg-gradient-to-br from-primary to-primary-container text-on-primary p-4 rounded-full shadow-2xl flex items-center space-x-3 hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span class="pr-2 font-bold tracking-tight">New Booking</span>
+</button>
+</body></html>
